@@ -2802,72 +2802,76 @@ function generarRecomendacionesArray(results) {
     }
   }
 
+
   return recomendaciones;
 }
 
 function generarPlanAccion(results) {
   let plan = '';
 
+  // Disclaimer inicial para todos los planes
+  const disclaimer = `⚠️ IMPORTANTE: CONSULTA CON TU PSICÓLOGO / A DE REFERENCIA
+    - Este plan es una guía general basada en tus respuestas.
+- No sustituye la valoración de un profesional.
+- Si tienes dudas o malestar, contacta con el psicólogo de tu equipo o solicita derivación.
+
+`;
+
   if (results.type === 'burnout' && (results.level.level === 'alto' || results.level.level === 'medio')) {
-    plan = `SEMANA 1-2: Establece práctica básica
-- Mindfulness diario 5 minutos (DRAW o Respiración Consciente)
-- Identifica 1 actividad restauradora y blóqueala en calendario
-- Habla con supervisor sobre carga de trabajo
+    plan = disclaimer + `SEMANA 1 - 2: Establece práctica básica
+    - Mindfulness diario 5 minutos(DRAW o Respiración Consciente)
+      - Identifica 1 actividad restauradora y blóqueala en calendario
+        - Habla con supervisor sobre carga de trabajo
 
-SEMANA 3-4: Añade segunda práctica
-- Continúa mindfulness diario
-- Meditación de autocompasión 7 min, 3x/semana
-- Conexión social con colega de confianza
+SEMANA 3 - 4: Añade segunda práctica
+    - Continúa mindfulness diario
+      - Meditación de autocompasión 7 min, 3x / semana
+        - Conexión social con colega de confianza
 
-SEMANA 5-8: Mantén y expande
-- Integra prácticas establecidas
-- Participa en debriefing de equipo
-- Re-evalúate en semana 8
-
-PRÓXIMOS PASOS:
-- Consulta sección "Recursos" para ejercicios prácticos
-- Accede a "Comunidad" para buscar apoyo
-- Descarga las guías complementarias`;
+SEMANA 5 - 8: Mantén y expande
+    - Integra prácticas establecidas
+      - Evalúa progreso
+        - Considera supervisión profesional`;
   } else if (results.type === 'compassion') {
-    plan = `SEMANA 1-2: Prácticas de anclaje
-- Técnica DRAW entre pacientes
-- Los 5 sentidos (grounding) cuando sientas activación
-- Debriefing informal con colega después de casos difíciles
+    plan = disclaimer + `SEMANA 1 - 2: Prácticas de anclaje
+    - Técnica DRAW entre pacientes
+      - Los 5 sentidos(grounding) cuando sientas activación
+        - Debriefing informal con colega después de casos difíciles
 
-SEMANA 3-4: Regulación emocional
-- Termómetro emocional: evalúa intensidad 2x/día
-- Descarga emocional segura cuando necesites
-- Meditación de autocompasión 3x/semana
+SEMANA 3 - 4: Regulación emocional
+    - Termómetro emocional: evalúa intensidad 2x / día
+      - Descarga emocional segura cuando necesites
+        - Meditación de autocompasión 3x / semana
 
-SEMANA 5-8: Consolidación
-- Mantén prácticas que mejor funcionan
-- Solicita debriefing formal de equipo
-- Re-evalúate en semana 8
+SEMANA 5 - 8: Consolidación
+    - Mantén prácticas que mejor funcionan
+      - Solicita debriefing formal de equipo
+        - Re - evalúate en semana 8
 
 PRÓXIMOS PASOS:
-- Recursos de regulación emocional disponibles
-- Contactos de apoyo profesional
-- Guía de Apoyo Emocional en Equipo`;
+  - Recursos de regulación emocional disponibles
+    - Contactos de apoyo profesional
+      - Guía de Apoyo Emocional en Equipo`;
   } else {
-    plan = `SEMANA 1-2: Identifica prioridades
-- Evalúa 4 dimensiones: físico, emocional, social, espiritual
-- Elige 2 prácticas concretas para empezar
-- Bloquea tiempo en calendario
+    plan = `SEMANA 1 - 2: Identifica prioridades
+    - Evalúa 4 dimensiones: físico, emocional, social, espiritual
+      - Elige 2 prácticas concretas para empezar
+        - Bloquea tiempo en calendario
 
-SEMANA 3-4: Establece rutina
-- Mantén prácticas de semana 1-2
-- Añade tercera práctica
-- Comparte con colega tu compromiso
+SEMANA 3 - 4: Establece rutina
+    - Mantén prácticas de semana 1 - 2
+      - Añade tercera práctica
+        - Comparte con colega tu compromiso
 
-SEMANA 5-8: Consolidación
-- Continúa con prácticas establecidas
-- Evalúa qué funciona mejor
-- Re-evalúate en semana 8
+SEMANA 5 - 8: Consolidación
+    - Continúa con prácticas establecidas
+      - Evalúa qué funciona mejor
+        - Re - evalúate en semana 8
 
 PRÓXIMOS PASOS:
-- Descarga Guía de Autocuidado para CPP
-- Explora ejercicios de mindfulness
-- Únete a espacios de apoyo`;
+  - Descarga Guía de Autocuidado para CPP
+    - Explora ejercicios de mindfulness
+      - Únete a espacios de apoyo`;
   }
 
   return plan;
@@ -2962,7 +2966,7 @@ function descargarResultadoRTF() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Resultados-${tipo}-${new Date().toISOString().slice(0, 10)}.rtf`;
+    link.download = `Resultados - ${tipo} -${new Date().toISOString().slice(0, 10)}.rtf`;
 
     document.body.appendChild(link);
     link.click();
@@ -3036,7 +3040,7 @@ function mostrarHistorialEvaluaciones() {
     const nivel = item.resultados.level ? item.resultados.level.text : (item.resultados.subscales ? item.resultados.subscales[0].level.text : 'N/A');
 
     return `
-      <div style="background: var(--color-surface); padding: var(--space-20); margin-bottom: var(--space-16); border-radius: var(--radius-lg); border-left: 4px solid var(--color-primary); border: 1px solid var(--color-card-border);">
+    < div style = "background: var(--color-surface); padding: var(--space-20); margin-bottom: var(--space-16); border-radius: var(--radius-lg); border-left: 4px solid var(--color-primary); border: 1px solid var(--color-card-border);" >
         <h4 style="margin-top: 0; color: var(--color-text); margin-bottom: var(--space-8);">${tipoLabels[item.tipo] || item.tipo}</h4>
         <p style="color: var(--color-text-secondary); margin: var(--space-4) 0; font-size: var(--font-size-sm);">
           <strong>Fecha:</strong> ${fecha}
@@ -3045,7 +3049,7 @@ function mostrarHistorialEvaluaciones() {
           <strong>Profesión:</strong> ${professionLabels[item.datos.profesion] || item.datos.profesion}
         </p>
         <p style="color: var(--color-text); margin: var(--space-12) 0;"><strong>Puntuación:</strong> ${puntuacion} (${nivel})</p>
-      </div>
+      </div >
     `;
   }).join('');
 }
