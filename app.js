@@ -35,6 +35,10 @@ try {
     })
     .catch((error) => {
       console.error("Error en autenticación anónima:", error);
+      const statusText = document.getElementById('status-text');
+      const statusDot = document.getElementById('status-dot');
+      if (statusText) statusText.textContent = "Error: " + error.message;
+      if (statusDot) statusDot.style.background = "red";
     });
 
   // Escuchar cambios de estado de autenticación
@@ -86,7 +90,8 @@ class EvaluacionManager {
       datos: {
         profesion: datos.profession,
         edad: datos.age,
-        experiencia: datos.experience
+        experiencia: datos.experience,
+        pais: datos.country
       },
       resultados: resultados
     };
@@ -329,9 +334,11 @@ function calcularResultados() {
 
   // PASO 2: Obtener datos demográficos
   const profesion = document.getElementById('eval-profesion').value || 'No especificada';
-  const edad = document.getElementById('eval-edad').value || '-';
-  const experiencia = document.getElementById('eval-experiencia').value || '-';
+  const edad = document.getElementById('eval-edad').value || 'No especificada';
+  const experiencia = document.getElementById('eval-experiencia').value || 'No especificada';
+  const pais = document.getElementById('eval-pais').value || 'No especificado';
 
+  demographicData = { profession: profesion, age: edad, experience: experiencia, country: pais };
   // PASO 3: Calcular puntuación (0-100) general y, en caso de burnout, las puntuaciones de subescalas
   // PASO 3: Calcular puntuación
   let puntuacion = 0;
