@@ -1,3 +1,62 @@
+// ==========================================
+// CONFIGURACIÓN DE FIREBASE (BACKEND)
+// ==========================================
+// ⚠️ IMPORTANTE: Reemplaza este objeto con tu propia configuración de Firebase
+// 1. Ve a https://console.firebase.google.com/
+// 2. Crea un proyecto nuevo
+// 3. Añade una "Web App"
+// 4. Copia las claves que te aparecen (firebaseConfig) y pégalas aquí abajo
+const firebaseConfig = {
+  apiKey: "TU_API_KEY_AQUI",
+  authDomain: "TU_PROYECTO.firebaseapp.com",
+  projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_PROYECTO.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
+};
+
+// Inicializar Firebase
+let db; // Referencia a Firestore
+let auth; // Referencia a Auth
+let currentUser = null;
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  console.log("Firebase inicializado correctamente");
+
+  // Iniciar sesión anónima automáticamente
+  auth.signInAnonymously()
+    .then(() => {
+      console.log("Sesión anónima iniciada");
+    })
+    .catch((error) => {
+      console.error("Error en autenticación anónima:", error);
+    });
+
+  // Escuchar cambios de estado de autenticación
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      currentUser = user;
+      console.log("Usuario conectado (ID):", user.uid);
+      // Cargar historial si existe
+      if (typeof cargarHistorialFirebase === 'function') {
+        cargarHistorialFirebase();
+      }
+    } else {
+      currentUser = null;
+    }
+  });
+
+} catch (error) {
+  console.warn("Firebase no configurado o error de inicialización. La app funcionará en modo local.", error);
+}
+
+// ==========================================
+// FIN CONFIGURACIÓN FIREBASE
+// ==========================================
+
 // Application state
 let evaluationResults = {};
 let hasCompletedEvaluations = false;
@@ -22,7 +81,24 @@ class EvaluacionManager {
       resultados: resultados
     };
 
+    // Guardar en memoria local
     this.evaluaciones.push(evaluacion);
+
+    // Guardar en Firebase si está conectado
+    if (currentUser && db) {
+      db.collection('evaluaciones').add({
+        userId: currentUser.uid,
+        ...evaluacion,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      })
+        .then((docRef) => {
+          console.log("Evaluación guardada en Firebase con ID: ", docRef.id);
+        })
+        .catch((error) => {
+          console.error("Error al guardar en Firebase: ", error);
+        });
+    }
+
     return evaluacion;
   }
 
@@ -2727,7 +2803,64 @@ function mostrarResultadoEnModal(results) {
   const plan = generarPlanAccion(results);
   document.getElementById('resultado-plan').textContent = plan;
 
-  // Guardar en variable global para descarga
+  // Guardar en// ==========================================
+  // CONFIGURACIÓN DE FIREBASE (BACKEND)
+  // ==========================================
+  // ⚠️ IMPORTANTE: Reemplaza este objeto con tu propia configuración de Firebase
+  // 1. Ve a https://console.firebase.google.com/
+  // 2. Crea un proyecto nuevo
+  // 3. Añade una "Web App"
+  // 4. Copia las claves que te aparecen (firebaseConfig) y pégalas aquí abajo
+  const firebaseConfig = {
+    apiKey: "TU_API_KEY_AQUI",
+    authDomain: "TU_PROYECTO.firebaseapp.com",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_PROYECTO.appspot.com",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+  };
+
+  // Inicializar Firebase
+  let db; // Referencia a Firestore
+  let auth; // Referencia a Auth
+  let currentUser = null;
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    auth = firebase.auth();
+    console.log("Firebase inicializado correctamente");
+
+    // Iniciar sesión anónima automáticamente
+    auth.signInAnonymously()
+      .then(() => {
+        console.log("Sesión anónima iniciada");
+      })
+      .catch((error) => {
+        console.error("Error en autenticación anónima:", error);
+      });
+
+    // Escuchar cambios de estado de autenticación
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        currentUser = user;
+        console.log("Usuario conectado (ID):", user.uid);
+        // Cargar historial si existe
+        cargarHistorialFirebase();
+      } else {
+        currentUser = null;
+      }
+    });
+
+  } catch (error) {
+    console.warn("Firebase no configurado o error de inicialización. La app funcionará en modo local.", error);
+  }
+
+  // ==========================================
+  // FIN CONFIGURACIÓN FIREBASE
+  // ==========================================
+
+  // Variables globales de estadorga
   window.resultadoActual = {
     tipo: tipo,
     datos: datos,
@@ -3002,7 +3135,85 @@ document.addEventListener('keydown', function (event) {
     }
   }
 });
+// ==========================================
+// FUNCIONES DE FIREBASE
+// ==========================================
 
+function cargarHistorialFirebase() {
+  if (!currentUser || !db) return;
+
+  console.log("Cargando historial desde Firebase...");
+
+  db.collection('evaluaciones')
+    .where('userId', '==', currentUser.uid)
+    .orderBy('timestamp', 'desc')
+    .get()
+    .then((querySnapshot) => {
+      // Limpiar historial local antes de cargar el remoto para evitar duplicados
+      evaluacionManager.limpiarHistorial();
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        // Adaptar formato si es necesario
+        const evaluacion = {
+          id: data.id || doc.id,
+          tipo: data.tipo,
+          fecha: data.fecha,
+          datos: data.datos,
+          resultados: data.resultados
+        };
+        evaluacionManager.evaluaciones.push(evaluacion);
+      });
+
+      console.log(`Historial cargado: ${evaluacionManager.evaluaciones.length} evaluaciones.`);
+
+      // Actualizar UI si estamos en la sección de seguimiento
+      if (currentSection === 'seguimiento') {
+        mostrarHistorialEvaluaciones();
+      }
+
+      // Verificar si hay evaluaciones para desbloquear funcionalidades
+      if (evaluacionManager.evaluaciones.length > 0) {
+        hasCompletedEvaluations = true;
+        // Cargar resultados más recientes en evaluationResults
+        // Esto es una simplificación, idealmente procesaríamos todo
+        const ultima = evaluacionManager.evaluaciones[0];
+        evaluationResults[ultima.tipo] = ultima.resultados;
+        evaluationResults.demographics = ultima.datos;
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar historial:", error);
+      // Fallback a índices si falta el índice compuesto
+      if (error.code === 'failed-precondition') {
+        console.warn("Falta índice compuesto en Firestore. Intentando consulta simple.");
+        // Intento sin ordenamiento (el cliente ordena)
+        db.collection('evaluaciones')
+          .where('userId', '==', currentUser.uid)
+          .get()
+          .then((querySnapshot) => {
+            evaluacionManager.limpiarHistorial();
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              const evaluacion = {
+                id: data.id || doc.id,
+                tipo: data.tipo,
+                fecha: data.fecha,
+                datos: data.datos,
+                resultados: data.resultados
+              };
+              evaluacionManager.evaluaciones.push(evaluacion);
+            });
+            // Ordenar localmente
+            evaluacionManager.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            if (currentSection === 'seguimiento') {
+              mostrarHistorialEvaluaciones();
+            }
+          });
+      }
+    });
+}
 // Mostrar historial de evaluaciones
 function mostrarHistorialEvaluaciones() {
   console.log('Cargando historial...');
