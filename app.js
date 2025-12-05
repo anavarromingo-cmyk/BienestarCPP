@@ -106,44 +106,40 @@ class EvaluacionManager {
         ...evaluacion,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       })
+    })
         .then((docRef) => {
-          console.log("Evaluación guardada en Firebase con ID: ", docRef.id);
-        })
-        .catch((error) => {
-        })
-        .then((docRef) => {
-          console.log("Evaluación guardada en Firebase con ID: ", docRef.id);
-          const statusText = document.getElementById('status-text');
-          if (statusText) statusText.textContent = "Guardado OK";
-          setTimeout(() => { if (statusText) statusText.textContent = "Conectado"; }, 3000);
-        })
-        .catch((error) => {
-          console.error("Error al guardar en Firebase: ", error);
-          const statusText = document.getElementById('status-text');
-          const statusDot = document.getElementById('status-dot');
-          if (statusText) statusText.textContent = "Error Guardando: " + error.code;
-          if (statusDot) statusDot.style.background = "orange";
-          alert("Error guardando datos: " + error.message + "\nRevisa las Reglas de Firestore.");
-        });
-    }
+      console.log("Evaluación guardada en Firebase con ID: ", docRef.id);
+      const statusText = document.getElementById('status-text');
+      if (statusText) statusText.textContent = "Guardado OK";
+      setTimeout(() => { if (statusText) statusText.textContent = "Conectado"; }, 3000);
+    })
+      .catch((error) => {
+        console.error("Error al guardar en Firebase: ", error);
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-dot');
+        if (statusText) statusText.textContent = "Error Guardando: " + error.code;
+        if (statusDot) statusDot.style.background = "orange";
+        alert("Error guardando datos: " + error.message + "\nRevisa las Reglas de Firestore.");
+      });
+  }
 
     return evaluacion;
   }
 
-  obtenerEvaluaciones(tipo = null) {
-    if (tipo) {
-      return this.evaluaciones.filter(e => e.tipo === tipo);
-    }
-    return this.evaluaciones;
+obtenerEvaluaciones(tipo = null) {
+  if (tipo) {
+    return this.evaluaciones.filter(e => e.tipo === tipo);
   }
+  return this.evaluaciones;
+}
 
-  obtenerHistorial() {
-    return this.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-  }
+obtenerHistorial() {
+  return this.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+}
 
-  limpiarHistorial() {
-    this.evaluaciones = [];
-  }
+limpiarHistorial() {
+  this.evaluaciones = [];
+}
 }
 
 // Instancia global
