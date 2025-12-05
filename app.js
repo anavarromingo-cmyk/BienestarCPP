@@ -39,15 +39,23 @@ try {
 
   // Escuchar cambios de estado de autenticación
   auth.onAuthStateChanged((user) => {
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+
     if (user) {
       currentUser = user;
       console.log("Usuario conectado (ID):", user.uid);
+      if (statusText) statusText.textContent = "Conectado";
+      if (statusDot) statusDot.style.background = "green";
+
       // Cargar historial si existe
       if (typeof cargarHistorialFirebase === 'function') {
         cargarHistorialFirebase();
       }
     } else {
       currentUser = null;
+      if (statusText) statusText.textContent = "Desconectado";
+      if (statusDot) statusDot.style.background = "red";
     }
   });
 
