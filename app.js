@@ -7,12 +7,14 @@
 // 3. Añade una "Web App"
 // 4. Copia las claves que te aparecen (firebaseConfig) y pégalas aquí abajo
 const firebaseConfig = {
-  apiKey: "TU_API_KEY_AQUI",
-  authDomain: "TU_PROYECTO.firebaseapp.com",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_PROYECTO.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyDazKVlP_psziqwv1UaJrN1j3S7XsxEnbg",
+  authDomain: "bienestar-paliativos.firebaseapp.com",
+  databaseURL: "https://bienestar-paliativos-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "bienestar-paliativos",
+  storageBucket: "bienestar-paliativos.firebasestorage.app",
+  messagingSenderId: "508770988384",
+  appId: "1:508770988384:web:cf06c15ad12f16536d2e05",
+  measurementId: "G-0K7XJ5PR6R"
 };
 
 // Inicializar Firebase
