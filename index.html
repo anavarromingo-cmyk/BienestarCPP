@@ -1030,9 +1030,9 @@
     }
 
     .item-options {
-      display: flex;
+      display: grid;
       gap: 8px;
-      flex-wrap: wrap;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     }
 
     .option-btn {
@@ -1043,9 +1043,13 @@
       cursor: pointer;
       font-size: 12px;
       transition: all 0.2s;
-      flex: 1;
-      min-width: 70px;
+      width: 100%;
+      min-width: 0;
+      /* Reset min-width */
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .option-btn:hover {
