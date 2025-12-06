@@ -651,7 +651,7 @@ const evaluations = {
       "Tengo pensamientos y sentimientos de felicidad por aquellos/as a los que atiendo y por cómo puedo ayudarles.", // 20. CS
       "Me siento abrumado/a porque la carga de mi trabajo parece interminable.", // 21. BO
       "Creo que puedo marcar la diferencia a través de mi trabajo.", // 22. CS
-      "Evito ciertas actividades o situaciones porque me recuerdan las experiencias asustadizas de las personas a las que atiendo.", // 23. STS
+      "Evito ciertas actividades o situaciones porque me recuerdan las experiencias traumáticas de las personas a las que atiendo.", // 23. STS
       "Estoy orgulloso/a de lo que puedo hacer para ayudar.", // 24. CS
       "Como resultado de mi asistencia, tengo pensamientos intrusivos y aterradores.", // 25. STS
       "Me siento atascado/a por el sistema.", // 26. BO
