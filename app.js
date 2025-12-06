@@ -2937,7 +2937,7 @@ RECURSOS RECOMENDADOS:
   });
 }
 
-  function generarRecomendacionesArray(results) {
+function generarRecomendacionesArray(results) {
     const recomendaciones = [];
 
     if (results.type === 'burnout') {
