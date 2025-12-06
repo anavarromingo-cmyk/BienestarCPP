@@ -104,7 +104,7 @@ class EvaluacionManager {
       db.collection('evaluaciones').add({
         userId: currentUser.uid,
         ...evaluacion,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        timestamp: new Date() // Usar fecha local para evitar errores de serverTimestamp
       })
         .then((docRef) => {
           console.log("Evaluación guardada en Firebase con ID: ", docRef.id);
