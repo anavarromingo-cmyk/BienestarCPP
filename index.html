@@ -1036,31 +1036,42 @@
     }
 
     .option-btn {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
       background: white;
-      border-radius: 4px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 12px;
-      transition: all 0.2s;
+      font-size: 14px;
+      transition: all 0.2s ease;
       width: 100%;
       min-width: 0;
-      /* Reset min-width */
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #555;
+      font-weight: 500;
+      position: relative;
     }
 
     .option-btn:hover {
       border-color: #3498db;
-      background: #ecf7ff;
+      background: #f0f7fc;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
     .option-btn.selected {
       background: #3498db;
       color: white;
       border-color: #3498db;
+      box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Hide default radio */
+    .option-btn input[type="radio"] {
+      display: none;
     }
 
     /* FOOTER DEL MODAL */
@@ -1074,7 +1085,91 @@
     }
 
     /* MODAL DE EVALUACIÓN - CORREGIDO */
-    /* Old expandable card styles removed - now using modal system */
+    /* General Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.activo {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-overlay.activo .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eeeff2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8f9fa;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--color-text);
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #999;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 5px;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 20px;
+      line-height: 1.6;
+      color: var(--color-text);
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      border-top: 1px solid #eeeff2;
+      background: #f8f9fa;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      border-radius: 0 0 12px 12px;
+    }
 
     /* Resultado modal - overlay */
     .resultado-modal {
@@ -2938,454 +3033,455 @@
           <div class="ref-category">
             <h3>🔥 Burnout en Profesionales de Cuidados Paliativos</h3>
             <div class="reference-list">
-              <div class="reference-item">
-                <h4>Recursos Oficiales y Asociaciones</h4>
-                <p>Enlaces directos a organizaciones de referencia.</p>
-                <ul style="list-style: none; padding: 0; margin-top: 10px;">
-                  <li style="margin-bottom: 8px;"><a href="https://www.cop.es" target="_blank"
-                      style="color: var(--color-primary); text-decoration: none;">🌐 Consejo General de la Psicología de
-                      España</a></li>
-                  <li style="margin-bottom: 8px;"><a href="https://pedpal.org" target="_blank"
-                      style="color: var(--color-primary); text-decoration: none;">🌐 Pedpal (Sociedad Española de
-                      Cuidados Paliativos Pediátricos)</a></li>
-                  <li style="margin-bottom: 8px;"><a href="https://www.secpal.com" target="_blank"
-                      style="color: var(--color-primary); text-decoration: none;">🌐 SECPAL (Sociedad Española de
-                      Cuidados Paliativos)</a></li>
-                </ul>
-              </div>
-              <div class="reference-item">
-                <h4>Executive Leadership and Physician Well-being: Nine Organizational Strategies to Promote Engagement
-                  and Reduce Burnout</h4>
-                <p class="ref-authors">Shanafelt TD, Noseworthy JH</p>
-                <p class="ref-journal">Mayo Clinic Proceedings, 2017</p>
-                <p class="ref-doi">DOI: 10.1016/j.mayocp.2016.10.004</p>
-                <p class="ref-summary">Describe 9 estrategias organizacionales para reducir burnout: reducción de carga
-                  administrativa, flexibilidad laboral, apoyo institucional, cultura de bienestar, y sistemas de apoyo
-                  entre pares.</p>
-                <span class="ref-tag">Alta relevancia CPP</span>
-                <a href="https://scholar.google.com/scholar?q=Executive+Leadership+Physician+Well-being+Shanafelt+Noseworthy"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>Burnout Prevalence and Associated Factors Among Palliative Care Professionals</h4>
-                <p class="ref-authors">Vargas et al.</p>
-                <p class="ref-journal">Palliative Medicine, 2017</p>
-                <p class="ref-summary">Estudio que encuentra prevalencia de burnout entre 3-66% según población y
-                  método. Factores de riesgo: alta carga emocional, falta de supervisión, recursos limitados.</p>
-                <span class="ref-tag">Muy alta relevancia CPP</span>
-                <a href="https://scholar.google.com/scholar?q=Burnout+Prevalence+Associated+Factors+Palliative+Care+Professionals+Vargas"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>The Relationship Between Burnout, Depression, and Anxiety in Medical Professionals</h4>
-                <p class="ref-authors">Rotenstein LS et al.</p>
-                <p class="ref-journal">JAMA, 2018</p>
-                <p class="ref-doi">DOI: 10.1001/jama.2018.12777</p>
-                <p class="ref-summary">Meta-análisis que documenta la relación entre burnout, depresión y ansiedad en
-                  profesionales médicos. Recomienda intervenciones tanto individuales como organizacionales.</p>
-                <span class="ref-tag">Alta relevancia</span>
-                <a href="https://scholar.google.com/scholar?q=Burnout+Depression+Anxiety+Medical+Professionals+Rotenstein"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-                <a href="https://pubmed.ncbi.nlm.nih.gov/30422299/" target="_blank" class="ref-link">Ver en PubMed →</a>
-              </div>
             </div>
-          </div>
-
-          <div class="ref-category">
-            <h3>💚 Fatiga por Compasión</h3>
-            <div class="reference-list">
-              <div class="reference-item">
-                <h4>Compassion Fatigue in Palliative Care Nursing: A Concept Analysis</h4>
-                <p class="ref-authors">Slocum-Gori S, Hemsworth D, Chan WWY et al.</p>
-                <p class="ref-journal">Nursing &amp; Health Sciences, 2013</p>
-                <p class="ref-doi">DOI: 10.1111/nhs.12053</p>
-                <p class="ref-summary">Análisis conceptual que define fatiga por compasión como combinación de burnout y
-                  estrés traumático secundario. Incluye pensamientos intrusivos, evitación y hiperactivación emocional.
-                </p>
-                <span class="ref-tag">Muy alta relevancia CPP</span>
-                <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Palliative+Care+Nursing+Concept+Analysis"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>Compassion Fatigue: Psychotherapists' Chronic Lack of Self Care</h4>
-                <p class="ref-authors">Figley CR</p>
-                <p class="ref-journal">Journal of Clinical Psychology, 2002</p>
-                <p class="ref-doi">DOI: 10.1002/jclp.10090</p>
-                <p class="ref-summary">Obra seminal que define fatiga por compasión y su relación con la falta de
-                  autocuidado. Propone modelo de resiliencia basado en balance entre empatía y autocuidado.</p>
-                <span class="ref-tag">Fundacional</span>
-                <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Psychotherapists+Chronic+Lack+Self+Care+Figley"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>A Cross-Sectional Pilot Study of Compassion Fatigue, Burnout, and Compassion Satisfaction in
-                  Pediatric Palliative Care Providers</h4>
-                <p class="ref-authors">Dooley J, Bailey C, McCabe R</p>
-                <p class="ref-journal">Palliative Medicine, 2018</p>
-                <p class="ref-summary">Estudio específico en CPP que encuentra niveles moderados de fatiga por compasión
-                  y burnout, pero también alta satisfacción por compasión. Recomienda programas de apoyo específicos.
-                </p>
-                <span class="ref-tag">Muy alta relevancia CPP</span>
-                <a href="https://scholar.google.com/scholar?q=Cross-Sectional+Pilot+Study+Compassion+Fatigue+Burnout+Pediatric+Palliative+Care"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
+            <div class="reference-item">
+              <h4>Recursos Oficiales y Asociaciones</h4>
+              <p>Enlaces directos a organizaciones de referencia.</p>
+              <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                <li style="margin-bottom: 8px;"><a href="https://www.cop.es" target="_blank"
+                    style="color: var(--color-primary); text-decoration: none;">🌐 Consejo General de la Psicología de
+                    España</a></li>
+                <li style="margin-bottom: 8px;"><a href="https://pedpal.es" target="_blank"
+                    style="color: var(--color-primary); text-decoration: none;">🌐 Pedpal (Sociedad Española de
+                    Cuidados Paliativos Pediátricos)</a></li>
+                <li style="margin-bottom: 8px;"><a href="https://www.secpal.org" target="_blank"
+                    style="color: var(--color-primary); text-decoration: none;">🌐 SECPAL (Sociedad Española de
+                    Cuidados Paliativos)</a></li>
+              </ul>
             </div>
-          </div>
+            <div class="reference-item">
+              <h4>Executive Leadership and Physician Well-being: Nine Organizational Strategies to Promote Engagement
+                and Reduce Burnout</h4>
+              <p class="ref-authors">Shanafelt TD, Noseworthy JH</p>
+              <p class="ref-journal">Mayo Clinic Proceedings, 2017</p>
+              <p class="ref-doi">DOI: 10.1016/j.mayocp.2016.10.004</p>
+              <p class="ref-summary">Describe 9 estrategias organizacionales para reducir burnout: reducción de carga
+                administrativa, flexibilidad laboral, apoyo institucional, cultura de bienestar, y sistemas de apoyo
+                entre pares.</p>
+              <span class="ref-tag">Alta relevancia CPP</span>
+              <a href="https://scholar.google.com/scholar?q=Executive+Leadership+Physician+Well-being+Shanafelt+Noseworthy"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
+            </div>
 
-          <div class="ref-category">
-            <h3>🌱 Intervenciones y Autocuidado</h3>
-            <div class="reference-list">
-              <div class="reference-item">
-                <h4>Mindfulness-Based Interventions to Reduce Burnout in Healthcare Professionals: A Systematic Review
-                </h4>
-                <p class="ref-authors">Burton A, Burgess C, Dean S et al.</p>
-                <p class="ref-journal">Frontiers in Psychology, 2021</p>
-                <p class="ref-doi">DOI: 10.3389/fpsyg.2021.701727</p>
-                <p class="ref-summary">Revisión sistemática que demuestra eficacia de intervenciones basadas en
-                  mindfulness para reducir burnout. Programas de 8 semanas muestran mejores resultados.</p>
-                <span class="ref-tag">Evidencia alta</span>
-                <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2021.701727/full" target="_blank"
-                  class="ref-link">Ver artículo completo →</a>
-              </div>
+            <div class="reference-item">
+              <h4>Burnout Prevalence and Associated Factors Among Palliative Care Professionals</h4>
+              <p class="ref-authors">Vargas et al.</p>
+              <p class="ref-journal">Palliative Medicine, 2017</p>
+              <p class="ref-summary">Estudio que encuentra prevalencia de burnout entre 3-66% según población y
+                método. Factores de riesgo: alta carga emocional, falta de supervisión, recursos limitados.</p>
+              <span class="ref-tag">Muy alta relevancia CPP</span>
+              <a href="https://scholar.google.com/scholar?q=Burnout+Prevalence+Associated+Factors+Palliative+Care+Professionals+Vargas"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
+            </div>
 
-              <div class="reference-item">
-                <h4>Self-Care Strategies for Professional Quality of Life Among Healthcare Providers</h4>
-                <p class="ref-authors">Coaston SC</p>
-                <p class="ref-journal">Best Practices in Mental Health, 2017</p>
-                <p class="ref-summary">Identifica estrategias de autocuidado efectivas: ejercicio físico regular,
-                  mindfulness, supervisión profesional, límites claros trabajo-vida, y conexión social.</p>
-                <span class="ref-tag">Práctico</span>
-                <a href="https://scholar.google.com/scholar?q=Self-Care+Strategies+Professional+Quality+Life+Healthcare+Providers+Coaston"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>Design and Implementation of a Brief Digital Mindfulness-Based Intervention for Nurses and Nursing
-                  Assistants</h4>
-                <p class="ref-authors">Conversano C, Orrù G, Pozza A et al.</p>
-                <p class="ref-journal">JMIR mHealth and uHealth, 2024</p>
-                <p class="ref-doi">DOI: 10.2196/40528</p>
-                <p class="ref-summary">Estudio que documenta eficacia de apps digitales de mindfulness breves (5-10 min)
-                  en personal sanitario. Resultados positivos en reducción de estrés y mejora de bienestar.</p>
-                <span class="ref-tag">Apps digitales</span>
-                <a href="https://mhealth.jmir.org/2024/1/e40528" target="_blank" class="ref-link">Ver artículo completo
-                  →</a>
-              </div>
-
-              <div class="reference-item">
-                <h4>The Compassion Fatigue Resiliency Program: An Evidence-Based Approach</h4>
-                <p class="ref-authors">Gentry JE</p>
-                <p class="ref-journal">Traumatology Institute, 2019</p>
-                <p class="ref-summary">Programa de resiliencia estructurado con enfoque en autocuidado, técnicas de
-                  regulación emocional, y estrategias de afrontamiento. Resultados positivos en profesionales de ayuda.
-                </p>
-                <span class="ref-tag">Programa validado</span>
-                <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Resiliency+Program+Evidence-Based+Approach+Gentry"
-                  target="_blank" class="ref-link">Ver en Google Scholar →</a>
-              </div>
+            <div class="reference-item">
+              <h4>The Relationship Between Burnout, Depression, and Anxiety in Medical Professionals</h4>
+              <p class="ref-authors">Rotenstein LS et al.</p>
+              <p class="ref-journal">JAMA, 2018</p>
+              <p class="ref-doi">DOI: 10.1001/jama.2018.12777</p>
+              <p class="ref-summary">Meta-análisis que documenta la relación entre burnout, depresión y ansiedad en
+                profesionales médicos. Recomienda intervenciones tanto individuales como organizacionales.</p>
+              <span class="ref-tag">Alta relevancia</span>
+              <a href="https://scholar.google.com/scholar?q=Burnout+Depression+Anxiety+Medical+Professionals+Rotenstein"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
+              <a href="https://pubmed.ncbi.nlm.nih.gov/30422299/" target="_blank" class="ref-link">Ver en PubMed →</a>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Apps Recomendadas -->
-      <div id="apps-tab" class="library-tab">
-        <div class="apps-grid">
-          <div class="app-card validated">
-            <div class="app-header">
-              <div class="app-icon">🧘</div>
-              <div>
-                <h3>Headspace</h3>
-                <span class="validation-badge">✓ Validada científicamente</span>
-              </div>
+        <div class="ref-category">
+          <h3>💚 Fatiga por Compasión</h3>
+          <div class="reference-list">
+            <div class="reference-item">
+              <h4>Compassion Fatigue in Palliative Care Nursing: A Concept Analysis</h4>
+              <p class="ref-authors">Slocum-Gori S, Hemsworth D, Chan WWY et al.</p>
+              <p class="ref-journal">Nursing &amp; Health Sciences, 2013</p>
+              <p class="ref-doi">DOI: 10.1111/nhs.12053</p>
+              <p class="ref-summary">Análisis conceptual que define fatiga por compasión como combinación de burnout y
+                estrés traumático secundario. Incluye pensamientos intrusivos, evitación y hiperactivación emocional.
+              </p>
+              <span class="ref-tag">Muy alta relevancia CPP</span>
+              <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Palliative+Care+Nursing+Concept+Analysis"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
             </div>
-            <p class="app-type">Meditación y Mindfulness</p>
-            <p class="app-cost"><strong>Coste:</strong> Freemium ($5.83-$12.99/mes)</p>
-            <div class="app-features">
-              <h4>Características para CPP:</h4>
-              <ul>
-                <li>Sección específica para profesionales sanitarios</li>
-                <li>Meditaciones cortas (3-10 min) adaptadas a turnos</li>
-                <li>Sleep stories para mejorar descanso</li>
-                <li>SOS para momentos de crisis</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Contenido de alta calidad, interfaz intuitiva, efectividad demostrada
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Requiere suscripción de pago
-              </div>
-            </div>
-            <a href="https://www.headspace.com" target="_blank" class="btn btn-primary">Visitar web</a>
-          </div>
 
-          <div class="app-card validated">
-            <div class="app-header">
-              <div class="app-icon">⏰</div>
-              <div>
-                <h3>Insight Timer</h3>
-                <span class="validation-badge">✓ Validada científicamente</span>
-              </div>
+            <div class="reference-item">
+              <h4>Compassion Fatigue: Psychotherapists' Chronic Lack of Self Care</h4>
+              <p class="ref-authors">Figley CR</p>
+              <p class="ref-journal">Journal of Clinical Psychology, 2002</p>
+              <p class="ref-doi">DOI: 10.1002/jclp.10090</p>
+              <p class="ref-summary">Obra seminal que define fatiga por compasión y su relación con la falta de
+                autocuidado. Propone modelo de resiliencia basado en balance entre empatía y autocuidado.</p>
+              <span class="ref-tag">Fundacional</span>
+              <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Psychotherapists+Chronic+Lack+Self+Care+Figley"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
             </div>
-            <p class="app-type">Meditación Comunitaria</p>
-            <p class="app-cost"><strong>Coste:</strong> Freemium (gratuito con opción premium)</p>
-            <div class="app-features">
-              <h4>Características:</h4>
-              <ul>
-                <li>Más de 70,000 meditaciones gratuitas</li>
-                <li>Comunidad global de meditadores</li>
-                <li>Música y sonidos ambientales</li>
-                <li>Cursos sobre estrés y ansiedad</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Variedad inmensa, acceso gratuito, comunidad de apoyo
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Puede ser abrumador por la cantidad de opciones
-              </div>
-            </div>
-            <a href="https://insighttimer.com" target="_blank" class="btn btn-primary">Visitar web</a>
-          </div>
 
-          <div class="app-card validated">
-            <div class="app-header">
-              <div class="app-icon">🌙</div>
-              <div>
-                <h3>Calm</h3>
-                <span class="validation-badge">✓ Validada científicamente</span>
-              </div>
+            <div class="reference-item">
+              <h4>A Cross-Sectional Pilot Study of Compassion Fatigue, Burnout, and Compassion Satisfaction in
+                Pediatric Palliative Care Providers</h4>
+              <p class="ref-authors">Dooley J, Bailey C, McCabe R</p>
+              <p class="ref-journal">Palliative Medicine, 2018</p>
+              <p class="ref-summary">Estudio específico en CPP que encuentra niveles moderados de fatiga por compasión
+                y burnout, pero también alta satisfacción por compasión. Recomienda programas de apoyo específicos.
+              </p>
+              <span class="ref-tag">Muy alta relevancia CPP</span>
+              <a href="https://scholar.google.com/scholar?q=Cross-Sectional+Pilot+Study+Compassion+Fatigue+Burnout+Pediatric+Palliative+Care"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
             </div>
-            <p class="app-type">Meditación y Sueño</p>
-            <p class="app-cost"><strong>Coste:</strong> Freemium ($14.99/mes o $69.99/año)</p>
-            <div class="app-features">
-              <h4>Características:</h4>
-              <ul>
-                <li>Programas de meditación guiada</li>
-                <li>Historias para dormir narradas por celebridades</li>
-                <li>Música y paisajes sonoros relajantes</li>
-                <li>Programa de bienestar de 21 días</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Excelente para mejorar sueño, contenido premium de calidad
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Precio elevado, menos contenido gratuito
-              </div>
-            </div>
-            <a href="https://www.calm.com" target="_blank" class="btn btn-primary">Visitar web</a>
-          </div>
-
-          <div class="app-card">
-            <div class="app-header">
-              <div class="app-icon">🧠</div>
-              <div>
-                <h3>Waking Up</h3>
-                <span class="validation-badge science">✓ Enfoque científico</span>
-              </div>
-            </div>
-            <p class="app-type">Meditación Avanzada</p>
-            <p class="app-cost"><strong>Coste:</strong> $99.99/año (becas disponibles)</p>
-            <div class="app-features">
-              <h4>Características:</h4>
-              <ul>
-                <li>Enfoque secular y científico de meditación</li>
-                <li>Curso introductorio de 28 días</li>
-                <li>Prácticas avanzadas de mindfulness</li>
-                <li>Conversaciones con expertos</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Rigor científico, para practicantes serios, becas disponibles
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Menos adecuado para principiantes absolutos
-              </div>
-            </div>
-            <a href="https://www.wakingup.com" target="_blank" class="btn btn-primary">Visitar web</a>
-          </div>
-
-          <div class="app-card">
-            <div class="app-header">
-              <div class="app-icon">⚕️</div>
-              <div>
-                <h3>MyMindfulness</h3>
-                <span class="validation-badge healthcare">✓ Para sanitarios</span>
-              </div>
-            </div>
-            <p class="app-type">Específica para Profesionales Sanitarios</p>
-            <p class="app-cost"><strong>Coste:</strong> Variable según institución</p>
-            <div class="app-features">
-              <h4>Características:</h4>
-              <ul>
-                <li>Diseñada específicamente para profesionales sanitarios</li>
-                <li>Contenido sobre burnout y fatiga por compasión</li>
-                <li>Prácticas breves entre pacientes</li>
-                <li>Módulos de autocuidado profesional</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Muy específica para contexto sanitario, comprende las demandas del trabajo
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Menos conocida, disponibilidad limitada
-              </div>
-            </div>
-          </div>
-
-          <div class="app-card">
-            <div class="app-header">
-              <div class="app-icon">🌈</div>
-              <div>
-                <h3>Happify</h3>
-                <span class="validation-badge">✓ Basada en CBT</span>
-              </div>
-            </div>
-            <p class="app-type">Psicología Positiva y Bienestar</p>
-            <p class="app-cost"><strong>Coste:</strong> Freemium ($14.99/mes)</p>
-            <div class="app-features">
-              <h4>Características:</h4>
-              <ul>
-                <li>Basada en CBT y psicología positiva</li>
-                <li>Juegos y actividades para mejorar bienestar</li>
-                <li>Tracks específicos (estrés, sueño, relaciones)</li>
-                <li>Gamificación del crecimiento personal</li>
-              </ul>
-            </div>
-            <div class="app-pros-cons">
-              <div class="pros">
-                <strong>Pros:</strong> Enfoque divertido, variedad de técnicas, progreso visible
-              </div>
-              <div class="cons">
-                <strong>Contras:</strong> Menos enfocada en meditación tradicional
-              </div>
-            </div>
-            <a href="https://www.happify.com" target="_blank" class="btn btn-primary">Visitar web</a>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- SECCIÓN 5: COMUNIDAD -->
-    <section id="comunidad" class="app-section">
-      <div class="section-header">
-        <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
-        <h2>No Estás Solo: Comunidad y Apoyo</h2>
-        <p class="section-description">Conecta, comparte y encuentra apoyo profesional</p>
-      </div>
-
-      <div class="community-grid">
-        <div class="community-card help-contacts">
-          <h3>📞 Contactos de Ayuda Profesional</h3>
-          <p class="card-intro">Si necesitas apoyo inmediato o intervención profesional:</p>
-
-          <div class="contact-list">
-            <div class="contact-item emergency">
-              <h4>🏥 Recursos de Intervención en Crisis</h4>
-              <p class="contact-number"><strong>024</strong></p>
-              <p>Línea de atención a la conducta suicida</p>
-              <p class="contact-number" style="font-size: 1.5rem; margin-top: 10px;"><strong>717 003 717</strong></p>
-              <p>Teléfono de la Esperanza</p>
-              <p class="availability">Disponibles 24/7 - Gratuitos - Confidenciales</p>
+        <div class="ref-category">
+          <h3>🌱 Intervenciones y Autocuidado</h3>
+          <div class="reference-list">
+            <div class="reference-item">
+              <h4>Mindfulness-Based Interventions to Reduce Burnout in Healthcare Professionals: A Systematic Review
+              </h4>
+              <p class="ref-authors">Burton A, Burgess C, Dean S et al.</p>
+              <p class="ref-journal">Frontiers in Psychology, 2021</p>
+              <p class="ref-doi">DOI: 10.3389/fpsyg.2021.701727</p>
+              <p class="ref-summary">Revisión sistemática que demuestra eficacia de intervenciones basadas en
+                mindfulness para reducir burnout. Programas de 8 semanas muestran mejores resultados.</p>
+              <span class="ref-tag">Evidencia alta</span>
+              <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2021.701727/full" target="_blank"
+                class="ref-link">Ver artículo completo →</a>
             </div>
 
-            <div class="contact-item">
-              <h4>🧠 Servicios de Apoyo Psicológico</h4>
-              <p>Contactar con el psicólogo del equipo de cuidados paliativos pediátricos de referencia.</p>
-              <p>Si no lo hubiese en el equipo, solicitar a través de su MAP atención psicológica (bien en Salud Mental,
-                bien si su centro de salud de AP dispone de psicólogo clínico).</p>
+            <div class="reference-item">
+              <h4>Self-Care Strategies for Professional Quality of Life Among Healthcare Providers</h4>
+              <p class="ref-authors">Coaston SC</p>
+              <p class="ref-journal">Best Practices in Mental Health, 2017</p>
+              <p class="ref-summary">Identifica estrategias de autocuidado efectivas: ejercicio físico regular,
+                mindfulness, supervisión profesional, límites claros trabajo-vida, y conexión social.</p>
+              <span class="ref-tag">Práctico</span>
+              <a href="https://scholar.google.com/scholar?q=Self-Care+Strategies+Professional+Quality+Life+Healthcare+Providers+Coaston"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
             </div>
-            <p>Asociación Española de Cuidados Paliativos Pediátricos</p>
-            <p>Ofrece formación, apoyo y recursos para profesionales de CPP</p>
-            <a href="https://www.pedpal.es" target="_blank" class="contact-link">www.pedpal.es</a>
-          </div>
 
-          <div class="contact-item">
-            <h4>🌍 IAHPC - International Association for Hospice &amp; Palliative Care</h4>
-            <p>Red internacional de profesionales de cuidados paliativos</p>
-            <p>Recursos, formación continua y conexión con profesionales globales</p>
-            <a href="https://www.hospicecare.com" target="_blank" class="contact-link">www.hospicecare.com</a>
-          </div>
+            <div class="reference-item">
+              <h4>Design and Implementation of a Brief Digital Mindfulness-Based Intervention for Nurses and Nursing
+                Assistants</h4>
+              <p class="ref-authors">Conversano C, Orrù G, Pozza A et al.</p>
+              <p class="ref-journal">JMIR mHealth and uHealth, 2024</p>
+              <p class="ref-doi">DOI: 10.2196/40528</p>
+              <p class="ref-summary">Estudio que documenta eficacia de apps digitales de mindfulness breves (5-10 min)
+                en personal sanitario. Resultados positivos en reducción de estrés y mejora de bienestar.</p>
+              <span class="ref-tag">Apps digitales</span>
+              <a href="https://mhealth.jmir.org/2024/1/e40528" target="_blank" class="ref-link">Ver artículo completo
+                →</a>
+            </div>
 
-          <div class="contact-item">
-            <h4>🧠 Colegio Oficial de Psicólogos</h4>
-            <p>Servicio de orientación y búsqueda de psicólogos especializados</p>
-            <p>Especializaciones en burnout, trauma y profesionales sanitarios</p>
-            <a href="https://www.cop.es" target="_blank" class="contact-link">www.cop.es</a>
-          </div>
-
-          <div class="contact-item">
-            <h4>❤️ Programas de Apoyo Hospitalarios</h4>
-            <p>Consulta si tu hospital ofrece:</p>
-            <ul>
-              <li>Servicio de salud laboral con atención psicológica</li>
-              <li>Programas de apoyo al empleado (EAP)</li>
-              <li>Grupos de apoyo entre pares</li>
-              <li>Schwartz Rounds o espacios de reflexión</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="community-card testimonials">
-        <h3>✨ Testimonios de Resiliencia</h3>
-        <p class="card-intro">Historias anónimas de profesionales que han enfrentado y superado dificultades:</p>
-
-        <div class="testimonial-list">
-          <div class="testimonial-item">
-            <h4>"Reconocer fue el primer paso"</h4>
-            <p class="testimonial-text">"Tras 5 años en CPP, empecé a tener pesadillas recurrentes con casos. Me
-              sentía culpable por no poder 'dejarlo en el trabajo'. La evaluación me ayudó a reconocer que tenía
-              estrés traumático secundario. Buscé terapia especializada y aprendí técnicas de procesamiento. Hoy sigo
-              en CPP, pero con herramientas para cuidarme."</p>
-            <p class="testimonial-role">- Enfermera, 32 años, 7 años en CPP</p>
-          </div>
-
-          <div class="testimonial-item">
-            <h4>"El autocuidado no es egoísmo"</h4>
-            <p class="testimonial-text">"Siempre pensé que cuidarme era 'quitarle tiempo' a los niños. Mi burnout
-              llegó a un punto en que consideré dejar la profesión. Mi mentor me dijo: 'No puedes dar de un vaso
-              vacío'. Empecé con pequeños cambios: 10 minutos de mindfulness diarios, límites horarios, ejercicio. La
-              diferencia fue enorme."</p>
-            <p class="testimonial-role">- Médico, 45 años, 12 años en CPP</p>
-          </div>
-
-          <div class="testimonial-item">
-            <h4>"Encontré mi comunidad"</h4>
-            <p class="testimonial-text">"Me sentía sola con lo que experimentaba. Conectar con otros profesionales de
-              CPP que entendían sin que tuviera que explicar fue transformador. Creamos un grupo de apoyo mensual.
-              Compartir, llorar juntos y celebrar pequeñas victorias me devolvió la esperanza."</p>
-            <p class="testimonial-role">- Psicóloga, 38 años, 6 años en CPP</p>
-          </div>
-
-          <div class="testimonial-item">
-            <h4>"La supervisión salvó mi carrera"</h4>
-            <p class="testimonial-text">"Empecé supervisión profesional cuando ya estaba al límite. Tener un espacio
-              seguro para procesar casos difíciles, llorar sin juicio y recibir orientación fue vital. Ahora es no
-              negociable en mi rutina. Es mi 'seguro de vida' profesional."</p>
-            <p class="testimonial-role">- Trabajadora Social, 41 años, 9 años en CPP</p>
+            <div class="reference-item">
+              <h4>The Compassion Fatigue Resiliency Program: An Evidence-Based Approach</h4>
+              <p class="ref-authors">Gentry JE</p>
+              <p class="ref-journal">Traumatology Institute, 2019</p>
+              <p class="ref-summary">Programa de resiliencia estructurado con enfoque en autocuidado, técnicas de
+                regulación emocional, y estrategias de afrontamiento. Resultados positivos en profesionales de ayuda.
+              </p>
+              <span class="ref-tag">Programa validado</span>
+              <a href="https://scholar.google.com/scholar?q=Compassion+Fatigue+Resiliency+Program+Evidence-Based+Approach+Gentry"
+                target="_blank" class="ref-link">Ver en Google Scholar →</a>
+            </div>
           </div>
         </div>
       </div>
   </div>
 
-  <div class="disclaimer-box">
-    <h4>⚠️ Importante</h4>
-    <p>Esta herramienta no sustituye una evaluación clínica profesional. Si experimentas dificultades significativas
-      que afectan tu vida diaria, trabajo o bienestar, por favor busca apoyo de un profesional de la salud mental
-      especializado.</p>
+  <!-- Apps Recomendadas -->
+  <div id="apps-tab" class="library-tab">
+    <div class="apps-grid">
+      <div class="app-card validated">
+        <div class="app-header">
+          <div class="app-icon">🧘</div>
+          <div>
+            <h3>Headspace</h3>
+            <span class="validation-badge">✓ Validada científicamente</span>
+          </div>
+        </div>
+        <p class="app-type">Meditación y Mindfulness</p>
+        <p class="app-cost"><strong>Coste:</strong> Freemium ($5.83-$12.99/mes)</p>
+        <div class="app-features">
+          <h4>Características para CPP:</h4>
+          <ul>
+            <li>Sección específica para profesionales sanitarios</li>
+            <li>Meditaciones cortas (3-10 min) adaptadas a turnos</li>
+            <li>Sleep stories para mejorar descanso</li>
+            <li>SOS para momentos de crisis</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Contenido de alta calidad, interfaz intuitiva, efectividad demostrada
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Requiere suscripción de pago
+          </div>
+        </div>
+        <a href="https://www.headspace.com" target="_blank" class="btn btn-primary">Visitar web</a>
+      </div>
+
+      <div class="app-card validated">
+        <div class="app-header">
+          <div class="app-icon">⏰</div>
+          <div>
+            <h3>Insight Timer</h3>
+            <span class="validation-badge">✓ Validada científicamente</span>
+          </div>
+        </div>
+        <p class="app-type">Meditación Comunitaria</p>
+        <p class="app-cost"><strong>Coste:</strong> Freemium (gratuito con opción premium)</p>
+        <div class="app-features">
+          <h4>Características:</h4>
+          <ul>
+            <li>Más de 70,000 meditaciones gratuitas</li>
+            <li>Comunidad global de meditadores</li>
+            <li>Música y sonidos ambientales</li>
+            <li>Cursos sobre estrés y ansiedad</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Variedad inmensa, acceso gratuito, comunidad de apoyo
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Puede ser abrumador por la cantidad de opciones
+          </div>
+        </div>
+        <a href="https://insighttimer.com" target="_blank" class="btn btn-primary">Visitar web</a>
+      </div>
+
+      <div class="app-card validated">
+        <div class="app-header">
+          <div class="app-icon">🌙</div>
+          <div>
+            <h3>Calm</h3>
+            <span class="validation-badge">✓ Validada científicamente</span>
+          </div>
+        </div>
+        <p class="app-type">Meditación y Sueño</p>
+        <p class="app-cost"><strong>Coste:</strong> Freemium ($14.99/mes o $69.99/año)</p>
+        <div class="app-features">
+          <h4>Características:</h4>
+          <ul>
+            <li>Programas de meditación guiada</li>
+            <li>Historias para dormir narradas por celebridades</li>
+            <li>Música y paisajes sonoros relajantes</li>
+            <li>Programa de bienestar de 21 días</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Excelente para mejorar sueño, contenido premium de calidad
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Precio elevado, menos contenido gratuito
+          </div>
+        </div>
+        <a href="https://www.calm.com" target="_blank" class="btn btn-primary">Visitar web</a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-header">
+          <div class="app-icon">🧠</div>
+          <div>
+            <h3>Waking Up</h3>
+            <span class="validation-badge science">✓ Enfoque científico</span>
+          </div>
+        </div>
+        <p class="app-type">Meditación Avanzada</p>
+        <p class="app-cost"><strong>Coste:</strong> $99.99/año (becas disponibles)</p>
+        <div class="app-features">
+          <h4>Características:</h4>
+          <ul>
+            <li>Enfoque secular y científico de meditación</li>
+            <li>Curso introductorio de 28 días</li>
+            <li>Prácticas avanzadas de mindfulness</li>
+            <li>Conversaciones con expertos</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Rigor científico, para practicantes serios, becas disponibles
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Menos adecuado para principiantes absolutos
+          </div>
+        </div>
+        <a href="https://www.wakingup.com" target="_blank" class="btn btn-primary">Visitar web</a>
+      </div>
+
+      <div class="app-card">
+        <div class="app-header">
+          <div class="app-icon">⚕️</div>
+          <div>
+            <h3>MyMindfulness</h3>
+            <span class="validation-badge healthcare">✓ Para sanitarios</span>
+          </div>
+        </div>
+        <p class="app-type">Específica para Profesionales Sanitarios</p>
+        <p class="app-cost"><strong>Coste:</strong> Variable según institución</p>
+        <div class="app-features">
+          <h4>Características:</h4>
+          <ul>
+            <li>Diseñada específicamente para profesionales sanitarios</li>
+            <li>Contenido sobre burnout y fatiga por compasión</li>
+            <li>Prácticas breves entre pacientes</li>
+            <li>Módulos de autocuidado profesional</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Muy específica para contexto sanitario, comprende las demandas del trabajo
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Menos conocida, disponibilidad limitada
+          </div>
+        </div>
+      </div>
+
+      <div class="app-card">
+        <div class="app-header">
+          <div class="app-icon">🌈</div>
+          <div>
+            <h3>Happify</h3>
+            <span class="validation-badge">✓ Basada en CBT</span>
+          </div>
+        </div>
+        <p class="app-type">Psicología Positiva y Bienestar</p>
+        <p class="app-cost"><strong>Coste:</strong> Freemium ($14.99/mes)</p>
+        <div class="app-features">
+          <h4>Características:</h4>
+          <ul>
+            <li>Basada en CBT y psicología positiva</li>
+            <li>Juegos y actividades para mejorar bienestar</li>
+            <li>Tracks específicos (estrés, sueño, relaciones)</li>
+            <li>Gamificación del crecimiento personal</li>
+          </ul>
+        </div>
+        <div class="app-pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong> Enfoque divertido, variedad de técnicas, progreso visible
+          </div>
+          <div class="cons">
+            <strong>Contras:</strong> Menos enfocada en meditación tradicional
+          </div>
+        </div>
+        <a href="https://www.happify.com" target="_blank" class="btn btn-primary">Visitar web</a>
+      </div>
+    </div>
   </div>
+  </section>
+
+  <!-- SECCIÓN 5: COMUNIDAD -->
+  <section id="comunidad" class="app-section">
+    <div class="section-header">
+      <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
+      <h2>No Estás Solo: Comunidad y Apoyo</h2>
+      <p class="section-description">Conecta, comparte y encuentra apoyo profesional</p>
+    </div>
+
+    <div class="community-grid">
+      <div class="community-card help-contacts">
+        <h3>📞 Contactos de Ayuda Profesional</h3>
+        <p class="card-intro">Si necesitas apoyo inmediato o intervención profesional:</p>
+
+        <div class="contact-list">
+          <div class="contact-item emergency">
+            <h4>🏥 Recursos de Intervención en Crisis</h4>
+            <p class="contact-number"><strong>024</strong></p>
+            <p>Línea de atención a la conducta suicida</p>
+            <p class="contact-number" style="font-size: 1.5rem; margin-top: 10px;"><strong>717 003 717</strong></p>
+            <p>Teléfono de la Esperanza</p>
+            <p class="availability">Disponibles 24/7 - Gratuitos - Confidenciales</p>
+          </div>
+
+          <div class="contact-item">
+            <h4>🧠 Servicios de Apoyo Psicológico</h4>
+            <p>Contactar con el psicólogo del equipo de cuidados paliativos pediátricos de referencia.</p>
+            <p>Si no lo hubiese en el equipo, solicitar a través de su MAP atención psicológica (bien en Salud Mental,
+              bien si su centro de salud de AP dispone de psicólogo clínico).</p>
+          </div>
+          <p>Asociación Española de Cuidados Paliativos Pediátricos</p>
+          <p>Ofrece formación, apoyo y recursos para profesionales de CPP</p>
+          <a href="https://www.pedpal.es" target="_blank" class="contact-link">www.pedpal.es</a>
+        </div>
+
+        <div class="contact-item">
+          <h4>🌍 IAHPC - International Association for Hospice &amp; Palliative Care</h4>
+          <p>Red internacional de profesionales de cuidados paliativos</p>
+          <p>Recursos, formación continua y conexión con profesionales globales</p>
+          <a href="https://www.hospicecare.com" target="_blank" class="contact-link">www.hospicecare.com</a>
+        </div>
+
+        <div class="contact-item">
+          <h4>🧠 Colegio Oficial de Psicólogos</h4>
+          <p>Servicio de orientación y búsqueda de psicólogos especializados</p>
+          <p>Especializaciones en burnout, trauma y profesionales sanitarios</p>
+          <a href="https://www.cop.es" target="_blank" class="contact-link">www.cop.es</a>
+        </div>
+
+        <div class="contact-item">
+          <h4>❤️ Programas de Apoyo Hospitalarios</h4>
+          <p>Consulta si tu hospital ofrece:</p>
+          <ul>
+            <li>Servicio de salud laboral con atención psicológica</li>
+            <li>Programas de apoyo al empleado (EAP)</li>
+            <li>Grupos de apoyo entre pares</li>
+            <li>Schwartz Rounds o espacios de reflexión</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="community-card testimonials">
+      <h3>✨ Testimonios de Resiliencia</h3>
+      <p class="card-intro">Historias anónimas de profesionales que han enfrentado y superado dificultades:</p>
+
+      <div class="testimonial-list">
+        <div class="testimonial-item">
+          <h4>"Reconocer fue el primer paso"</h4>
+          <p class="testimonial-text">"Tras 5 años en CPP, empecé a tener pesadillas recurrentes con casos. Me
+            sentía culpable por no poder 'dejarlo en el trabajo'. La evaluación me ayudó a reconocer que tenía
+            estrés traumático secundario. Buscé terapia especializada y aprendí técnicas de procesamiento. Hoy sigo
+            en CPP, pero con herramientas para cuidarme."</p>
+          <p class="testimonial-role">- Enfermera, 32 años, 7 años en CPP</p>
+        </div>
+
+        <div class="testimonial-item">
+          <h4>"El autocuidado no es egoísmo"</h4>
+          <p class="testimonial-text">"Siempre pensé que cuidarme era 'quitarle tiempo' a los niños. Mi burnout
+            llegó a un punto en que consideré dejar la profesión. Mi mentor me dijo: 'No puedes dar de un vaso
+            vacío'. Empecé con pequeños cambios: 10 minutos de mindfulness diarios, límites horarios, ejercicio. La
+            diferencia fue enorme."</p>
+          <p class="testimonial-role">- Médico, 45 años, 12 años en CPP</p>
+        </div>
+
+        <div class="testimonial-item">
+          <h4>"Encontré mi comunidad"</h4>
+          <p class="testimonial-text">"Me sentía sola con lo que experimentaba. Conectar con otros profesionales de
+            CPP que entendían sin que tuviera que explicar fue transformador. Creamos un grupo de apoyo mensual.
+            Compartir, llorar juntos y celebrar pequeñas victorias me devolvió la esperanza."</p>
+          <p class="testimonial-role">- Psicóloga, 38 años, 6 años en CPP</p>
+        </div>
+
+        <div class="testimonial-item">
+          <h4>"La supervisión salvó mi carrera"</h4>
+          <p class="testimonial-text">"Empecé supervisión profesional cuando ya estaba al límite. Tener un espacio
+            seguro para procesar casos difíciles, llorar sin juicio y recibir orientación fue vital. Ahora es no
+            negociable en mi rutina. Es mi 'seguro de vida' profesional."</p>
+          <p class="testimonial-role">- Trabajadora Social, 41 años, 9 años en CPP</p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="disclaimer-box">
+      <h4>⚠️ Importante</h4>
+      <p>Esta herramienta no sustituye una evaluación clínica profesional. Si experimentas dificultades significativas
+        que afectan tu vida diaria, trabajo o bienestar, por favor busca apoyo de un profesional de la salud mental
+        especializado.</p>
+    </div>
   </section>
 
   <!-- SECCIÓN 6: SEGUIMIENTO -->
@@ -3522,97 +3618,113 @@
   <div id="creditosModal" class="credits-modal">
     <div class="credits-modal-content">
       <div class="credits-header">
-        <h2 style="margin: 0; font-size: 20px;">Créditos y Referencias</h2>
-        <button onclick="document.getElementById('creditosModal').style.display='none'" class="close-modal-btn"
-          style="color: var(--color-text); background: transparent;">×</button>
-      </div>
-      <div class="credits-body">
-        <h3>Escalas Utilizadas</h3>
-        <p><strong>Maslach Burnout Inventory (MBI)</strong><br>
-          Maslach, C., Jackson, S. E., & Leiter, M. P. (1996). Maslach Burnout Inventory Manual (3rd ed.). Consulting
-          Psychologists Press.<br>
-          Versión española validada utilizada.</p>
+        <!-- MODAL CRÉDITOS -->
+        <div id="creditosModal" class="modal-overlay" style="z-index: 10000; display: none;">
+          <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+              <h3 style="color: var(--color-primary); margin: 0;">Créditos y Referencias</h3>
+              <button class="close-modal"
+                onclick="document.getElementById('creditosModal').classList.remove('activo'); document.getElementById('creditosModal').style.display='none';">×</button>
+            </div>
+            <div class="modal-body" style="text-align: left; padding: 20px;">
+              <h4 style="margin-top: 0;">Herramientas de Evaluación Validadas</h4>
+              <p><strong>Maslach Burnout Inventory (MBI-HSS):</strong><br>
+                Maslach, C., Jackson, S. E., & Leiter, M. P. (1996). <em>Maslach Burnout Inventory Manual</em> (3rd
+                ed.). Consulting Psychologists Press.<br>
+                <span style="font-size: 0.9em; color: #666;">Adaptación española utilizada: Seisdedos, N. (1997). Manual
+                  MBI, Inventario de Burnout de Maslach. Madrid: TEA Ediciones.</span>
+              </p>
 
-        <p><strong>Professional Quality of Life Scale (ProQOL) v5</strong><br>
-          Stamm, B. H. (2010). The Concise ProQOL Manual. Pocatello, ID: ProQOL.org.<br>
-          Versión española validada utilizada.</p>
+              <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
+                Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
+                <span style="font-size: 0.9em; color: #666;">Traducción y validación española: Galiana et al.
+                  (2017).</span>
+              </p>
 
-        <h3>Recursos</h3>
-        <p>Los recursos y guías han sido recopilados de fuentes oficiales y literatura científica especializada en
-          cuidados paliativos pediátricos.</p>
+              <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
-        <h3>Desarrollo</h3>
-        <p>Aplicación desarrollada por Álvaro Navarro Mingorance como herramienta de apoyo para profesionales.</p>
-      </div>
-      <div class="credits-footer">
-        <button class="btn btn-primary"
-          onclick="document.getElementById('creditosModal').style.display='none'">Cerrar</button>
-      </div>
-    </div>
-  </div>
+              <h4>Propiedad Intelectual y Desarrollo</h4>
+              <p><strong>© 2025 Álvaro Navarro Mingorance</strong><br>
+                Psicólogo General Sanitario. Especialista en Cuidados Paliativos Pediátricos.</p>
 
-  <!-- MODAL DE RESULTADOS -->
-  <div id="resultadoModal" class="resultado-modal">
-    <div class="resultado-contenedor">
-      <div class="resultado-header">
-        <button class="close-btn" onclick="cerrarResultado()" aria-label="Cerrar">×</button>
-        <h2 id="resultadoTitulo">Tus Resultados</h2>
-        <p id="resultadoSubtitulo" style="margin: 0; opacity: 0.9; font-size: 14px; color: white;"></p>
-      </div>
+              <p style="font-size: 0.9em;">Esta aplicación es una herramienta de apoyo desarrollada para uso exclusivo
+                de investigación y soporte profesional. No comercializar.</p>
 
-      <div class="resultado-body">
-        <!-- Datos de la evaluación -->
-        <div class="resultado-seccion">
-          <h3>📋 Datos de la Evaluación</h3>
-          <p style="margin: 5px 0;"><strong>Fecha:</strong> <span id="resultado-fecha"></span></p>
-          <p style="margin: 5px 0;"><strong>Profesión:</strong> <span id="resultado-profesion"></span></p>
-          <p style="margin: 5px 0;"><strong>Edad:</strong> <span id="resultado-edad"></span></p>
-          <p style="margin: 5px 0;"><strong>Experiencia:</strong> <span id="resultado-experiencia"></span></p>
-        </div>
-
-        <!-- Puntuación -->
-        <div class="resultado-seccion">
-          <h3>📊 Tu Puntuación</h3>
-          <div class="resultado-puntuacion" id="resultado-puntuacion-container">
-            <div class="numero" id="resultado-puntuacion" style="color: white;">--</div>
-            <div class="interpretacion" id="resultado-interpretacion" style="color: white;"></div>
+              <div style="background: #f0f7fc; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.85em;">
+                <strong>Aviso Legal:</strong> El almacenamiento de datos se realiza de forma local y/o anónima en
+                servidores seguros (Firebase), cumpliendo con la normativa vigente de protección de datos.</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary"
+                onclick="document.getElementById('creditosModal').classList.remove('activo'); document.getElementById('creditosModal').style.display='none';">Cerrar</button>
+            </div>
           </div>
         </div>
 
-        <!-- Recomendaciones -->
-        <div class="resultado-seccion">
-          <h3>💡 Recomendaciones Personalizadas</h3>
-          <div class="resultado-recomendaciones">
-            <ul id="resultado-recomendaciones"></ul>
+        <!-- MODAL DE RESULTADOS -->
+        <div id="resultadoModal" class="resultado-modal">
+          <div class="resultado-contenedor">
+            <div class="resultado-header">
+              <button class="close-btn" onclick="cerrarResultado()" aria-label="Cerrar">×</button>
+              <h2 id="resultadoTitulo">Tus Resultados</h2>
+              <p id="resultadoSubtitulo" style="margin: 0; opacity: 0.9; font-size: 14px; color: white;"></p>
+            </div>
+
+            <div class="resultado-body">
+              <!-- Datos de la evaluación -->
+              <div class="resultado-seccion">
+                <h3>📋 Datos de la Evaluación</h3>
+                <p style="margin: 5px 0;"><strong>Fecha:</strong> <span id="resultado-fecha"></span></p>
+                <p style="margin: 5px 0;"><strong>Profesión:</strong> <span id="resultado-profesion"></span></p>
+                <p style="margin: 5px 0;"><strong>Edad:</strong> <span id="resultado-edad"></span></p>
+                <p style="margin: 5px 0;"><strong>Experiencia:</strong> <span id="resultado-experiencia"></span></p>
+              </div>
+
+              <!-- Puntuación -->
+              <div class="resultado-seccion">
+                <h3>📊 Tu Puntuación</h3>
+                <div class="resultado-puntuacion" id="resultado-puntuacion-container">
+                  <div class="numero" id="resultado-puntuacion" style="color: white;">--</div>
+                  <div class="interpretacion" id="resultado-interpretacion" style="color: white;"></div>
+                </div>
+              </div>
+
+              <!-- Recomendaciones -->
+              <div class="resultado-seccion">
+                <h3>💡 Recomendaciones Personalizadas</h3>
+                <div class="resultado-recomendaciones">
+                  <ul id="resultado-recomendaciones"></ul>
+                </div>
+              </div>
+
+              <!-- Plan personalizado -->
+              <div class="resultado-seccion">
+                <h3>📅 Tu Plan de Acción</h3>
+                <div id="resultado-plan"
+                  style="background: var(--color-background); padding: 15px; border-radius: 6px; line-height: 1.8;">
+                </div>
+              </div>
+            </div>
+
+            <div class="resultado-botones">
+              <!-- Botón para descargar los resultados en PDF -->
+              <button class="btn-descargar" onclick="descargarResultadoPDF()">
+                ⬇️ Descargar PDF
+              </button>
+              <button class="btn-cerrar" onclick="cerrarResultado()">
+                ✕ Cerrar
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Plan personalizado -->
-        <div class="resultado-seccion">
-          <h3>📅 Tu Plan de Acción</h3>
-          <div id="resultado-plan"
-            style="background: var(--color-background); padding: 15px; border-radius: 6px; line-height: 1.8;"></div>
-        </div>
-      </div>
+        <!-- Firebase SDKs -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-      <div class="resultado-botones">
-        <!-- Botón para descargar los resultados en PDF -->
-        <button class="btn-descargar" onclick="descargarResultadoPDF()">
-          ⬇️ Descargar PDF
-        </button>
-        <button class="btn-cerrar" onclick="cerrarResultado()">
-          ✕ Cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-  <script src="app.js"></script>
+        <script src="app.js"></script>
 </body>
 
 </html>
