@@ -911,6 +911,11 @@ document.addEventListener('DOMContentLoaded', function () {
           <option value=">10">Más de 10 años</option>
         </select>
       </div>
+
+      <div class="form-group" style="margin-bottom: var(--space-20);">
+        <label class="form-label" for="country" style="margin-bottom: var(--space-8);">País de trabajo</label>
+        <input type="text" class="form-control" id="country" placeholder="Ej: España, México..." style="padding: var(--space-12);">
+      </div>
       
       <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-24);" onclick="saveDemographicsAndStart()">Comenzar evaluación</button>
     </div>
@@ -921,13 +926,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const profession = document.getElementById('profession').value;
     const age = document.getElementById('age').value;
     const experience = document.getElementById('experience').value;
+    const country = document.getElementById('country').value || 'No especificado';
 
     if (!profession || !age || !experience) {
-      alert('Por favor, completa todos los campos antes de continuar.');
+      alert('Por favor, completa todos los campos obligatorios antes de continuar.');
       return;
     }
 
-    demographicData = { profession, age, experience };
+    demographicData = { profession, age, experience, country };
     currentStep = 'questionnaire';
     currentQuestionIndex = 0;
 
@@ -2929,6 +2935,7 @@ RECURSOS RECOMENDADOS:
       cerrarResultado();
     }
   });
+}
 
   function generarRecomendacionesArray(results) {
     const recomendaciones = [];
@@ -3177,122 +3184,122 @@ PRÓXIMOS PASOS:
       }
     }
   });
-  // ==========================================
-  // FUNCIONES DE FIREBASE
-  // ==========================================
+// ==========================================
+// FUNCIONES DE FIREBASE
+// ==========================================
 
-  function cargarHistorialFirebase() {
-    if (!currentUser || !db) return;
+function cargarHistorialFirebase() {
+  if (!currentUser || !db) return;
 
-    console.log("Cargando historial desde Firebase...");
+  console.log("Cargando historial desde Firebase...");
 
-    db.collection('evaluaciones')
-      .where('userId', '==', currentUser.uid)
-      .orderBy('timestamp', 'desc')
-      .get()
-      .then((querySnapshot) => {
-        // Limpiar historial local antes de cargar el remoto para evitar duplicados
-        evaluacionManager.limpiarHistorial();
+  db.collection('evaluaciones')
+    .where('userId', '==', currentUser.uid)
+    .orderBy('timestamp', 'desc')
+    .get()
+    .then((querySnapshot) => {
+      // Limpiar historial local antes de cargar el remoto para evitar duplicados
+      evaluacionManager.limpiarHistorial();
 
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          // Adaptar formato si es necesario
-          const evaluacion = {
-            id: data.id || doc.id,
-            tipo: data.tipo,
-            fecha: data.fecha,
-            datos: data.datos,
-            resultados: data.resultados
-          };
-          evaluacionManager.evaluaciones.push(evaluacion);
-        });
-
-        console.log(`Historial cargado: ${evaluacionManager.evaluaciones.length} evaluaciones.`);
-
-        // Actualizar UI si estamos en la sección de seguimiento
-        if (currentSection === 'seguimiento') {
-          mostrarHistorialEvaluaciones();
-        }
-
-        // Verificar si hay evaluaciones para desbloquear funcionalidades
-        if (evaluacionManager.evaluaciones.length > 0) {
-          hasCompletedEvaluations = true;
-          // Cargar resultados más recientes en evaluationResults
-          // Esto es una simplificación, idealmente procesaríamos todo
-          const ultima = evaluacionManager.evaluaciones[0];
-          evaluationResults[ultima.tipo] = ultima.resultados;
-          evaluationResults.demographics = ultima.datos;
-        }
-      })
-      .catch((error) => {
-        console.error("Error al cargar historial:", error);
-        // Fallback a índices si falta el índice compuesto
-        if (error.code === 'failed-precondition') {
-          console.warn("Falta índice compuesto en Firestore. Intentando consulta simple.");
-          // Intento sin ordenamiento (el cliente ordena)
-          db.collection('evaluaciones')
-            .where('userId', '==', currentUser.uid)
-            .get()
-            .then((querySnapshot) => {
-              evaluacionManager.limpiarHistorial();
-              querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const evaluacion = {
-                  id: data.id || doc.id,
-                  tipo: data.tipo,
-                  fecha: data.fecha,
-                  datos: data.datos,
-                  resultados: data.resultados
-                };
-                evaluacionManager.evaluaciones.push(evaluacion);
-              });
-              // Ordenar localmente
-              evaluacionManager.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-              if (currentSection === 'seguimiento') {
-                mostrarHistorialEvaluaciones();
-              }
-            });
-        }
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        // Adaptar formato si es necesario
+        const evaluacion = {
+          id: data.id || doc.id,
+          tipo: data.tipo,
+          fecha: data.fecha,
+          datos: data.datos,
+          resultados: data.resultados
+        };
+        evaluacionManager.evaluaciones.push(evaluacion);
       });
+
+      console.log(`Historial cargado: ${evaluacionManager.evaluaciones.length} evaluaciones.`);
+
+      // Actualizar UI si estamos en la sección de seguimiento
+      if (currentSection === 'seguimiento') {
+        mostrarHistorialEvaluaciones();
+      }
+
+      // Verificar si hay evaluaciones para desbloquear funcionalidades
+      if (evaluacionManager.evaluaciones.length > 0) {
+        hasCompletedEvaluations = true;
+        // Cargar resultados más recientes en evaluationResults
+        // Esto es una simplificación, idealmente procesaríamos todo
+        const ultima = evaluacionManager.evaluaciones[0];
+        evaluationResults[ultima.tipo] = ultima.resultados;
+        evaluationResults.demographics = ultima.datos;
+      }
+    })
+    .catch((error) => {
+      console.error("Error al cargar historial:", error);
+      // Fallback a índices si falta el índice compuesto
+      if (error.code === 'failed-precondition') {
+        console.warn("Falta índice compuesto en Firestore. Intentando consulta simple.");
+        // Intento sin ordenamiento (el cliente ordena)
+        db.collection('evaluaciones')
+          .where('userId', '==', currentUser.uid)
+          .get()
+          .then((querySnapshot) => {
+            evaluacionManager.limpiarHistorial();
+            querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              const evaluacion = {
+                id: data.id || doc.id,
+                tipo: data.tipo,
+                fecha: data.fecha,
+                datos: data.datos,
+                resultados: data.resultados
+              };
+              evaluacionManager.evaluaciones.push(evaluacion);
+            });
+            // Ordenar localmente
+            evaluacionManager.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            if (currentSection === 'seguimiento') {
+              mostrarHistorialEvaluaciones();
+            }
+          });
+      }
+    });
+}
+// Mostrar historial de evaluaciones
+function mostrarHistorialEvaluaciones() {
+  console.log('Cargando historial...');
+  const historial = evaluacionManager.obtenerHistorial();
+  console.log('Historial obtenido:', historial);
+  const container = document.getElementById('evaluationHistory');
+
+  if (!container) {
+    console.error('Container evaluationHistory no encontrado');
+    return;
   }
-  // Mostrar historial de evaluaciones
-  function mostrarHistorialEvaluaciones() {
-    console.log('Cargando historial...');
-    const historial = evaluacionManager.obtenerHistorial();
-    console.log('Historial obtenido:', historial);
-    const container = document.getElementById('evaluationHistory');
 
-    if (!container) {
-      console.error('Container evaluationHistory no encontrado');
-      return;
-    }
+  if (historial.length === 0) {
+    container.innerHTML = '<p class="empty-state">Aún no has completado ninguna evaluación. <a href="#evaluaciones" onclick="showSection(\'evaluaciones\')">Comienza ahora</a></p>';
+    return;
+  }
 
-    if (historial.length === 0) {
-      container.innerHTML = '<p class="empty-state">Aún no has completado ninguna evaluación. <a href="#evaluaciones" onclick="showSection(\'evaluaciones\')">Comienza ahora</a></p>';
-      return;
-    }
+  const professionLabels = {
+    medico: 'Médico/a',
+    enfermero: 'Enfermero/a',
+    psicologo: 'Psicólogo/a',
+    trabajador_social: 'Trabajador/a Social',
+    otro: 'Otro'
+  };
 
-    const professionLabels = {
-      medico: 'Médico/a',
-      enfermero: 'Enfermero/a',
-      psicologo: 'Psicólogo/a',
-      trabajador_social: 'Trabajador/a Social',
-      otro: 'Otro'
-    };
+  const tipoLabels = {
+    burnout: 'Burnout',
+    compassion: 'Fatiga por Compasión',
+    selfcare: 'Autocuidado'
+  };
 
-    const tipoLabels = {
-      burnout: 'Burnout',
-      compassion: 'Fatiga por Compasión',
-      selfcare: 'Autocuidado'
-    };
+  container.innerHTML = historial.map((item, idx) => {
+    const fecha = new Date(item.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+    const puntuacion = item.resultados.total || (item.resultados.subscales ? item.resultados.subscales[0].score : 'N/A');
+    const nivel = item.resultados.level ? item.resultados.level.text : (item.resultados.subscales ? item.resultados.subscales[0].level.text : 'N/A');
 
-    container.innerHTML = historial.map((item, idx) => {
-      const fecha = new Date(item.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-      const puntuacion = item.resultados.total || (item.resultados.subscales ? item.resultados.subscales[0].score : 'N/A');
-      const nivel = item.resultados.level ? item.resultados.level.text : (item.resultados.subscales ? item.resultados.subscales[0].level.text : 'N/A');
-
-      return `
+    return `
     < div style = "background: var(--color-surface); padding: var(--space-20); margin-bottom: var(--space-16); border-radius: var(--radius-lg); border-left: 4px solid var(--color-primary); border: 1px solid var(--color-card-border);" >
         <h4 style="margin-top: 0; color: var(--color-text); margin-bottom: var(--space-8);">${tipoLabels[item.tipo] || item.tipo}</h4>
         <p style="color: var(--color-text-secondary); margin: var(--space-4) 0; font-size: var(--font-size-sm);">
@@ -3304,31 +3311,31 @@ PRÓXIMOS PASOS:
         <p style="color: var(--color-text); margin: var(--space-12) 0;"><strong>Puntuación:</strong> ${puntuacion} (${nivel})</p>
       </div >
     `;
-    }).join('');
+  }).join('');
+}
+
+function limpiarHistorial() {
+  if (confirm('¿Estás seguro de que quieres eliminar todo tu historial de evaluaciones?')) {
+    evaluacionManager.limpiarHistorial();
+    mostrarHistorialEvaluaciones();
+    alert('Historial eliminado correctamente.');
+  }
+}
+
+// Initialize app on load
+window.addEventListener('DOMContentLoaded', () => {
+  // Show inicio section by default
+  showSection('inicio');
+
+  // Check if there are any saved evaluations
+  const generateBtn = document.getElementById('generatePlanBtn');
+  if (generateBtn) {
+    generateBtn.disabled = !hasCompletedEvaluations;
   }
 
-  function limpiarHistorial() {
-    if (confirm('¿Estás seguro de que quieres eliminar todo tu historial de evaluaciones?')) {
-      evaluacionManager.limpiarHistorial();
-      mostrarHistorialEvaluaciones();
-      alert('Historial eliminado correctamente.');
-    }
+  // Load evaluation history if on seguimiento section
+  const historyContainer = document.getElementById('evaluationHistory');
+  if (historyContainer) {
+    mostrarHistorialEvaluaciones();
   }
-
-  // Initialize app on load
-  window.addEventListener('DOMContentLoaded', () => {
-    // Show inicio section by default
-    showSection('inicio');
-
-    // Check if there are any saved evaluations
-    const generateBtn = document.getElementById('generatePlanBtn');
-    if (generateBtn) {
-      generateBtn.disabled = !hasCompletedEvaluations;
-    }
-
-    // Load evaluation history if on seguimiento section
-    const historyContainer = document.getElementById('evaluationHistory');
-    if (historyContainer) {
-      mostrarHistorialEvaluaciones();
-    }
-  });
+});
