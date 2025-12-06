@@ -88,10 +88,10 @@ class EvaluacionManager {
       tipo: tipo,
       fecha: new Date().toISOString(),
       datos: {
-        profesion: datos.profession,
-        edad: datos.age,
-        experiencia: datos.experience,
-        pais: datos.country
+        profesion: datos.profession || 'No especificada',
+        edad: datos.age || 'No especificada',
+        experiencia: datos.experience || 'No especificada',
+        pais: datos.country || 'No especificado'
       },
       resultados: resultados
     };
@@ -738,6 +738,15 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('evalModal').addEventListener('click', function (e) {
     if (e.target === this) cerrarEvaluacion();
   });
+
+  // Event Listeners for new form
+  const demographicsForm = document.getElementById('demographics-form');
+  if (demographicsForm) {
+    demographicsForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      saveDemographicsAndStart();
+    });
+  }
 
   document.getElementById('resultModal').addEventListener('click', function (e) {
     if (e.target === this) cerrarResultado();
