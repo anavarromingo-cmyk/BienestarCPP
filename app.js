@@ -152,12 +152,17 @@ let answers = [];
 // Navigation
 function showSection(sectionId) {
   // Hide all sections
-  document.querySelectorAll('.section').forEach(section => {
+  document.querySelectorAll('.app-section').forEach(section => {
     section.classList.remove('active');
+    section.style.display = 'none'; // Ensure hidden
   });
 
   // Show target section
-  document.getElementById(sectionId).classList.add('active');
+  const target = document.getElementById(sectionId);
+  if (target) {
+    target.classList.add('active');
+    target.style.display = 'block'; // Ensure visible
+  }
 
   // Update logic triggers
   if (sectionId === 'seguimiento') {
