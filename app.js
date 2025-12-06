@@ -737,141 +737,149 @@ function descargarResultadoPDF() {
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('evalModal').addEventListener('click', function (e) {
     if (e.target === this) cerrarEvaluacion();
+    const evalModal = document.getElementById('evalModal');
+    if (evalModal) {
+      evalModal.addEventListener('click', function (e) {
+        if (e.target === this) cerrarEvaluacion();
+      });
+    }
+
+    // Event Listeners for new form
+    const demographicsForm = document.getElementById('demographics-form');
+    if (demographicsForm) {
+      demographicsForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        saveDemographicsAndStart();
+      });
+    }
+
+    const resultModal = document.getElementById('resultModal');
+    if (resultModal) {
+      resultModal.addEventListener('click', function (e) {
+        if (e.target === this) cerrarResultado();
+      });
+    }
   });
 
-  // Event Listeners for new form
-  const demographicsForm = document.getElementById('demographics-form');
-  if (demographicsForm) {
-    demographicsForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      saveDemographicsAndStart();
-    });
-  }
-
-  document.getElementById('resultModal').addEventListener('click', function (e) {
-    if (e.target === this) cerrarResultado();
-  });
-});
-
-// Data structures
-const evaluations = {
-  burnout: {
-    name: 'Burnout',
-    title: 'Evaluación de Burnout',
-    questions: [
-      '¿Con qué frecuencia está cansado?',
-      '¿Con qué frecuencia está físicamente exhausto?',
-      '¿Con qué frecuencia está emocionalmente exhausto?',
-      '¿Con qué frecuencia piensa: "no puedo más"?',
-      '¿Con qué frecuencia se siente agotado?',
-      '¿Con qué frecuencia se siente débil y susceptible a enfermar?',
-      '¿Encuentra su trabajo emocionalmente agotador?',
-      '¿Su trabajo le produce frustración?',
-      '¿Se siente agotado al final de la jornada de trabajo?',
-      '¿Se siente exhausto por la mañana al pensar en otro día de trabajo por delante?',
-      '¿Siente que cada hora de trabajo es agotadora para usted?',
-      '¿Tiene energía para la familia y los amigos durante el tiempo libre?',
-      '¿Su trabajo es una fuente de estrés personal para usted?',
-      '¿Encuentra difícil trabajar con sus pacientes/niños?',
-      '¿Trabajar con sus pacientes/niños le produce desgaste?',
-      '¿Le frustra trabajar con sus pacientes/niños?',
-      '¿Siente que da más de lo que recibe cuando trabaja con sus pacientes/niños?',
-      '¿Está cansado de trabajar con sus pacientes/niños?',
-      '¿Se pregunta cuánto tiempo más será capaz de trabajar con sus pacientes/niños?'
-    ],
-    options: [
-      { text: 'Nunca', value: 0 },
-      { text: 'Sólo alguna vez', value: 25 },
-      { text: 'Algunas veces', value: 50 },
-      { text: 'Muchas veces', value: 75 },
-      { text: 'Siempre', value: 100 }
-    ],
-    reverseItem: 11
-  },
-  compassion: {
-    name: 'Fatiga por Compasión',
-    title: 'Evaluación de Fatiga por Compasión',
-    questions: [
-      'Me gusta mi trabajo como profesional de ayuda',
-      'Siento que puedo marcar la diferencia a través de mi trabajo',
-      'Estoy orgulloso de lo que puedo hacer para ayudar',
-      'Tengo pensamientos reconfortantes sobre las personas a las que he ayudado',
-      'Creo que puedo hacer mucho bien a las personas a las que ayudo',
-      'Me siento sobrecargado porque mi carga de casos parece interminable',
-      'Siento que estoy fracasando en mi trabajo como profesional de ayuda',
-      'Siento que mi trabajo me está desgastando',
-      'Me siento "estancado" por el sistema',
-      'Me siento desconectado de los demás',
-      'Tengo pensamientos intrusivos sobre algunas de las personas a las que he ayudado',
-      'Tengo dificultades para conciliar el sueño',
-      'Siento que puedo "contagiarme" del trauma de aquellos a quienes ayudo',
-      'Me siento vulnerable a causa de mi trabajo como profesional de ayuda',
-      'Como resultado de mi trabajo he tenido saltos de una emoción extrema a otra'
-    ],
-    options: [
-      { text: 'Nunca', value: 1 },
-      { text: 'Rara vez', value: 2 },
-      { text: 'A veces', value: 3 },
-      { text: 'A menudo', value: 4 },
-      { text: 'Muy a menudo', value: 5 }
-    ]
-  },
-  selfcare: {
-    name: 'Autocuidado',
-    title: 'Evaluación de Autocuidado',
-    questions: [
-      'Soy consciente de la necesidad de autocuidado',
-      'Programo actividades de autocuidado en la agenda',
-      'Reconozco los riesgos psicosociales de mi profesión',
-      'Descanso y duermo lo que necesito',
-      'Cuido la alimentación para que sea saludable',
-      'Hago ejercicio físico regularmente',
-      'Consulto mis dudas profesionales a mentores o supervisión',
-      'Me siento apoyado por personas significativas',
-      'Cultivo las relaciones en mi tiempo de ocio',
-      'Pongo límites al número de casos que atiendo',
-      'Establezco momentos de descanso en mi jornada',
-      'Pongo límites claros a mi horario laboral',
-      'Identifico y reformulo pensamientos negativos',
-      'Hago escapadas de contacto con la naturaleza',
-      'Uso el sentido del humor',
-      'Realizo técnicas de relajación frecuentemente',
-      'Practico mindfulness habitualmente',
-      'Realizo hobbies creativos regularmente',
-      'Estoy comprometido con mi crecimiento personal',
-      'Mi profesión conecta con mi misión en la vida'
-    ],
-    options: [
-      { text: 'Nunca', value: 1 },
-      { text: 'Rara vez', value: 2 },
-      { text: 'A veces', value: 3 },
-      { text: 'A menudo', value: 4 },
-      { text: 'Siempre', value: 5 }
-    ]
-  }
-};
-
-// Legacy function - redirect to new modal system
-function startEvaluation(type) {
-  const tipoMap = {
-    'burnout': 'burnout',
-    'compassion': 'compasion',
-    'selfcare': 'autocuidado'
+  // Data structures
+  const evaluations = {
+    burnout: {
+      name: 'Burnout',
+      title: 'Evaluación de Burnout',
+      questions: [
+        '¿Con qué frecuencia está cansado?',
+        '¿Con qué frecuencia está físicamente exhausto?',
+        '¿Con qué frecuencia está emocionalmente exhausto?',
+        '¿Con qué frecuencia piensa: "no puedo más"?',
+        '¿Con qué frecuencia se siente agotado?',
+        '¿Con qué frecuencia se siente débil y susceptible a enfermar?',
+        '¿Encuentra su trabajo emocionalmente agotador?',
+        '¿Su trabajo le produce frustración?',
+        '¿Se siente agotado al final de la jornada de trabajo?',
+        '¿Se siente exhausto por la mañana al pensar en otro día de trabajo por delante?',
+        '¿Siente que cada hora de trabajo es agotadora para usted?',
+        '¿Tiene energía para la familia y los amigos durante el tiempo libre?',
+        '¿Su trabajo es una fuente de estrés personal para usted?',
+        '¿Encuentra difícil trabajar con sus pacientes/niños?',
+        '¿Trabajar con sus pacientes/niños le produce desgaste?',
+        '¿Le frustra trabajar con sus pacientes/niños?',
+        '¿Siente que da más de lo que recibe cuando trabaja con sus pacientes/niños?',
+        '¿Está cansado de trabajar con sus pacientes/niños?',
+        '¿Se pregunta cuánto tiempo más será capaz de trabajar con sus pacientes/niños?'
+      ],
+      options: [
+        { text: 'Nunca', value: 0 },
+        { text: 'Sólo alguna vez', value: 25 },
+        { text: 'Algunas veces', value: 50 },
+        { text: 'Muchas veces', value: 75 },
+        { text: 'Siempre', value: 100 }
+      ],
+      reverseItem: 11
+    },
+    compassion: {
+      name: 'Fatiga por Compasión',
+      title: 'Evaluación de Fatiga por Compasión',
+      questions: [
+        'Me gusta mi trabajo como profesional de ayuda',
+        'Siento que puedo marcar la diferencia a través de mi trabajo',
+        'Estoy orgulloso de lo que puedo hacer para ayudar',
+        'Tengo pensamientos reconfortantes sobre las personas a las que he ayudado',
+        'Creo que puedo hacer mucho bien a las personas a las que ayudo',
+        'Me siento sobrecargado porque mi carga de casos parece interminable',
+        'Siento que estoy fracasando en mi trabajo como profesional de ayuda',
+        'Siento que mi trabajo me está desgastando',
+        'Me siento "estancado" por el sistema',
+        'Me siento desconectado de los demás',
+        'Tengo pensamientos intrusivos sobre algunas de las personas a las que he ayudado',
+        'Tengo dificultades para conciliar el sueño',
+        'Siento que puedo "contagiarme" del trauma de aquellos a quienes ayudo',
+        'Me siento vulnerable a causa de mi trabajo como profesional de ayuda',
+        'Como resultado de mi trabajo he tenido saltos de una emoción extrema a otra'
+      ],
+      options: [
+        { text: 'Nunca', value: 1 },
+        { text: 'Rara vez', value: 2 },
+        { text: 'A veces', value: 3 },
+        { text: 'A menudo', value: 4 },
+        { text: 'Muy a menudo', value: 5 }
+      ]
+    },
+    selfcare: {
+      name: 'Autocuidado',
+      title: 'Evaluación de Autocuidado',
+      questions: [
+        'Soy consciente de la necesidad de autocuidado',
+        'Programo actividades de autocuidado en la agenda',
+        'Reconozco los riesgos psicosociales de mi profesión',
+        'Descanso y duermo lo que necesito',
+        'Cuido la alimentación para que sea saludable',
+        'Hago ejercicio físico regularmente',
+        'Consulto mis dudas profesionales a mentores o supervisión',
+        'Me siento apoyado por personas significativas',
+        'Cultivo las relaciones en mi tiempo de ocio',
+        'Pongo límites al número de casos que atiendo',
+        'Establezco momentos de descanso en mi jornada',
+        'Pongo límites claros a mi horario laboral',
+        'Identifico y reformulo pensamientos negativos',
+        'Hago escapadas de contacto con la naturaleza',
+        'Uso el sentido del humor',
+        'Realizo técnicas de relajación frecuentemente',
+        'Practico mindfulness habitualmente',
+        'Realizo hobbies creativos regularmente',
+        'Estoy comprometido con mi crecimiento personal',
+        'Mi profesión conecta con mi misión en la vida'
+      ],
+      options: [
+        { text: 'Nunca', value: 1 },
+        { text: 'Rara vez', value: 2 },
+        { text: 'A veces', value: 3 },
+        { text: 'A menudo', value: 4 },
+        { text: 'Siempre', value: 5 }
+      ]
+    }
   };
-  abrirEvaluacion(tipoMap[type] || type);
-}
 
-// Old expandable card functions removed - now using modal system
+  // Legacy function - redirect to new modal system
+  function startEvaluation(type) {
+    const tipoMap = {
+      'burnout': 'burnout',
+      'compassion': 'compasion',
+      'selfcare': 'autocuidado'
+    };
+    abrirEvaluacion(tipoMap[type] || type);
+  }
 
-function closeModal() {
-  const modal = document.getElementById('evaluationModal');
-  modal.classList.remove('active');
-}
+  // Old expandable card functions removed - now using modal system
 
-function showDemographics() {
-  const modalBody = document.getElementById('modalBody');
+  function closeModal() {
+    const modal = document.getElementById('evaluationModal');
+    modal.classList.remove('active');
+  }
 
-  modalBody.innerHTML = `
+  function showDemographics() {
+    const modalBody = document.getElementById('modalBody');
+
+    modalBody.innerHTML = `
     <div class="demographics-form" style="padding: var(--space-20);">
       <p style="margin-bottom: var(--space-24); color: var(--color-text-secondary);">Antes de comenzar, necesitamos algunos datos básicos:</p>
       
@@ -907,43 +915,43 @@ function showDemographics() {
       <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-24);" onclick="saveDemographicsAndStart()">Comenzar evaluación</button>
     </div>
   `;
-}
-
-function saveDemographicsAndStart() {
-  const profession = document.getElementById('profession').value;
-  const age = document.getElementById('age').value;
-  const experience = document.getElementById('experience').value;
-
-  if (!profession || !age || !experience) {
-    alert('Por favor, completa todos los campos antes de continuar.');
-    return;
   }
 
-  demographicData = { profession, age, experience };
-  currentStep = 'questionnaire';
-  currentQuestionIndex = 0;
+  function saveDemographicsAndStart() {
+    const profession = document.getElementById('profession').value;
+    const age = document.getElementById('age').value;
+    const experience = document.getElementById('experience').value;
 
-  document.getElementById('progressBarContainer').classList.remove('hidden');
-  showQuestion();
-}
+    if (!profession || !age || !experience) {
+      alert('Por favor, completa todos los campos antes de continuar.');
+      return;
+    }
 
-function showQuestion() {
-  const evaluation = evaluations[currentEvaluation];
-  const totalQuestions = evaluation.questions.length;
-  const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+    demographicData = { profession, age, experience };
+    currentStep = 'questionnaire';
+    currentQuestionIndex = 0;
 
-  document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('progressBarContainer').classList.remove('hidden');
+    showQuestion();
+  }
 
-  const modalBody = document.getElementById('modalBody');
-  const question = evaluation.questions[currentQuestionIndex];
+  function showQuestion() {
+    const evaluation = evaluations[currentEvaluation];
+    const totalQuestions = evaluation.questions.length;
+    const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
-  let optionsHTML = evaluation.options.map((option, index) => `
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    const modalBody = document.getElementById('modalBody');
+    const question = evaluation.questions[currentQuestionIndex];
+
+    let optionsHTML = evaluation.options.map((option, index) => `
     <button class="option-button" onclick="selectAnswer(${option.value})">
       ${option.text}
     </button>
   `).join('');
 
-  modalBody.innerHTML = `
+    modalBody.innerHTML = `
     <div class="question-container" style="padding: var(--space-20); margin-bottom: var(--space-16);">
       <span class="question-number" style="margin-bottom: var(--space-12); display: block;">Pregunta ${currentQuestionIndex + 1} de ${totalQuestions}</span>
       <div class="question-text" style="padding: var(--space-16) var(--space-12); margin-bottom: var(--space-20); line-height: 1.6;">${question}</div>
@@ -956,188 +964,188 @@ function showQuestion() {
       ${answers[currentQuestionIndex] !== undefined ? '<button class="btn btn-primary" onclick="nextQuestion()">Siguiente</button>' : '<div></div>'}
     </div>
   `;
-}
+  }
 
-function selectAnswer(value) {
-  answers[currentQuestionIndex] = value;
+  function selectAnswer(value) {
+    answers[currentQuestionIndex] = value;
 
-  const buttons = document.querySelectorAll('.option-button');
-  buttons.forEach(btn => btn.classList.remove('selected'));
-  event.target.classList.add('selected');
+    const buttons = document.querySelectorAll('.option-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
 
-  const navigationButtons = document.querySelector('.navigation-buttons');
-  if (answers[currentQuestionIndex] !== undefined && navigationButtons) {
-    const existingNextBtn = navigationButtons.querySelector('.btn-primary');
-    if (!existingNextBtn) {
-      navigationButtons.innerHTML = `
+    const navigationButtons = document.querySelector('.navigation-buttons');
+    if (answers[currentQuestionIndex] !== undefined && navigationButtons) {
+      const existingNextBtn = navigationButtons.querySelector('.btn-primary');
+      if (!existingNextBtn) {
+        navigationButtons.innerHTML = `
         ${currentQuestionIndex > 0 ? '<button class="btn btn-outline" onclick="previousQuestion()">Anterior</button>' : '<div></div>'}
         <button class="btn btn-primary" onclick="nextQuestion()">Siguiente</button>
       `;
+      }
     }
   }
-}
 
-function previousQuestion() {
-  if (currentQuestionIndex > 0) {
-    currentQuestionIndex--;
-    showQuestion();
-  }
-}
-
-function nextQuestion() {
-  if (answers[currentQuestionIndex] === undefined) {
-    alert('Por favor, selecciona una respuesta antes de continuar.');
-    return;
+  function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+      currentQuestionIndex--;
+      showQuestion();
+    }
   }
 
-  const evaluation = evaluations[currentEvaluation];
+  function nextQuestion() {
+    if (answers[currentQuestionIndex] === undefined) {
+      alert('Por favor, selecciona una respuesta antes de continuar.');
+      return;
+    }
 
-  if (currentQuestionIndex < evaluation.questions.length - 1) {
-    currentQuestionIndex++;
-    showQuestion();
-  } else {
-    calculateAndShowResults();
-  }
-}
+    const evaluation = evaluations[currentEvaluation];
 
-function calculateAndShowResults() {
-  let results = {};
-
-  if (currentEvaluation === 'burnout') {
-    results = calculateBurnoutResults();
-  } else if (currentEvaluation === 'compassion') {
-    results = calculateCompassionResults();
-  } else if (currentEvaluation === 'selfcare') {
-    results = calculateSelfcareResults();
-  }
-
-  // Save results for plan generation
-  evaluationResults[currentEvaluation] = results;
-  evaluationResults.demographics = demographicData;
-  hasCompletedEvaluations = true;
-
-  // GUARDAR EN HISTORIAL
-  evaluacionManager.guardarEvaluacion(currentEvaluation, demographicData, results);
-
-  // Cerrar modal de evaluación
-  closeModal();
-
-  // Mostrar resultados en modal overlay
-  mostrarResultadoEnModal(results);
-}
-
-function calculateBurnoutResults() {
-  const ansArray = this.answers || answers;
-  let personalSum = 0;
-  let workSum = 0;
-  let patientSum = 0;
-
-  for (let i = 0; i < 6; i++) {
-    personalSum += ansArray[i];
-  }
-
-  for (let i = 6; i < 13; i++) {
-    if (i === 11) {
-      workSum += 100 - ansArray[i];
+    if (currentQuestionIndex < evaluation.questions.length - 1) {
+      currentQuestionIndex++;
+      showQuestion();
     } else {
-      workSum += ansArray[i];
+      calculateAndShowResults();
     }
   }
 
-  for (let i = 13; i < 19; i++) {
-    patientSum += ansArray[i];
-  }
+  function calculateAndShowResults() {
+    let results = {};
 
-  const personalAvg = personalSum / 6;
-  const workAvg = workSum / 7;
-  const patientAvg = patientSum / 6;
-  const totalAvg = (personalSum + workSum + patientSum) / 19;
-
-  const getLevel = (score) => {
-    if (score < 40) return { level: 'bajo', text: 'Bajo' };
-    if (score <= 60) return { level: 'medio', text: 'Medio' };
-    return { level: 'alto', text: 'Alto' };
-  };
-
-  return {
-    type: 'burnout',
-    total: totalAvg.toFixed(1),
-    level: getLevel(totalAvg),
-    subscales: [
-      { name: 'Burnout Personal', score: personalAvg.toFixed(1), level: getLevel(personalAvg) },
-      { name: 'Burnout Relacionado con el Trabajo', score: workAvg.toFixed(1), level: getLevel(workAvg) },
-      { name: 'Burnout Relacionado con Pacientes', score: patientAvg.toFixed(1), level: getLevel(patientAvg) }
-    ]
-  };
-}
-
-function calculateCompassionResults() {
-  const ansArray = this.answers || answers;
-  let satisfactionSum = 0;
-  let burnoutSum = 0;
-  let traumaSum = 0;
-
-  for (let i = 0; i < 5; i++) {
-    satisfactionSum += ansArray[i];
-  }
-
-  for (let i = 5; i < 10; i++) {
-    burnoutSum += ansArray[i];
-  }
-
-  for (let i = 10; i < 15; i++) {
-    traumaSum += ansArray[i];
-  }
-
-  const getLevel = (score, isPositive = false) => {
-    if (isPositive) {
-      if (score <= 15) return { level: 'bajo', text: 'Bajo' };
-      if (score <= 22) return { level: 'medio', text: 'Moderado' };
-      return { level: 'alto', text: 'Alto' };
-    } else {
-      if (score <= 15) return { level: 'bajo', text: 'Bajo' };
-      if (score <= 22) return { level: 'medio', text: 'Moderado' };
-      return { level: 'alto', text: 'Alto' };
+    if (currentEvaluation === 'burnout') {
+      results = calculateBurnoutResults();
+    } else if (currentEvaluation === 'compassion') {
+      results = calculateCompassionResults();
+    } else if (currentEvaluation === 'selfcare') {
+      results = calculateSelfcareResults();
     }
-  };
 
-  return {
-    type: 'compassion',
-    subscales: [
-      { name: 'Satisfacción por Compasión', score: satisfactionSum, level: getLevel(satisfactionSum, true), isPositive: true },
-      { name: 'Burnout', score: burnoutSum, level: getLevel(burnoutSum) },
-      { name: 'Estrés Traumático Secundario', score: traumaSum, level: getLevel(traumaSum) }
-    ]
-  };
-}
+    // Save results for plan generation
+    evaluationResults[currentEvaluation] = results;
+    evaluationResults.demographics = demographicData;
+    hasCompletedEvaluations = true;
 
-function calculateSelfcareResults() {
-  const ansArray = this.answers || answers;
-  const sum = ansArray.reduce((a, b) => a + b, 0);
-  const average = sum / ansArray.length;
+    // GUARDAR EN HISTORIAL
+    evaluacionManager.guardarEvaluacion(currentEvaluation, demographicData, results);
 
-  const getLevel = (score) => {
-    if (score < 3.0) return { level: 'bajo', text: 'Bajo' };
-    if (score < 4.0) return { level: 'medio', text: 'Moderado' };
-    return { level: 'alto', text: 'Alto' };
-  };
+    // Cerrar modal de evaluación
+    closeModal();
 
-  return {
-    type: 'selfcare',
-    total: average.toFixed(2),
-    level: getLevel(average)
-  };
-}
+    // Mostrar resultados en modal overlay
+    mostrarResultadoEnModal(results);
+  }
 
-function showResults(results) {
-  document.getElementById('progressBarContainer').classList.add('hidden');
-  const modalBody = document.getElementById('modalBody');
+  function calculateBurnoutResults() {
+    const ansArray = this.answers || answers;
+    let personalSum = 0;
+    let workSum = 0;
+    let patientSum = 0;
 
-  let resultsHTML = '<div class="results-container">';
-  resultsHTML += '<h3 style="margin-bottom: var(--space-24);">Tus Resultados</h3>';
+    for (let i = 0; i < 6; i++) {
+      personalSum += ansArray[i];
+    }
 
-  if (results.type === 'burnout') {
-    resultsHTML += `
+    for (let i = 6; i < 13; i++) {
+      if (i === 11) {
+        workSum += 100 - ansArray[i];
+      } else {
+        workSum += ansArray[i];
+      }
+    }
+
+    for (let i = 13; i < 19; i++) {
+      patientSum += ansArray[i];
+    }
+
+    const personalAvg = personalSum / 6;
+    const workAvg = workSum / 7;
+    const patientAvg = patientSum / 6;
+    const totalAvg = (personalSum + workSum + patientSum) / 19;
+
+    const getLevel = (score) => {
+      if (score < 40) return { level: 'bajo', text: 'Bajo' };
+      if (score <= 60) return { level: 'medio', text: 'Medio' };
+      return { level: 'alto', text: 'Alto' };
+    };
+
+    return {
+      type: 'burnout',
+      total: totalAvg.toFixed(1),
+      level: getLevel(totalAvg),
+      subscales: [
+        { name: 'Burnout Personal', score: personalAvg.toFixed(1), level: getLevel(personalAvg) },
+        { name: 'Burnout Relacionado con el Trabajo', score: workAvg.toFixed(1), level: getLevel(workAvg) },
+        { name: 'Burnout Relacionado con Pacientes', score: patientAvg.toFixed(1), level: getLevel(patientAvg) }
+      ]
+    };
+  }
+
+  function calculateCompassionResults() {
+    const ansArray = this.answers || answers;
+    let satisfactionSum = 0;
+    let burnoutSum = 0;
+    let traumaSum = 0;
+
+    for (let i = 0; i < 5; i++) {
+      satisfactionSum += ansArray[i];
+    }
+
+    for (let i = 5; i < 10; i++) {
+      burnoutSum += ansArray[i];
+    }
+
+    for (let i = 10; i < 15; i++) {
+      traumaSum += ansArray[i];
+    }
+
+    const getLevel = (score, isPositive = false) => {
+      if (isPositive) {
+        if (score <= 15) return { level: 'bajo', text: 'Bajo' };
+        if (score <= 22) return { level: 'medio', text: 'Moderado' };
+        return { level: 'alto', text: 'Alto' };
+      } else {
+        if (score <= 15) return { level: 'bajo', text: 'Bajo' };
+        if (score <= 22) return { level: 'medio', text: 'Moderado' };
+        return { level: 'alto', text: 'Alto' };
+      }
+    };
+
+    return {
+      type: 'compassion',
+      subscales: [
+        { name: 'Satisfacción por Compasión', score: satisfactionSum, level: getLevel(satisfactionSum, true), isPositive: true },
+        { name: 'Burnout', score: burnoutSum, level: getLevel(burnoutSum) },
+        { name: 'Estrés Traumático Secundario', score: traumaSum, level: getLevel(traumaSum) }
+      ]
+    };
+  }
+
+  function calculateSelfcareResults() {
+    const ansArray = this.answers || answers;
+    const sum = ansArray.reduce((a, b) => a + b, 0);
+    const average = sum / ansArray.length;
+
+    const getLevel = (score) => {
+      if (score < 3.0) return { level: 'bajo', text: 'Bajo' };
+      if (score < 4.0) return { level: 'medio', text: 'Moderado' };
+      return { level: 'alto', text: 'Alto' };
+    };
+
+    return {
+      type: 'selfcare',
+      total: average.toFixed(2),
+      level: getLevel(average)
+    };
+  }
+
+  function showResults(results) {
+    document.getElementById('progressBarContainer').classList.add('hidden');
+    const modalBody = document.getElementById('modalBody');
+
+    let resultsHTML = '<div class="results-container">';
+    resultsHTML += '<h3 style="margin-bottom: var(--space-24);">Tus Resultados</h3>';
+
+    if (results.type === 'burnout') {
+      resultsHTML += `
       <div class="result-card">
         <h4>Puntuación Global</h4>
         <div class="result-score">${results.total}</div>
@@ -1148,18 +1156,18 @@ function showResults(results) {
       </div>
     `;
 
-    results.subscales.forEach(subscale => {
-      resultsHTML += `
+      results.subscales.forEach(subscale => {
+        resultsHTML += `
         <div class="result-card">
           <h4>${subscale.name}</h4>
           <div class="result-score" style="font-size: var(--font-size-3xl);">${subscale.score}</div>
           <span class="result-level level-${subscale.level.level}">${subscale.level.text}</span>
         </div>
       `;
-    });
-  } else if (results.type === 'compassion') {
-    results.subscales.forEach(subscale => {
-      resultsHTML += `
+      });
+    } else if (results.type === 'compassion') {
+      results.subscales.forEach(subscale => {
+        resultsHTML += `
         <div class="result-card">
           <h4>${subscale.name}</h4>
           <div class="result-score">${subscale.score}</div>
@@ -1169,9 +1177,9 @@ function showResults(results) {
           </p>
         </div>
       `;
-    });
-  } else if (results.type === 'selfcare') {
-    resultsHTML += `
+      });
+    } else if (results.type === 'selfcare') {
+      resultsHTML += `
       <div class="result-card">
         <h4>Nivel de Autocuidado</h4>
         <div class="result-score">${results.total}</div>
@@ -1181,11 +1189,11 @@ function showResults(results) {
         </p>
       </div>
     `;
-  }
+    }
 
-  resultsHTML += getRecommendations(results);
+    resultsHTML += getRecommendations(results);
 
-  resultsHTML += `
+    resultsHTML += `
     <div class="action-buttons">
       <button class="btn btn-primary" onclick="generatePDF()">Descargar informe</button>
       <button class="btn btn-primary" onclick="closeModal(); showSection('seguimiento'); setTimeout(generatePersonalPlan, 500);">Generar mi Plan Personalizado</button>
@@ -1195,64 +1203,64 @@ function showResults(results) {
     </div>
   `;
 
-  resultsHTML += '</div>';
-  modalBody.innerHTML = resultsHTML;
-}
+    resultsHTML += '</div>';
+    modalBody.innerHTML = resultsHTML;
+  }
 
-function getBurnoutInterpretation(level) {
-  const interpretations = {
-    bajo: 'Tus niveles de burnout son bajos. Estás gestionando bien las demandas de tu trabajo. Continúa con tus estrategias de afrontamiento.',
-    medio: 'Presentas niveles moderados de burnout. Es importante que prestes atención a tu bienestar y consideres implementar estrategias de prevención.',
-    alto: 'Tus niveles de burnout son altos. Es fundamental que busques apoyo profesional y implementes cambios en tu rutina laboral y personal.'
-  };
-  return interpretations[level];
-}
-
-function getCompassionInterpretation(subscale, level, isPositive) {
-  if (subscale.includes('Satisfacción')) {
+  function getBurnoutInterpretation(level) {
     const interpretations = {
-      bajo: 'Tu satisfacción por compasión es baja. Podrías beneficiarte de reconectar con el propósito y significado de tu trabajo.',
-      medio: 'Tu satisfacción por compasión es moderada. Hay espacio para fortalecer el sentido de logro en tu labor.',
-      alto: 'Tu satisfacción por compasión es alta. Encuentras gran significado y recompensa en tu trabajo de ayuda.'
-    };
-    return interpretations[level];
-  } else if (subscale.includes('Burnout')) {
-    const interpretations = {
-      bajo: 'Tus niveles de burnout son bajos. Estás manejando bien la carga de trabajo.',
-      medio: 'Presentas niveles moderados de burnout relacionado con tu trabajo de ayuda.',
-      alto: 'Tus niveles de burnout son altos. Es importante buscar apoyo y ajustar tu carga de trabajo.'
-    };
-    return interpretations[level];
-  } else {
-    const interpretations = {
-      bajo: 'Tu nivel de estrés traumático secundario es bajo. Estás procesando bien las experiencias difíciles.',
-      medio: 'Presentas niveles moderados de estrés traumático secundario. Considera estrategias de procesamiento emocional.',
-      alto: 'Tu nivel de estrés traumático secundario es alto. Es fundamental buscar apoyo profesional especializado.'
+      bajo: 'Tus niveles de burnout son bajos. Estás gestionando bien las demandas de tu trabajo. Continúa con tus estrategias de afrontamiento.',
+      medio: 'Presentas niveles moderados de burnout. Es importante que prestes atención a tu bienestar y consideres implementar estrategias de prevención.',
+      alto: 'Tus niveles de burnout son altos. Es fundamental que busques apoyo profesional y implementes cambios en tu rutina laboral y personal.'
     };
     return interpretations[level];
   }
-}
 
-function getSelfcareInterpretation(level) {
-  const interpretations = {
-    bajo: 'Tu nivel de autocuidado es bajo. Estás priorizando a otros sobre ti mismo/a. Es fundamental que empieces a cuidarte mejor.',
-    medio: 'Tu nivel de autocuidado es moderado. Hay áreas de mejora. Considera fortalecer tus prácticas de autocuidado.',
-    alto: 'Tu nivel de autocuidado es alto. ¡Excelente! Estás cuidando bien de ti mismo/a, lo cual te permite cuidar mejor de otros.'
-  };
-  return interpretations[level];
-}
+  function getCompassionInterpretation(subscale, level, isPositive) {
+    if (subscale.includes('Satisfacción')) {
+      const interpretations = {
+        bajo: 'Tu satisfacción por compasión es baja. Podrías beneficiarte de reconectar con el propósito y significado de tu trabajo.',
+        medio: 'Tu satisfacción por compasión es moderada. Hay espacio para fortalecer el sentido de logro en tu labor.',
+        alto: 'Tu satisfacción por compasión es alta. Encuentras gran significado y recompensa en tu trabajo de ayuda.'
+      };
+      return interpretations[level];
+    } else if (subscale.includes('Burnout')) {
+      const interpretations = {
+        bajo: 'Tus niveles de burnout son bajos. Estás manejando bien la carga de trabajo.',
+        medio: 'Presentas niveles moderados de burnout relacionado con tu trabajo de ayuda.',
+        alto: 'Tus niveles de burnout son altos. Es importante buscar apoyo y ajustar tu carga de trabajo.'
+      };
+      return interpretations[level];
+    } else {
+      const interpretations = {
+        bajo: 'Tu nivel de estrés traumático secundario es bajo. Estás procesando bien las experiencias difíciles.',
+        medio: 'Presentas niveles moderados de estrés traumático secundario. Considera estrategias de procesamiento emocional.',
+        alto: 'Tu nivel de estrés traumático secundario es alto. Es fundamental buscar apoyo profesional especializado.'
+      };
+      return interpretations[level];
+    }
+  }
 
-function getRecommendations(results) {
-  let html = '<div class="recommendations">';
+  function getSelfcareInterpretation(level) {
+    const interpretations = {
+      bajo: 'Tu nivel de autocuidado es bajo. Estás priorizando a otros sobre ti mismo/a. Es fundamental que empieces a cuidarte mejor.',
+      medio: 'Tu nivel de autocuidado es moderado. Hay áreas de mejora. Considera fortalecer tus prácticas de autocuidado.',
+      alto: 'Tu nivel de autocuidado es alto. ¡Excelente! Estás cuidando bien de ti mismo/a, lo cual te permite cuidar mejor de otros.'
+    };
+    return interpretations[level];
+  }
 
-  const needsIntervention = results.level && (results.level.level === 'alto' || results.level.level === 'medio');
-  const hasHighSubscale = results.subscales && results.subscales.some(s => !s.isPositive && (s.level.level === 'alto' || s.level.level === 'medio'));
+  function getRecommendations(results) {
+    let html = '<div class="recommendations">';
 
-  if (needsIntervention || hasHighSubscale) {
-    html += '<h3>Necesitas atención: Estrategias de tratamiento</h3>';
+    const needsIntervention = results.level && (results.level.level === 'alto' || results.level.level === 'medio');
+    const hasHighSubscale = results.subscales && results.subscales.some(s => !s.isPositive && (s.level.level === 'alto' || s.level.level === 'medio'));
 
-    if (results.type === 'burnout' && (results.level.level === 'alto' || results.level.level === 'medio')) {
-      html += `
+    if (needsIntervention || hasHighSubscale) {
+      html += '<h3>Necesitas atención: Estrategias de tratamiento</h3>';
+
+      if (results.type === 'burnout' && (results.level.level === 'alto' || results.level.level === 'medio')) {
+        html += `
         <ul>
           <li><strong>Intervenciones organizacionales:</strong> Habla con tu supervisor sobre ajustar tu carga de trabajo</li>
           <li><strong>Mindfulness:</strong> Programa sesiones de mindfulness (apps: Headspace, Calm)</li>
@@ -1262,14 +1270,14 @@ function getRecommendations(results) {
           <li><strong>Descanso:</strong> Es prioritario tomar tiempo de descanso</li>
         </ul>
       `;
-    }
+      }
 
-    if (results.type === 'compassion') {
-      const hasBurnout = results.subscales.find(s => s.name.includes('Burnout') && (s.level.level === 'alto' || s.level.level === 'medio'));
-      const hasTrauma = results.subscales.find(s => s.name.includes('Traumático') && (s.level.level === 'alto' || s.level.level === 'medio'));
+      if (results.type === 'compassion') {
+        const hasBurnout = results.subscales.find(s => s.name.includes('Burnout') && (s.level.level === 'alto' || s.level.level === 'medio'));
+        const hasTrauma = results.subscales.find(s => s.name.includes('Traumático') && (s.level.level === 'alto' || s.level.level === 'medio'));
 
-      if (hasBurnout || hasTrauma) {
-        html += `
+        if (hasBurnout || hasTrauma) {
+          html += `
           <ul>
             <li><strong>Programa CFRP:</strong> Busca formación en Programa de Resiliencia de Fatiga por Compasión</li>
             <li><strong>Debriefing:</strong> Establece sesiones de debriefing regulares con tu equipo</li>
@@ -1279,11 +1287,11 @@ function getRecommendations(results) {
             <li><strong>Autocuidado intensivo:</strong> Prioriza actividades restauradoras diarias</li>
           </ul>
         `;
+        }
       }
-    }
 
-    if (results.type === 'selfcare' && (results.level.level === 'bajo' || results.level.level === 'medio')) {
-      html += `
+      if (results.type === 'selfcare' && (results.level.level === 'bajo' || results.level.level === 'medio')) {
+        html += `
         <ul>
           <li><strong>Plan de autocuidado:</strong> Crea un plan escrito con actividades específicas semanales</li>
           <li><strong>Agenda protegida:</strong> Bloquea tiempo para autocuidado en tu calendario</li>
@@ -1293,12 +1301,12 @@ function getRecommendations(results) {
           <li><strong>Mentoría:</strong> Busca un mentor que modele buen autocuidado</li>
         </ul>
       `;
-    }
-  } else {
-    html += '<h3>¡Vas bien! Estrategias de prevención</h3>';
+      }
+    } else {
+      html += '<h3>¡Vas bien! Estrategias de prevención</h3>';
 
-    if (results.type === 'burnout') {
-      html += `
+      if (results.type === 'burnout') {
+        html += `
         <ul>
           <li><strong>Mantén equilibrio trabajo-vida:</strong> Respeta tus límites horarios</li>
           <li><strong>Supervisión regular:</strong> Continúa con espacios de supervisión</li>
@@ -1307,10 +1315,10 @@ function getRecommendations(results) {
           <li><strong>Autocuidado proactivo:</strong> No esperes a sentirte mal para cuidarte</li>
         </ul>
       `;
-    }
+      }
 
-    if (results.type === 'compassion') {
-      html += `
+      if (results.type === 'compassion') {
+        html += `
         <ul>
           <li><strong>Mindfulness regular:</strong> Mantén práctica diaria de 10-15 minutos</li>
           <li><strong>Reflexión estructurada:</strong> Dedica tiempo semanal a procesar emociones</li>
@@ -1319,10 +1327,10 @@ function getRecommendations(results) {
           <li><strong>Formación en resiliencia:</strong> Asiste a talleres de construcción de resiliencia</li>
         </ul>
       `;
-    }
+      }
 
-    if (results.type === 'selfcare') {
-      html += `
+      if (results.type === 'selfcare') {
+        html += `
         <ul>
           <li><strong>Continúa con tus estrategias actuales:</strong> Lo estás haciendo bien</li>
           <li><strong>Revisa periódicamente:</strong> Evalúa tu autocuidado cada 3 meses</li>
@@ -1331,181 +1339,181 @@ function getRecommendations(results) {
           <li><strong>Celebra logros:</strong> Reconoce lo bien que te cuidas</li>
         </ul>
       `;
-    }
-  }
-
-  html += '</div>';
-  return html;
-}
-
-// This function is deprecated - results now download via RTF in modal
-function generatePDF() {
-  alert('Los resultados se descargan desde el modal de resultados. Haz clic en "Ver mis resultados" para acceder a la descarga en formato RTF.');
-}
-
-function shareDataAnonymously() {
-  window.open('https://forms.gle/DATOS-ANONIMOS-AQUI', '_blank');
-}
-
-window.onclick = function (event) {
-  const evalModal = document.getElementById('evaluationModal');
-  const guideModal = document.getElementById('guideModal');
-
-  if (event.target === evalModal) {
-    closeModal();
-  }
-
-  if (event.target === guideModal) {
-    cerrarGuia();
-  }
-};
-
-// Section Navigation
-function showSection(sectionId) {
-  // Hide all sections
-  document.querySelectorAll('.app-section').forEach(section => {
-    section.classList.remove('active');
-  });
-
-  // Show selected section
-  const section = document.getElementById(sectionId);
-  if (section) {
-    section.classList.add('active');
-    currentSection = sectionId;
-
-    // Si es seguimiento, cargar historial
-    if (sectionId === 'seguimiento') {
-      setTimeout(() => mostrarHistorialEvaluaciones(), 100);
+      }
     }
 
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    html += '</div>';
+    return html;
+  }
 
-    // Close mobile menu if open
-    const navMenu = document.getElementById('navMenu');
-    if (navMenu) {
-      navMenu.classList.remove('active');
+  // This function is deprecated - results now download via RTF in modal
+  function generatePDF() {
+    alert('Los resultados se descargan desde el modal de resultados. Haz clic en "Ver mis resultados" para acceder a la descarga en formato RTF.');
+  }
+
+  function shareDataAnonymously() {
+    window.open('https://forms.gle/DATOS-ANONIMOS-AQUI', '_blank');
+  }
+
+  window.onclick = function (event) {
+    const evalModal = document.getElementById('evaluationModal');
+    const guideModal = document.getElementById('guideModal');
+
+    if (event.target === evalModal) {
+      closeModal();
     }
-  }
-}
 
-function toggleMenu() {
-  const navMenu = document.getElementById('navMenu');
-  if (navMenu) {
-    navMenu.classList.toggle('active');
-  }
-}
-
-// Resource Tabs
-function showResourceTab(tabName) {
-  // Hide all tabs
-  document.querySelectorAll('.resource-tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
-
-  // Show selected tab
-  const tab = document.getElementById(tabName + '-tab');
-  if (tab) {
-    tab.classList.add('active');
-  }
-
-  // Update button states
-  document.querySelectorAll('.resources-tabs .tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  event.target.classList.add('active');
-}
-
-// Library Tabs
-function showLibraryTab(tabName) {
-  // Hide all tabs
-  document.querySelectorAll('.library-tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
-
-  // Show selected tab
-  const tab = document.getElementById(tabName + '-tab');
-  if (tab) {
-    tab.classList.add('active');
-  }
-
-  // Update button states
-  const parentSection = event.target.closest('section');
-  if (parentSection) {
-    parentSection.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
-  }
-  event.target.classList.add('active');
-}
-
-// Guided Exercise Functions
-function startGuidedExercise(exerciseType) {
-  const exercises = {
-    respiracion: {
-      title: 'Respiración Consciente Abdominal',
-      duration: 3,
-      instructions: [
-        { time: 0, text: 'Encuentra una postura cómoda. Cierra los ojos si te sientes cómodo.' },
-        { time: 30, text: 'Coloca una mano en tu pecho y otra en tu abdomen.' },
-        { time: 60, text: 'Inhala profundamente por la nariz contando hasta 4... 1, 2, 3, 4.' },
-        { time: 68, text: 'Retén el aire contando hasta 4... 1, 2, 3, 4.' },
-        { time: 76, text: 'Exhala lentamente por la boca contando hasta 6... 1, 2, 3, 4, 5, 6.' },
-        { time: 86, text: 'Muy bien. Repitamos el ciclo...' },
-        { time: 90, text: 'Inhala... 1, 2, 3, 4.' },
-        { time: 98, text: 'Retén... 1, 2, 3, 4.' },
-        { time: 106, text: 'Exhala... 1, 2, 3, 4, 5, 6.' },
-        { time: 120, text: 'Continúa con este ritmo a tu propio ritmo durante 2 minutos más.' },
-        { time: 150, text: 'Cuando estés listo, abre los ojos lentamente. ¡Excelente trabajo!' }
-      ]
-    },
-    escaneo: {
-      title: 'Escaneo Corporal Express',
-      duration: 5,
-      instructions: [
-        { time: 0, text: 'Acuéstate o siéntate cómodamente. Cierra los ojos.' },
-        { time: 30, text: 'Lleva tu atención a tus pies. ¿Qué sensaciones notas?' },
-        { time: 60, text: 'Sube a tus tobillos y pantorrillas. Solo observa, sin juzgar.' },
-        { time: 90, text: 'Ahora tus rodillas y muslos. Nota cualquier tensión o relajación.' },
-        { time: 120, text: 'Caderas y abdomen. Respira hacia cualquier tensión que encuentres.' },
-        { time: 150, text: 'Pecho y espalda. Siente cómo se expanden con cada respiración.' },
-        { time: 180, text: 'Hombros y brazos. Permite que se relajen hacia abajo.' },
-        { time: 210, text: 'Cuello y cabeza. Suaviza cualquier tensión en tu mandíbula.' },
-        { time: 240, text: 'Ahora siente tu cuerpo como un todo. Completamente presente.' },
-        { time: 270, text: 'Cuando estés listo, abre los ojos. Has completado el escaneo.' }
-      ]
-    },
-    autocompasion: {
-      title: 'Meditación de Autocompasión',
-      duration: 7,
-      instructions: [
-        { time: 0, text: 'Siéntate cómodamente. Cierra los ojos y respira naturalmente.' },
-        { time: 30, text: 'Coloca tus manos sobre tu corazón. Siente su calor.' },
-        { time: 60, text: 'Reconoce que este momento puede ser difícil. Está bien.' },
-        { time: 90, text: 'Repite mentalmente: "Me merezco compasión y amabilidad"' },
-        { time: 120, text: 'Respira. "Estoy haciendo lo mejor que puedo"' },
-        { time: 150, text: 'Continúa respirando. "Es normal sentir dificultades"' },
-        { time: 180, text: 'Imagina que hablas con un amigo querido que sufre. ¿Qué le dirías?' },
-        { time: 240, text: 'Ahora dirígete esas mismas palabras amables a ti mismo.' },
-        { time: 300, text: 'Respira con esa energía de amabilidad hacia ti.' },
-        { time: 360, text: 'Cuando estés listo, abre los ojos. Llévate esta compasión contigo.' }
-      ]
+    if (event.target === guideModal) {
+      cerrarGuia();
     }
   };
 
-  const exercise = exercises[exerciseType];
-  if (!exercise) {
-    alert('Ejercicio no disponible en esta versión.');
-    return;
+  // Section Navigation
+  function showSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.app-section').forEach(section => {
+      section.classList.remove('active');
+    });
+
+    // Show selected section
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.classList.add('active');
+      currentSection = sectionId;
+
+      // Si es seguimiento, cargar historial
+      if (sectionId === 'seguimiento') {
+        setTimeout(() => mostrarHistorialEvaluaciones(), 100);
+      }
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Close mobile menu if open
+      const navMenu = document.getElementById('navMenu');
+      if (navMenu) {
+        navMenu.classList.remove('active');
+      }
+    }
   }
 
-  // Create modal for guided exercise
-  const modal = document.getElementById('evaluationModal');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalBody = document.getElementById('modalBody');
+  function toggleMenu() {
+    const navMenu = document.getElementById('navMenu');
+    if (navMenu) {
+      navMenu.classList.toggle('active');
+    }
+  }
 
-  modalTitle.textContent = exercise.title;
-  modalBody.innerHTML = `
+  // Resource Tabs
+  function showResourceTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.resource-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    // Show selected tab
+    const tab = document.getElementById(tabName + '-tab');
+    if (tab) {
+      tab.classList.add('active');
+    }
+
+    // Update button states
+    document.querySelectorAll('.resources-tabs .tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+
+  // Library Tabs
+  function showLibraryTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.library-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    // Show selected tab
+    const tab = document.getElementById(tabName + '-tab');
+    if (tab) {
+      tab.classList.add('active');
+    }
+
+    // Update button states
+    const parentSection = event.target.closest('section');
+    if (parentSection) {
+      parentSection.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+    }
+    event.target.classList.add('active');
+  }
+
+  // Guided Exercise Functions
+  function startGuidedExercise(exerciseType) {
+    const exercises = {
+      respiracion: {
+        title: 'Respiración Consciente Abdominal',
+        duration: 3,
+        instructions: [
+          { time: 0, text: 'Encuentra una postura cómoda. Cierra los ojos si te sientes cómodo.' },
+          { time: 30, text: 'Coloca una mano en tu pecho y otra en tu abdomen.' },
+          { time: 60, text: 'Inhala profundamente por la nariz contando hasta 4... 1, 2, 3, 4.' },
+          { time: 68, text: 'Retén el aire contando hasta 4... 1, 2, 3, 4.' },
+          { time: 76, text: 'Exhala lentamente por la boca contando hasta 6... 1, 2, 3, 4, 5, 6.' },
+          { time: 86, text: 'Muy bien. Repitamos el ciclo...' },
+          { time: 90, text: 'Inhala... 1, 2, 3, 4.' },
+          { time: 98, text: 'Retén... 1, 2, 3, 4.' },
+          { time: 106, text: 'Exhala... 1, 2, 3, 4, 5, 6.' },
+          { time: 120, text: 'Continúa con este ritmo a tu propio ritmo durante 2 minutos más.' },
+          { time: 150, text: 'Cuando estés listo, abre los ojos lentamente. ¡Excelente trabajo!' }
+        ]
+      },
+      escaneo: {
+        title: 'Escaneo Corporal Express',
+        duration: 5,
+        instructions: [
+          { time: 0, text: 'Acuéstate o siéntate cómodamente. Cierra los ojos.' },
+          { time: 30, text: 'Lleva tu atención a tus pies. ¿Qué sensaciones notas?' },
+          { time: 60, text: 'Sube a tus tobillos y pantorrillas. Solo observa, sin juzgar.' },
+          { time: 90, text: 'Ahora tus rodillas y muslos. Nota cualquier tensión o relajación.' },
+          { time: 120, text: 'Caderas y abdomen. Respira hacia cualquier tensión que encuentres.' },
+          { time: 150, text: 'Pecho y espalda. Siente cómo se expanden con cada respiración.' },
+          { time: 180, text: 'Hombros y brazos. Permite que se relajen hacia abajo.' },
+          { time: 210, text: 'Cuello y cabeza. Suaviza cualquier tensión en tu mandíbula.' },
+          { time: 240, text: 'Ahora siente tu cuerpo como un todo. Completamente presente.' },
+          { time: 270, text: 'Cuando estés listo, abre los ojos. Has completado el escaneo.' }
+        ]
+      },
+      autocompasion: {
+        title: 'Meditación de Autocompasión',
+        duration: 7,
+        instructions: [
+          { time: 0, text: 'Siéntate cómodamente. Cierra los ojos y respira naturalmente.' },
+          { time: 30, text: 'Coloca tus manos sobre tu corazón. Siente su calor.' },
+          { time: 60, text: 'Reconoce que este momento puede ser difícil. Está bien.' },
+          { time: 90, text: 'Repite mentalmente: "Me merezco compasión y amabilidad"' },
+          { time: 120, text: 'Respira. "Estoy haciendo lo mejor que puedo"' },
+          { time: 150, text: 'Continúa respirando. "Es normal sentir dificultades"' },
+          { time: 180, text: 'Imagina que hablas con un amigo querido que sufre. ¿Qué le dirías?' },
+          { time: 240, text: 'Ahora dirígete esas mismas palabras amables a ti mismo.' },
+          { time: 300, text: 'Respira con esa energía de amabilidad hacia ti.' },
+          { time: 360, text: 'Cuando estés listo, abre los ojos. Llévate esta compasión contigo.' }
+        ]
+      }
+    };
+
+    const exercise = exercises[exerciseType];
+    if (!exercise) {
+      alert('Ejercicio no disponible en esta versión.');
+      return;
+    }
+
+    // Create modal for guided exercise
+    const modal = document.getElementById('evaluationModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    modalTitle.textContent = exercise.title;
+    modalBody.innerHTML = `
     <div style="text-align: center; padding: var(--space-32);">
       <div id="exerciseInstruction" style="font-size: var(--font-size-xl); margin-bottom: var(--space-32); min-height: 80px; display: flex; align-items: center; justify-content: center;">
         Preparando ejercicio...
@@ -1517,315 +1525,315 @@ function startGuidedExercise(exerciseType) {
     </div>
   `;
 
-  modal.classList.add('active');
+    modal.classList.add('active');
 
-  // Run exercise timer
-  let currentTime = 0;
-  let currentInstructionIndex = 0;
-  const instructionEl = document.getElementById('exerciseInstruction');
-  const timerEl = document.getElementById('exerciseTimer');
+    // Run exercise timer
+    let currentTime = 0;
+    let currentInstructionIndex = 0;
+    const instructionEl = document.getElementById('exerciseInstruction');
+    const timerEl = document.getElementById('exerciseTimer');
 
-  const timer = setInterval(() => {
-    currentTime++;
+    const timer = setInterval(() => {
+      currentTime++;
 
-    // Update timer display
-    const minutes = Math.floor((exercise.duration * 60 - currentTime) / 60);
-    const seconds = (exercise.duration * 60 - currentTime) % 60;
-    timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      // Update timer display
+      const minutes = Math.floor((exercise.duration * 60 - currentTime) / 60);
+      const seconds = (exercise.duration * 60 - currentTime) % 60;
+      timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-    // Update instruction
-    if (currentInstructionIndex < exercise.instructions.length &&
-      currentTime >= exercise.instructions[currentInstructionIndex].time) {
-      instructionEl.textContent = exercise.instructions[currentInstructionIndex].text;
-      currentInstructionIndex++;
+      // Update instruction
+      if (currentInstructionIndex < exercise.instructions.length &&
+        currentTime >= exercise.instructions[currentInstructionIndex].time) {
+        instructionEl.textContent = exercise.instructions[currentInstructionIndex].text;
+        currentInstructionIndex++;
+      }
+
+      // End exercise
+      if (currentTime >= exercise.duration * 60) {
+        clearInterval(timer);
+        instructionEl.textContent = '¡Ejercicio completado! Excelente trabajo.';
+      }
+    }, 1000);
+
+    // Store timer to clear on modal close
+    modal.exerciseTimer = timer;
+  }
+
+  // Override closeModal to clear exercise timer
+  const originalCloseModal = closeModal;
+  closeModal = function () {
+    const modal = document.getElementById('evaluationModal');
+    if (modal.exerciseTimer) {
+      clearInterval(modal.exerciseTimer);
+      modal.exerciseTimer = null;
+    }
+    originalCloseModal();
+  };
+
+  // Personal Plan Generation
+  function generatePersonalPlan() {
+    console.log('generatePersonalPlan llamada');
+    console.log('hasCompletedEvaluations:', hasCompletedEvaluations);
+    console.log('evaluationResults:', evaluationResults);
+
+    // Verificar si hay evaluaciones en el manager
+    const historial = evaluacionManager.obtenerHistorial();
+    if (historial.length === 0 && !hasCompletedEvaluations) {
+      alert('Completa al menos una evaluación para generar tu plan personalizado.');
+      return;
     }
 
-    // End exercise
-    if (currentTime >= exercise.duration * 60) {
-      clearInterval(timer);
-      instructionEl.textContent = '¡Ejercicio completado! Excelente trabajo.';
+    const planContainer = document.getElementById('personalPlan');
+    const generateBtn = document.getElementById('generatePlanBtn');
+
+    if (generateBtn) {
+      generateBtn.disabled = false;
     }
-  }, 1000);
 
-  // Store timer to clear on modal close
-  modal.exerciseTimer = timer;
-}
-
-// Override closeModal to clear exercise timer
-const originalCloseModal = closeModal;
-closeModal = function () {
-  const modal = document.getElementById('evaluationModal');
-  if (modal.exerciseTimer) {
-    clearInterval(modal.exerciseTimer);
-    modal.exerciseTimer = null;
-  }
-  originalCloseModal();
-};
-
-// Personal Plan Generation
-function generatePersonalPlan() {
-  console.log('generatePersonalPlan llamada');
-  console.log('hasCompletedEvaluations:', hasCompletedEvaluations);
-  console.log('evaluationResults:', evaluationResults);
-
-  // Verificar si hay evaluaciones en el manager
-  const historial = evaluacionManager.obtenerHistorial();
-  if (historial.length === 0 && !hasCompletedEvaluations) {
-    alert('Completa al menos una evaluación para generar tu plan personalizado.');
-    return;
-  }
-
-  const planContainer = document.getElementById('personalPlan');
-  const generateBtn = document.getElementById('generatePlanBtn');
-
-  if (generateBtn) {
-    generateBtn.disabled = false;
-  }
-
-  // Show loading
-  planContainer.innerHTML = `
+    // Show loading
+    planContainer.innerHTML = `
     <div style="text-align: center; padding: var(--space-32);">
       <div style="font-size: var(--font-size-3xl); margin-bottom: var(--space-16);">⏳</div>
       <p>Generando tu plan personalizado...</p>
     </div>
   `;
 
-  // Simulate generation time
-  setTimeout(() => {
-    try {
-      const plan = createPersonalizedPlan();
-      console.log('Plan creado:', plan);
-      displayPersonalPlan(plan);
-    } catch (error) {
-      console.error('Error generando plan:', error);
-      planContainer.innerHTML = '<div class="empty-state" style="color: red;">Error al generar el plan: ' + error.message + '</div>';
-    }
-  }, 2000);
-}
+    // Simulate generation time
+    setTimeout(() => {
+      try {
+        const plan = createPersonalizedPlan();
+        console.log('Plan creado:', plan);
+        displayPersonalPlan(plan);
+      } catch (error) {
+        console.error('Error generando plan:', error);
+        planContainer.innerHTML = '<div class="empty-state" style="color: red;">Error al generar el plan: ' + error.message + '</div>';
+      }
+    }, 2000);
+  }
 
-function createPersonalizedPlan() {
-  console.log('createPersonalizedPlan iniciado');
+  function createPersonalizedPlan() {
+    console.log('createPersonalizedPlan iniciado');
 
-  // Intentar obtener datos del historial si no hay en evaluationResults
-  let demo = evaluationResults.demographics || {};
-  let burnout = evaluationResults.burnout;
-  let compassion = evaluationResults.compassion;
-  let selfcare = evaluationResults.selfcare;
+    // Intentar obtener datos del historial si no hay en evaluationResults
+    let demo = evaluationResults.demographics || {};
+    let burnout = evaluationResults.burnout;
+    let compassion = evaluationResults.compassion;
+    let selfcare = evaluationResults.selfcare;
 
-  // Si no hay datos, intentar del historial
-  if (!demo.profession) {
-    const historial = evaluacionManager.obtenerHistorial();
-    if (historial.length > 0) {
-      const ultimaEval = historial[0];
-      demo = ultimaEval.datos || {};
+    // Si no hay datos, intentar del historial
+    if (!demo.profession) {
+      const historial = evaluacionManager.obtenerHistorial();
+      if (historial.length > 0) {
+        const ultimaEval = historial[0];
+        demo = ultimaEval.datos || {};
 
-      // Reconstruir resultados desde historial
-      if (ultimaEval.tipo === 'burnout') {
-        burnout = ultimaEval.resultados;
-      } else if (ultimaEval.tipo === 'compasion') {
-        compassion = ultimaEval.resultados;
-      } else if (ultimaEval.tipo === 'autocuidado') {
-        selfcare = ultimaEval.resultados;
+        // Reconstruir resultados desde historial
+        if (ultimaEval.tipo === 'burnout') {
+          burnout = ultimaEval.resultados;
+        } else if (ultimaEval.tipo === 'compasion') {
+          compassion = ultimaEval.resultados;
+        } else if (ultimaEval.tipo === 'autocuidado') {
+          selfcare = ultimaEval.resultados;
+        }
       }
     }
-  }
 
-  console.log('Datos para plan:', { demo, burnout, compassion, selfcare });
+    console.log('Datos para plan:', { demo, burnout, compassion, selfcare });
 
-  let plan = {
-    profession: demo.profession || 'profesional',
-    age: demo.age || 'N/A',
-    experience: demo.experience || 'N/A',
-    diagnosis: '',
-    priority: '',
-    urgency: 'MEDIA',
-    phases: []
-  };
+    let plan = {
+      profession: demo.profession || 'profesional',
+      age: demo.age || 'N/A',
+      experience: demo.experience || 'N/A',
+      diagnosis: '',
+      priority: '',
+      urgency: 'MEDIA',
+      phases: []
+    };
 
-  // Determine priority and urgency
-  let highestRisk = '';
-  let highestScore = 0;
+    // Determine priority and urgency
+    let highestRisk = '';
+    let highestScore = 0;
 
-  if (burnout && parseFloat(burnout.total) > highestScore) {
-    highestScore = parseFloat(burnout.total);
-    highestRisk = 'burnout';
-  }
-
-  if (compassion) {
-    const burnoutSub = compassion.subscales.find(s => s.name.includes('Burnout'));
-    const traumaSub = compassion.subscales.find(s => s.name.includes('Traumático'));
-    if (burnoutSub && burnoutSub.score > 22) {
-      highestRisk = 'compassion';
+    if (burnout && parseFloat(burnout.total) > highestScore) {
+      highestScore = parseFloat(burnout.total);
+      highestRisk = 'burnout';
     }
-    if (traumaSub && traumaSub.score > 22) {
-      highestRisk = 'trauma';
+
+    if (compassion) {
+      const burnoutSub = compassion.subscales.find(s => s.name.includes('Burnout'));
+      const traumaSub = compassion.subscales.find(s => s.name.includes('Traumático'));
+      if (burnoutSub && burnoutSub.score > 22) {
+        highestRisk = 'compassion';
+      }
+      if (traumaSub && traumaSub.score > 22) {
+        highestRisk = 'trauma';
+      }
     }
-  }
 
-  if (selfcare && parseFloat(selfcare.total) < 2.5) {
-    highestRisk = 'selfcare';
-  }
-
-  // Set urgency
-  if ((burnout && parseFloat(burnout.total) > 70) || (selfcare && parseFloat(selfcare.total) < 2.0)) {
-    plan.urgency = 'ALTA';
-  }
-
-  // Create diagnosis
-  plan.diagnosis = getDiagnosis(burnout, compassion, selfcare);
-  plan.priority = highestRisk;
-
-  // Generate phases based on assessment
-  plan.phases = generatePhases(plan.profession, highestRisk, burnout, compassion, selfcare);
-
-  return plan;
-}
-
-function getDiagnosis(burnout, compassion, selfcare) {
-  let diagnosis = 'Según tus evaluaciones, observamos: ';
-  let items = [];
-
-  if (burnout) {
-    const level = burnout.level.text.toLowerCase();
-    items.push(`Burnout ${level} (${burnout.total}/100)`);
-  }
-
-  if (compassion) {
-    const burnoutSub = compassion.subscales.find(s => s.name.includes('Burnout'));
-    if (burnoutSub) {
-      items.push(`Burnout ProQOL: ${burnoutSub.level.text} (${burnoutSub.score}/25)`);
+    if (selfcare && parseFloat(selfcare.total) < 2.5) {
+      highestRisk = 'selfcare';
     }
+
+    // Set urgency
+    if ((burnout && parseFloat(burnout.total) > 70) || (selfcare && parseFloat(selfcare.total) < 2.0)) {
+      plan.urgency = 'ALTA';
+    }
+
+    // Create diagnosis
+    plan.diagnosis = getDiagnosis(burnout, compassion, selfcare);
+    plan.priority = highestRisk;
+
+    // Generate phases based on assessment
+    plan.phases = generatePhases(plan.profession, highestRisk, burnout, compassion, selfcare);
+
+    return plan;
   }
 
-  if (selfcare) {
-    const level = selfcare.level.text.toLowerCase();
-    items.push(`Autocuidado ${level} (${selfcare.total}/5)`);
+  function getDiagnosis(burnout, compassion, selfcare) {
+    let diagnosis = 'Según tus evaluaciones, observamos: ';
+    let items = [];
+
+    if (burnout) {
+      const level = burnout.level.text.toLowerCase();
+      items.push(`Burnout ${level} (${burnout.total}/100)`);
+    }
+
+    if (compassion) {
+      const burnoutSub = compassion.subscales.find(s => s.name.includes('Burnout'));
+      if (burnoutSub) {
+        items.push(`Burnout ProQOL: ${burnoutSub.level.text} (${burnoutSub.score}/25)`);
+      }
+    }
+
+    if (selfcare) {
+      const level = selfcare.level.text.toLowerCase();
+      items.push(`Autocuidado ${level} (${selfcare.total}/5)`);
+    }
+
+    return diagnosis + items.join(', ');
   }
 
-  return diagnosis + items.join(', ');
-}
+  function generatePhases(profession, priority, burnout, compassion, selfcare) {
+    const phases = [];
 
-function generatePhases(profession, priority, burnout, compassion, selfcare) {
-  const phases = [];
+    // FASE 1: Emergency response based on priority
+    const phase1 = {
+      title: 'FASE 1: Establecimiento (Semanas 1-2)',
+      objetivo: 'Detener deterioro y crear espacio de respiro',
+      acciones: []
+    };
 
-  // FASE 1: Emergency response based on priority
-  const phase1 = {
-    title: 'FASE 1: Establecimiento (Semanas 1-2)',
-    objetivo: 'Detener deterioro y crear espacio de respiro',
-    acciones: []
-  };
+    if (priority === 'burnout' || (burnout && parseFloat(burnout.total) > 60)) {
+      phase1.acciones.push({
+        titulo: 'Límite de Carga de Trabajo',
+        descripcion: 'Habla con tu supervisor esta semana sobre ajustar tu carga. Propuesta: reducir consultas o casos nuevos temporalmente.',
+        tiempo: '1 reunión (30 min)',
+        checklist: ['Reunión programada', 'Propuesta presentada', 'Acuerdo alcanzado']
+      });
+    }
 
-  if (priority === 'burnout' || (burnout && parseFloat(burnout.total) > 60)) {
     phase1.acciones.push({
-      titulo: 'Límite de Carga de Trabajo',
-      descripcion: 'Habla con tu supervisor esta semana sobre ajustar tu carga. Propuesta: reducir consultas o casos nuevos temporalmente.',
-      tiempo: '1 reunión (30 min)',
-      checklist: ['Reunión programada', 'Propuesta presentada', 'Acuerdo alcanzado']
+      titulo: 'Práctica Diaria de Mindfulness',
+      descripcion: 'Elige: DRAW, Respiración Consciente o Escaneo Corporal. Cuándo: Antes o después del turno.',
+      tiempo: '5 minutos',
+      checklist: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
     });
-  }
 
-  phase1.acciones.push({
-    titulo: 'Práctica Diaria de Mindfulness',
-    descripcion: 'Elige: DRAW, Respiración Consciente o Escaneo Corporal. Cuándo: Antes o después del turno.',
-    tiempo: '5 minutos',
-    checklist: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes']
-  });
+    if (selfcare && parseFloat(selfcare.total) < 2.5) {
+      phase1.acciones.push({
+        titulo: 'Identificar Actividad Restauradora',
+        descripcion: 'Busca una actividad que realmente disfrutes (no relacionada con trabajo). Blóqueala en tu calendario.',
+        tiempo: '30 minutos, 2 veces/semana',
+        checklist: ['Actividad identificada', 'Calendario bloqueado', 'Primera sesión completada']
+      });
+    }
 
-  if (selfcare && parseFloat(selfcare.total) < 2.5) {
     phase1.acciones.push({
-      titulo: 'Identificar Actividad Restauradora',
-      descripcion: 'Busca una actividad que realmente disfrutes (no relacionada con trabajo). Blóqueala en tu calendario.',
-      tiempo: '30 minutos, 2 veces/semana',
-      checklist: ['Actividad identificada', 'Calendario bloqueado', 'Primera sesión completada']
+      titulo: 'Conexión Social',
+      descripcion: 'Identifica 1 colega de confianza. Propone almuerzo o café esta semana. Conversación sobre cómo estás.',
+      tiempo: '30 minutos',
+      checklist: ['Colega identificado', 'Encuentro realizado']
     });
+
+    phases.push(phase1);
+
+    // FASE 2: Consolidation
+    const phase2 = {
+      title: 'FASE 2: Consolidación (Semanas 3-4)',
+      objetivo: 'Mantener lo de Fase 1 y añadir segunda intervención',
+      acciones: [
+        {
+          titulo: 'Mantener Prácticas de Fase 1',
+          descripcion: 'Continúa con mindfulness diario y conexiones sociales establecidas.',
+          tiempo: 'Según Fase 1',
+          checklist: ['Mindfulness diario', 'Actividad restauradora', 'Conexión social']
+        },
+        {
+          titulo: 'Meditación de Autocompasión',
+          descripcion: 'Añade práctica de autocompasión 7 minutos, 3 veces por semana. Propósito: cambiar autocrítica a compasión.',
+          tiempo: '7 minutos, 3x/semana',
+          checklist: ['Sesión 1', 'Sesión 2', 'Sesión 3']
+        }
+      ]
+    };
+
+    if (priority === 'compassion' || priority === 'trauma') {
+      phase2.acciones.push({
+        titulo: 'Debriefing de Equipo',
+        descripcion: 'Solicita o participa en sesión de debriefing grupal. Espacio seguro para procesar emociones difíciles.',
+        tiempo: '60 minutos',
+        checklist: ['Sesión solicitada', 'Participación activa']
+      });
+    }
+
+    phases.push(phase2);
+
+    // FASE 3: Maintenance
+    const phase3 = {
+      title: 'FASE 3: Mantenimiento (Semanas 5-8)',
+      objetivo: 'Consolidar hábitos y planificar re-evaluación',
+      acciones: [
+        {
+          titulo: 'Prácticas Establecidas',
+          descripcion: 'Mantener 2-3 prácticas que mejor funcionan para ti. Introducir variaciones si es necesario.',
+          tiempo: 'Diario',
+          checklist: ['Práctica 1 mantenida', 'Práctica 2 mantenida', 'Variación explorada']
+        },
+        {
+          titulo: 'Evaluación de Progreso',
+          descripcion: 'Semana 5: Evalúa cambios usando Termómetro Emocional. Semana 8: Re-evalúa con cuestionarios completos.',
+          tiempo: '15 minutos',
+          checklist: ['Evaluación semana 5', 'Re-evaluación semana 8', 'Comparación de resultados']
+        },
+        {
+          titulo: 'Plan a Largo Plazo',
+          descripcion: 'Define qué prácticas continuarás de forma permanente. Considera supervisión profesional regular.',
+          tiempo: '30 minutos reflexión',
+          checklist: ['Prácticas permanentes identificadas', 'Calendario de seguimiento']
+        }
+      ]
+    };
+
+    phases.push(phase3);
+
+    return phases;
   }
 
-  phase1.acciones.push({
-    titulo: 'Conexión Social',
-    descripcion: 'Identifica 1 colega de confianza. Propone almuerzo o café esta semana. Conversación sobre cómo estás.',
-    tiempo: '30 minutos',
-    checklist: ['Colega identificado', 'Encuentro realizado']
-  });
+  function displayPersonalPlan(plan) {
+    const planContainer = document.getElementById('personalPlan');
 
-  phases.push(phase1);
+    let html = '<div class="plan-generated" id="planContent">';
 
-  // FASE 2: Consolidation
-  const phase2 = {
-    title: 'FASE 2: Consolidación (Semanas 3-4)',
-    objetivo: 'Mantener lo de Fase 1 y añadir segunda intervención',
-    acciones: [
-      {
-        titulo: 'Mantener Prácticas de Fase 1',
-        descripcion: 'Continúa con mindfulness diario y conexiones sociales establecidas.',
-        tiempo: 'Según Fase 1',
-        checklist: ['Mindfulness diario', 'Actividad restauradora', 'Conexión social']
-      },
-      {
-        titulo: 'Meditación de Autocompasión',
-        descripcion: 'Añade práctica de autocompasión 7 minutos, 3 veces por semana. Propósito: cambiar autocrítica a compasión.',
-        tiempo: '7 minutos, 3x/semana',
-        checklist: ['Sesión 1', 'Sesión 2', 'Sesión 3']
-      }
-    ]
-  };
-
-  if (priority === 'compassion' || priority === 'trauma') {
-    phase2.acciones.push({
-      titulo: 'Debriefing de Equipo',
-      descripcion: 'Solicita o participa en sesión de debriefing grupal. Espacio seguro para procesar emociones difíciles.',
-      tiempo: '60 minutos',
-      checklist: ['Sesión solicitada', 'Participación activa']
-    });
-  }
-
-  phases.push(phase2);
-
-  // FASE 3: Maintenance
-  const phase3 = {
-    title: 'FASE 3: Mantenimiento (Semanas 5-8)',
-    objetivo: 'Consolidar hábitos y planificar re-evaluación',
-    acciones: [
-      {
-        titulo: 'Prácticas Establecidas',
-        descripcion: 'Mantener 2-3 prácticas que mejor funcionan para ti. Introducir variaciones si es necesario.',
-        tiempo: 'Diario',
-        checklist: ['Práctica 1 mantenida', 'Práctica 2 mantenida', 'Variación explorada']
-      },
-      {
-        titulo: 'Evaluación de Progreso',
-        descripcion: 'Semana 5: Evalúa cambios usando Termómetro Emocional. Semana 8: Re-evalúa con cuestionarios completos.',
-        tiempo: '15 minutos',
-        checklist: ['Evaluación semana 5', 'Re-evaluación semana 8', 'Comparación de resultados']
-      },
-      {
-        titulo: 'Plan a Largo Plazo',
-        descripcion: 'Define qué prácticas continuarás de forma permanente. Considera supervisión profesional regular.',
-        tiempo: '30 minutos reflexión',
-        checklist: ['Prácticas permanentes identificadas', 'Calendario de seguimiento']
-      }
-    ]
-  };
-
-  phases.push(phase3);
-
-  return phases;
-}
-
-function displayPersonalPlan(plan) {
-  const planContainer = document.getElementById('personalPlan');
-
-  let html = '<div class="plan-generated" id="planContent">';
-
-  // Header
-  html += `
+    // Header
+    html += `
     <div style="text-align: center; margin-bottom: var(--space-32); padding: var(--space-24); background: var(--color-bg-1); border-radius: var(--radius-lg);">
       <h3 style="color: var(--color-primary); margin-bottom: var(--space-12);">MI PLAN DE BIENESTAR PERSONALIZADO</h3>
       <p style="color: var(--color-text-secondary);">Generado: ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
     </div>
   `;
 
-  // Situation
-  html += `
+    // Situation
+    html += `
     <div style="background: var(--color-surface); padding: var(--space-24); border-radius: var(--radius-lg); border: 1px solid var(--color-card-border); margin-bottom: var(--space-24);">
       <h4 style="margin-bottom: var(--space-16);">SITUACIÓN ACTUAL</h4>
       <p style="line-height: 1.6;">${plan.diagnosis}</p>
@@ -1835,10 +1843,10 @@ function displayPersonalPlan(plan) {
     </div>
   `;
 
-  // Phases
-  plan.phases.forEach((phase, index) => {
-    const bgColors = ['var(--color-bg-1)', 'var(--color-bg-3)', 'var(--color-bg-7)'];
-    html += `
+    // Phases
+    plan.phases.forEach((phase, index) => {
+      const bgColors = ['var(--color-bg-1)', 'var(--color-bg-3)', 'var(--color-bg-7)'];
+      html += `
       <div style="background: ${bgColors[index]}; padding: var(--space-24); border-radius: var(--radius-lg); margin-bottom: var(--space-24); border-left: 4px solid var(--color-primary);">
         <h4 style="margin-bottom: var(--space-8);">${phase.title}</h4>
         <p style="color: var(--color-text-secondary); margin-bottom: var(--space-20); font-style: italic;">${phase.objetivo}</p>
@@ -1846,8 +1854,8 @@ function displayPersonalPlan(plan) {
         <div style="display: flex; flex-direction: column; gap: var(--space-16);">
     `;
 
-    phase.acciones.forEach((accion, aIndex) => {
-      html += `
+      phase.acciones.forEach((accion, aIndex) => {
+        html += `
         <div style="background: var(--color-surface); padding: var(--space-16); border-radius: var(--radius-base);">
           <h5 style="margin-bottom: var(--space-8); color: var(--color-primary);">Acción ${aIndex + 1}: ${accion.titulo}</h5>
           <p style="margin-bottom: var(--space-8); line-height: 1.6;">${accion.descripcion}</p>
@@ -1857,25 +1865,25 @@ function displayPersonalPlan(plan) {
             <div style="margin-top: var(--space-8); display: flex; flex-wrap: wrap; gap: var(--space-8);">
       `;
 
-      accion.checklist.forEach(item => {
-        html += `<label style="font-size: var(--font-size-sm); display: flex; align-items: center; gap: var(--space-4);"><input type="checkbox"> ${item}</label>`;
-      });
+        accion.checklist.forEach(item => {
+          html += `<label style="font-size: var(--font-size-sm); display: flex; align-items: center; gap: var(--space-4);"><input type="checkbox"> ${item}</label>`;
+        });
 
-      html += `
+        html += `
             </div>
           </div>
         </div>
       `;
-    });
+      });
 
-    html += `
+      html += `
         </div>
       </div>
     `;
-  });
+    });
 
-  // Resources
-  html += `
+    // Resources
+    html += `
     <div style="background: var(--color-bg-2); padding: var(--space-20); border-radius: var(--radius-base); margin-bottom: var(--space-24);">
       <h4 style="margin-bottom: var(--space-12);">📚 RECURSOS ASIGNADOS</h4>
       <ul style="margin: 0; padding-left: var(--space-20); line-height: 1.8;">
@@ -1887,99 +1895,99 @@ function displayPersonalPlan(plan) {
     </div>
   `;
 
-  // Reminder
-  html += `
+    // Reminder
+    html += `
     <div style="background: var(--color-secondary); padding: var(--space-20); border-radius: var(--radius-base); margin-bottom: var(--space-24);">
       <p style="margin: 0;"><strong>📅 Recordatorio:</strong> Re-evalúa tu bienestar en 3 meses (${new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')}) para medir tu progreso.</p>
     </div>
   `;
 
-  // Download button
-  html += `
+    // Download button
+    html += `
     <button class="btn btn-primary" style="width: 100%;" onclick="downloadPersonalPlanPDF()">📥 Descargar Plan</button>
   `;
 
-  html += '</div>';
+    html += '</div>';
 
-  planContainer.innerHTML = html;
-}
-
-// Download Personal Plan as RTF - UPDATED VERSION
-function downloadPersonalPlanPDF() {
-  try {
-    const date = new Date().toLocaleDateString('es-ES');
-    const demo = evaluationResults.demographics || {};
-    const professionLabels = {
-      medico: 'Médico/a',
-      enfermero: 'Enfermero/a',
-      psicologo: 'Psicólogo/a',
-      trabajador_social: 'Trabajador/a Social',
-      otro: 'Otro'
-    };
-    // Obtener el plan generado
-    const plan = createPersonalizedPlan();
-    // Construir líneas de texto
-    const lines = [];
-    lines.push('MI PLAN DE BIENESTAR PERSONALIZADO');
-    lines.push('Generado: ' + date);
-    lines.push('Profesión: ' + (professionLabels[demo.profession] || 'N/A'));
-    lines.push('Experiencia: ' + (demo.experience || 'N/A'));
-    lines.push('');
-    lines.push('SITUACION ACTUAL');
-    lines.push(plan.diagnosis);
-    lines.push('PRIORIDAD: URGENCIA ' + plan.urgency);
-    lines.push('');
-    // Fases
-    plan.phases.forEach((phase, index) => {
-      lines.push(phase.title.toUpperCase());
-      lines.push('Objetivo: ' + phase.objetivo);
-      phase.acciones.forEach((accion, aIndex) => {
-        lines.push('Acción ' + (aIndex + 1) + ': ' + accion.titulo);
-        lines.push(accion.descripcion);
-        lines.push('Tiempo: ' + accion.tiempo);
-        if (accion.checklist && accion.checklist.length) {
-          lines.push('Checklist:');
-          accion.checklist.forEach(item => lines.push('[ ] ' + item));
-        }
-        lines.push('');
-      });
-    });
-    lines.push('RECURSOS ASIGNADOS');
-    lines.push('- Ejercicios de Mindfulness (sección Recursos Inmediatos)');
-    lines.push('- Técnicas de Regulación Emocional');
-    lines.push('- Guías descargables (sección Biblioteca)');
-    lines.push('- Contactos de apoyo profesional (sección Comunidad)');
-    lines.push('');
-    const followUpDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES');
-    lines.push('Recordatorio: Re-evalúa tu bienestar en 3 meses (' + followUpDate + ')');
-    lines.push('');
-    lines.push('© 2025 Alvaro Navarro Mingorance | CC BY-NC 4.0');
-    // Generar y descargar PDF
-    const fileName = `Plan_Bienestar_${new Date().toISOString().split('T')[0]}.pdf`;
-    generateAndDownloadPDF(fileName, 'Plan de Bienestar', lines);
-    alert('¡Plan descargado como PDF correctamente!');
-  } catch (error) {
-    console.error('Error descargando plan:', error);
-    alert('Error al descargar el plan. Error: ' + error.message);
+    planContainer.innerHTML = html;
   }
-}
 
-// Guide content database
-const guideContents = {
-  autocuidado: {
-    title: 'Guía de Autocuidado para Profesionales de CPP',
-    sections: [
-      {
-        title: '¿Qué es el Autocuidado?',
-        content: `El autocuidado es el conjunto de prácticas deliberadas que realizamos para cuidar nuestra salud física, emocional, mental y espiritual. En el contexto de cuidados paliativos pediátricos, el autocuidado no es un lujo - es una necesidad profesional y ética.
+  // Download Personal Plan as RTF - UPDATED VERSION
+  function downloadPersonalPlanPDF() {
+    try {
+      const date = new Date().toLocaleDateString('es-ES');
+      const demo = evaluationResults.demographics || {};
+      const professionLabels = {
+        medico: 'Médico/a',
+        enfermero: 'Enfermero/a',
+        psicologo: 'Psicólogo/a',
+        trabajador_social: 'Trabajador/a Social',
+        otro: 'Otro'
+      };
+      // Obtener el plan generado
+      const plan = createPersonalizedPlan();
+      // Construir líneas de texto
+      const lines = [];
+      lines.push('MI PLAN DE BIENESTAR PERSONALIZADO');
+      lines.push('Generado: ' + date);
+      lines.push('Profesión: ' + (professionLabels[demo.profession] || 'N/A'));
+      lines.push('Experiencia: ' + (demo.experience || 'N/A'));
+      lines.push('');
+      lines.push('SITUACION ACTUAL');
+      lines.push(plan.diagnosis);
+      lines.push('PRIORIDAD: URGENCIA ' + plan.urgency);
+      lines.push('');
+      // Fases
+      plan.phases.forEach((phase, index) => {
+        lines.push(phase.title.toUpperCase());
+        lines.push('Objetivo: ' + phase.objetivo);
+        phase.acciones.forEach((accion, aIndex) => {
+          lines.push('Acción ' + (aIndex + 1) + ': ' + accion.titulo);
+          lines.push(accion.descripcion);
+          lines.push('Tiempo: ' + accion.tiempo);
+          if (accion.checklist && accion.checklist.length) {
+            lines.push('Checklist:');
+            accion.checklist.forEach(item => lines.push('[ ] ' + item));
+          }
+          lines.push('');
+        });
+      });
+      lines.push('RECURSOS ASIGNADOS');
+      lines.push('- Ejercicios de Mindfulness (sección Recursos Inmediatos)');
+      lines.push('- Técnicas de Regulación Emocional');
+      lines.push('- Guías descargables (sección Biblioteca)');
+      lines.push('- Contactos de apoyo profesional (sección Comunidad)');
+      lines.push('');
+      const followUpDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString('es-ES');
+      lines.push('Recordatorio: Re-evalúa tu bienestar en 3 meses (' + followUpDate + ')');
+      lines.push('');
+      lines.push('© 2025 Alvaro Navarro Mingorance | CC BY-NC 4.0');
+      // Generar y descargar PDF
+      const fileName = `Plan_Bienestar_${new Date().toISOString().split('T')[0]}.pdf`;
+      generateAndDownloadPDF(fileName, 'Plan de Bienestar', lines);
+      alert('¡Plan descargado como PDF correctamente!');
+    } catch (error) {
+      console.error('Error descargando plan:', error);
+      alert('Error al descargar el plan. Error: ' + error.message);
+    }
+  }
+
+  // Guide content database
+  const guideContents = {
+    autocuidado: {
+      title: 'Guía de Autocuidado para Profesionales de CPP',
+      sections: [
+        {
+          title: '¿Qué es el Autocuidado?',
+          content: `El autocuidado es el conjunto de prácticas deliberadas que realizamos para cuidar nuestra salud física, emocional, mental y espiritual. En el contexto de cuidados paliativos pediátricos, el autocuidado no es un lujo - es una necesidad profesional y ética.
 
 Cuando trabajamos con niños en fin de vida y sus familias, estamos constantemente expuestos al sufrimiento, la pérdida y el duelo. Sin prácticas sistemáticas de autocuidado, corremos el riesgo de desarrollar burnout, fatiga por compasión y estrés traumático secundario.
 
 El autocuidado no es egoísmo - es la base que nos permite seguir cuidando de otros con calidad y compasión.`
-      },
-      {
-        title: '20 Estrategias Prácticas',
-        content: `1. Físico:
+        },
+        {
+          title: '20 Estrategias Prácticas',
+          content: `1. Físico:
 - Dormir 7-8 horas diarias
 - Alimentación saludable y regular
 - Ejercicio físico 3-4 veces/semana
@@ -2013,10 +2021,10 @@ El autocuidado no es egoísmo - es la base que nos permite seguir cuidando de ot
 - Participación en equipos de apoyo
 - Límites de carga de trabajo
 - Celebración de logros`
-      },
-      {
-        title: 'Barreras Comunes y Soluciones',
-        content: `BARRERA: "No tengo tiempo"
+        },
+        {
+          title: 'Barreras Comunes y Soluciones',
+          content: `BARRERA: "No tengo tiempo"
 SOLUCIÓN: Empieza con 5 minutos diarios. El autocuidado es una inversión, no un gasto de tiempo.
 
 BARRERA: "Me siento culpable cuidando de mí"
@@ -2030,10 +2038,10 @@ SOLUCIÓN: Sé el ejemplo. Normaliza el autocuidado en tu equipo.
 
 BARRERA: "Es caro"
 SOLUCIÓN: El autocuidado más efectivo es gratuito: respirar, caminar, conectar.`
-      },
-      {
-        title: 'Plan Personalizado',
-        content: `MI PLAN DE AUTOCUIDADO:
+        },
+        {
+          title: 'Plan Personalizado',
+          content: `MI PLAN DE AUTOCUIDADO:
 
 Físico (elige 2):
 □ _______________________
@@ -2056,15 +2064,15 @@ FECHA DE INICIO: _______
 REVISIÓN EN 1 MES: _______
 
 COMPROMISO: Me comprometo a cuidarme porque mi bienestar importa.`
-      }
-    ]
-  },
-  burnout: {
-    title: 'Reconocer Señales de Alerta de Burnout',
-    sections: [
-      {
-        title: 'Definición de Burnout',
-        content: `El burnout es un síndrome de agotamiento emocional, despersonalización y reducción del logro personal que surge cuando las demandas del trabajo superan constantemente nuestros recursos para afrontarlas.
+        }
+      ]
+    },
+    burnout: {
+      title: 'Reconocer Señales de Alerta de Burnout',
+      sections: [
+        {
+          title: 'Definición de Burnout',
+          content: `El burnout es un síndrome de agotamiento emocional, despersonalización y reducción del logro personal que surge cuando las demandas del trabajo superan constantemente nuestros recursos para afrontarlas.
 
 Tres dimensiones:
 1. AGOTAMIENTO EMOCIONAL: Te sientes vacío, sin energía, exhausto
@@ -2072,10 +2080,10 @@ Tres dimensiones:
 3. BAJA REALIZACIÓN: Sensación de ineficacia, falta de logros
 
 El burnout no aparece de repente - es un proceso gradual que podemos prevenir si reconocemos las señales tempranas.`
-      },
-      {
-        title: 'Síntomas Precoces - Checklist',
-        content: `CHECKLIST DE SEÑALES TEMPRANAS:
+        },
+        {
+          title: 'Síntomas Precoces - Checklist',
+          content: `CHECKLIST DE SEÑALES TEMPRANAS:
 
 Físicas:
 □ Fatiga constante, incluso después de descansar
@@ -2110,10 +2118,10 @@ Cognitivas:
 □ Dificultad para tomar decisiones
 
 Si marcaste 5 o más: ACCIÓN INMEDIATA NECESARIA`
-      },
-      {
-        title: '¿Cuándo Buscar Ayuda Profesional?',
-        content: `BUSCA AYUDA PROFESIONAL SI:
+        },
+        {
+          title: '¿Cuándo Buscar Ayuda Profesional?',
+          content: `BUSCA AYUDA PROFESIONAL SI:
 
 ⚠️ Tus síntomas afectan significativamente tu vida diaria
 ⚠️ Has intentado estrategias de autocuidado sin mejora
@@ -2131,10 +2139,10 @@ OPCIONES DE APOYO:
 5. Grupos de apoyo entre pares
 
 RECUERDA: Buscar ayuda es signo de fortaleza, no de debilidad. Los mejores profesionales se cuidan y buscan apoyo cuando lo necesitan.`
-      },
-      {
-        title: 'Contactos de Crisis en España',
-        content: `CONTACTOS DE EMERGENCIA:
+        },
+        {
+          title: 'Contactos de Crisis en España',
+          content: `CONTACTOS DE EMERGENCIA:
 
 📞 024
 Línea de atención a la conducta suicida
@@ -2160,15 +2168,15 @@ RECURSOS ONLINE:
 - Portal de salud laboral de tu hospital
 - Programas de bienestar institucionales
 - Asociaciones profesionales de tu especialidad`
-      }
-    ]
-  },
-  apoyo: {
-    title: 'Apoyo Emocional en Equipo',
-    sections: [
-      {
-        title: 'Importancia del Apoyo en CPP',
-        content: `El trabajo en cuidados paliativos pediátricos es intensamente emocional. Ninguno de nosotros puede procesarlo en solitario. El apoyo del equipo no es opcional - es esencial.
+        }
+      ]
+    },
+    apoyo: {
+      title: 'Apoyo Emocional en Equipo',
+      sections: [
+        {
+          title: 'Importancia del Apoyo en CPP',
+          content: `El trabajo en cuidados paliativos pediátricos es intensamente emocional. Ninguno de nosotros puede procesarlo en solitario. El apoyo del equipo no es opcional - es esencial.
 
 BENEFICIOS DEL APOYO EN EQUIPO:
 - Reduce burnout y fatiga por compasión
@@ -2179,10 +2187,10 @@ BENEFICIOS DEL APOYO EN EQUIPO:
 - Previene aislamiento emocional
 
 Un equipo que se apoya mutuamente proporciona mejor cuidado a pacientes y familias.`
-      },
-      {
-        title: 'Cómo Comunicarse Efectivamente',
-        content: `PRINCIPIOS DE COMUNICACIÓN DE APOYO:
+        },
+        {
+          title: 'Cómo Comunicarse Efectivamente',
+          content: `PRINCIPIOS DE COMUNICACIÓN DE APOYO:
 
 1. ESCUCHA ACTIVA
 - Escucha sin interrumpir
@@ -2206,10 +2214,10 @@ Un equipo que se apoya mutuamente proporciona mejor cuidado a pacientes y famili
 - Comparte tus propias dificultades
 - Normaliza pedir ayuda
 - Modela autocuidado`
-      },
-      {
-        title: 'Modelo de Debriefing',
-        content: `ESTRUCTURA DE DEBRIEFING POST-CASO:
+        },
+        {
+          title: 'Modelo de Debriefing',
+          content: `ESTRUCTURA DE DEBRIEFING POST-CASO:
 
 Duración: 30-60 minutos
 Frecuencia: Después de casos especialmente difíciles
@@ -2244,10 +2252,10 @@ FASES:
 7. CIERRE (5 min)
 - Recordar estrategias de autocuidado
 - Seguimiento si alguien lo necesita`
-      },
-      {
-        title: 'Crear Espacios Seguros',
-        content: `CÓMO CREAR UNA CULTURA DE APOYO:
+        },
+        {
+          title: 'Crear Espacios Seguros',
+          content: `CÓMO CREAR UNA CULTURA DE APOYO:
 
 1. NORMALIZAR LA VULNERABILIDAD
 - Los líderes comparten sus propias dificultades
@@ -2278,15 +2286,15 @@ FASES:
 - Protocolos claros post-evento traumático
 - Acceso a apoyo psicológico
 - Flexibilidad tras casos difíciles`
-      }
-    ]
-  },
-  mindfulness: {
-    title: 'Mindfulness para Principiantes en CPP',
-    sections: [
-      {
-        title: '¿Qué es Mindfulness? (Base Científica)',
-        content: `Mindfulness o atención plena es la capacidad de estar presente en el momento actual, con una actitud de apertura, curiosidad y aceptación, sin juzgar.
+        }
+      ]
+    },
+    mindfulness: {
+      title: 'Mindfulness para Principiantes en CPP',
+      sections: [
+        {
+          title: '¿Qué es Mindfulness? (Base Científica)',
+          content: `Mindfulness o atención plena es la capacidad de estar presente en el momento actual, con una actitud de apertura, curiosidad y aceptación, sin juzgar.
 
 ORIGEN: Prácticas contemplativas orientales adaptadas al contexto clínico occidental por Jon Kabat-Zinn (1979) con el programa MBSR.
 
@@ -2309,10 +2317,10 @@ Para profesionales de CPP, mindfulness nos ayuda a:
 2. Regular nuestras emociones intensas
 3. Mantener compasión sin agotarnos
 4. Recuperarnos del estrés diario`
-      },
-      {
-        title: 'Prácticas Progresivas',
-        content: `NIVEL 1: INICIACIÓN (Semanas 1-2)
+        },
+        {
+          title: 'Prácticas Progresivas',
+          content: `NIVEL 1: INICIACIÓN (Semanas 1-2)
 
 Respiración Consciente (3 min)
 - Siéntate cómodo
@@ -2355,10 +2363,10 @@ Meditación de Compasión (10 min)
 - Primero hacia ti, luego hacia otros
 - Incluye pacientes y familias
 Frecuencia: 3 veces/semana`
-      },
-      {
-        title: 'Integración en Rutina',
-        content: `CÓMO HACER DE MINDFULNESS UN HÁBITO:
+        },
+        {
+          title: 'Integración en Rutina',
+          content: `CÓMO HACER DE MINDFULNESS UN HÁBITO:
 
 1. ANCLA A RUTINAS EXISTENTES
 - Respiración consciente al despertar (antes de levantarte)
@@ -2400,20 +2408,20 @@ RECURSOS RECOMENDADOS:
 - Libros: "Mindfulness en la práctica clínica"
 - Cursos: MBSR online o presencial
 - Grupos: Práctica grupal en tu hospital`
-      }
-    ]
-  }
-};
+        }
+      ]
+    }
+  };
 
-// Global variable to store current guide type
-let currentGuideType = null;
-let guiaActual = null;
+  // Global variable to store current guide type
+  let currentGuideType = null;
+  let guiaActual = null;
 
-// Contenido de guías
-const guiasContenido = {
-  autocuidado: {
-    titulo: 'Guía de Autocuidado para CPP',
-    contenido: `
+  // Contenido de guías
+  const guiasContenido = {
+    autocuidado: {
+      titulo: 'Guía de Autocuidado para CPP',
+      contenido: `
       <h3>¿QUÉ ES AUTOCUIDADO?</h3>
       <p>El autocuidado es el conjunto de prácticas deliberadas que realizas para mantener tu bienestar físico, emocional, social y espiritual. En cuidados paliativos pediátricos, no es un lujo: es esencial.</p>
       <p>Cuando trabajas con niños en fin de vida y sus familias, estás constantemente expuesto al sufrimiento, la pérdida y el duelo. Sin prácticas sistemáticas de autocuidado, corres el riesgo de desarrollar burnout, fatiga por compasión y estrés traumático secundario.</p>
@@ -2466,10 +2474,10 @@ const guiasContenido = {
       <p><strong>Espiritual (elige 1):</strong> _______________________</p>
       <p><strong>COMPROMISO:</strong> Me comprometo a cuidarme porque mi bienestar importa.</p>
     `
-  },
-  alertas: {
-    titulo: 'Reconocer Señales de Alerta de Burnout',
-    contenido: `
+    },
+    alertas: {
+      titulo: 'Reconocer Señales de Alerta de Burnout',
+      contenido: `
       <h3>¿QUÉ ES BURNOUT?</h3>
       <p>El burnout es un síndrome de agotamiento emocional, despersonalización y reducción del logro personal que surge cuando las demandas del trabajo superan constantemente nuestros recursos para afrontarlas.</p>
       <p><strong>Tres dimensiones:</strong></p>
@@ -2525,10 +2533,10 @@ const guiasContenido = {
       <p><strong>PEDPAL:</strong> www.pedpal.es - Recursos y apoyo para profesionales CPP</p>
       <p><em>RECUERDA: Buscar ayuda es signo de fortaleza, no de debilidad.</em></p>
     `
-  },
-  equipo: {
-    titulo: 'Apoyo Emocional en Equipo',
-    contenido: `
+    },
+    equipo: {
+      titulo: 'Apoyo Emocional en Equipo',
+      contenido: `
       <h3>IMPORTANCIA DEL APOYO EN CPP</h3>
       <p>El trabajo en cuidados paliativos pediátricos es intensamente emocional. Ninguno de nosotros puede procesarlo en solitario. El apoyo del equipo no es opcional - es esencial.</p>
       <p><strong>BENEFICIOS:</strong></p>
@@ -2573,10 +2581,10 @@ const guiasContenido = {
         <li><strong>Políticas de apoyo:</strong> Acceso a apoyo psicológico, flexibilidad tras casos difíciles</li>
       </ul>
     `
-  },
-  mindfulness: {
-    titulo: 'Mindfulness para Principiantes en CPP',
-    contenido: `
+    },
+    mindfulness: {
+      titulo: 'Mindfulness para Principiantes en CPP',
+      contenido: `
       <h3>¿QUÉ ES MINDFULNESS?</h3>
       <p>Mindfulness o atención plena es la capacidad de estar presente en el momento actual, con una actitud de apertura, curiosidad y aceptación, sin juzgar.</p>
       <p><strong>ORIGEN:</strong> Prácticas contemplativas orientales adaptadas al contexto clínico occidental por Jon Kabat-Zinn (1979) con el programa MBSR.</p>
@@ -2620,372 +2628,372 @@ const guiasContenido = {
         <li><strong>Calm:</strong> Excelente para mejorar sueño</li>
       </ul>
     `
-  }
-};
+    }
+  };
 
-function leerGuia(tipo) {
-  guiaActual = tipo;
-  const guia = guiasContenido[tipo];
+  function leerGuia(tipo) {
+    guiaActual = tipo;
+    const guia = guiasContenido[tipo];
 
-  if (!guia) {
-    alert('Guía no disponible');
-    return;
-  }
+    if (!guia) {
+      alert('Guía no disponible');
+      return;
+    }
 
-  const modal = document.getElementById('guiaModal');
-  if (!modal) {
-    console.error('Modal de guía no encontrado');
-    return;
-  }
+    const modal = document.getElementById('guiaModal');
+    if (!modal) {
+      console.error('Modal de guía no encontrado');
+      return;
+    }
 
-  document.getElementById('guiaTitle').textContent = guia.titulo;
-  document.getElementById('guiaContent').innerHTML = guia.contenido;
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-function descargarGuia(tipo) {
-  const guia = guiasContenido[tipo];
-  if (!guia) {
-    alert('Guía no disponible');
-    return;
+    document.getElementById('guiaTitle').textContent = guia.titulo;
+    document.getElementById('guiaContent').innerHTML = guia.contenido;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   }
 
-  // Crear contenido de texto limpio a partir del HTML de la guía
-  const temp = document.createElement('div');
-  temp.innerHTML = guia.contenido;
-  const textoLimpio = temp.innerText;
-  // Construir las líneas para el PDF
-  const lines = [];
-  lines.push(guia.titulo);
-  lines.push('');
-  textoLimpio.split('\n').forEach(l => lines.push(l));
-  lines.push('');
-  lines.push('© 2025 Alvaro Navarro Mingorance | CC BY-NC 4.0');
-  // Generar y descargar PDF utilizando el helper
-  const fileName = guia.titulo.replace(/\s/g, '-') + '.pdf';
-  generateAndDownloadPDF(fileName, guia.titulo, lines);
-  console.log('Guía descargada en PDF:', tipo);
-}
+  function descargarGuia(tipo) {
+    const guia = guiasContenido[tipo];
+    if (!guia) {
+      alert('Guía no disponible');
+      return;
+    }
 
-function descargarGuiaActual() {
-  if (!guiaActual) return;
-  descargarGuia(guiaActual);
-}
-
-function descargarComoTexto(titulo, contenido) {
-  // Limpiar HTML
-  const temp = document.createElement('div');
-  temp.innerHTML = contenido;
-  const texto = titulo + '\n\n' + temp.innerText;
-
-  // Crear RTF
-  let rtf = '{\\rtf1\\ansi\\ansicpg1252\\cocoartf2100\n';
-  rtf += '{\\fonttbl\\f0\\fswiss Helvetica;}\n';
-  rtf += '\\margl1440\\margr1440\\f0\\fs24\n';
-  rtf += '{\\b\\fs32 ' + titulo + '}\\par\\par\n';
-  rtf += texto.replace(/\n/g, '\\par\n') + '\\par\\par\n';
-  rtf += '{\\fs16 © 2025 Álvaro Navarro Mingorance | CC BY-NC}\n}';
-
-  // Descargar
-  const blob = new Blob([rtf], { type: 'application/rtf' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = titulo.replace(/\s/g, '-') + '.rtf';
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-// Download guide function - shows content in dedicated guide modal
-function downloadGuide(guideType) {
-  const guide = guideContents[guideType];
-  if (!guide) {
-    alert('Guía no disponible');
-    return;
+    // Crear contenido de texto limpio a partir del HTML de la guía
+    const temp = document.createElement('div');
+    temp.innerHTML = guia.contenido;
+    const textoLimpio = temp.innerText;
+    // Construir las líneas para el PDF
+    const lines = [];
+    lines.push(guia.titulo);
+    lines.push('');
+    textoLimpio.split('\n').forEach(l => lines.push(l));
+    lines.push('');
+    lines.push('© 2025 Alvaro Navarro Mingorance | CC BY-NC 4.0');
+    // Generar y descargar PDF utilizando el helper
+    const fileName = guia.titulo.replace(/\s/g, '-') + '.pdf';
+    generateAndDownloadPDF(fileName, guia.titulo, lines);
+    console.log('Guía descargada en PDF:', tipo);
   }
 
-  currentGuideType = guideType;
+  function descargarGuiaActual() {
+    if (!guiaActual) return;
+    descargarGuia(guiaActual);
+  }
 
-  // Use dedicated guide modal
-  const modal = document.getElementById('guideModal');
-  const modalTitle = document.getElementById('guideTitle');
-  const modalBody = document.getElementById('guideContent');
+  function descargarComoTexto(titulo, contenido) {
+    // Limpiar HTML
+    const temp = document.createElement('div');
+    temp.innerHTML = contenido;
+    const texto = titulo + '\n\n' + temp.innerText;
 
-  modalTitle.textContent = guide.title;
+    // Crear RTF
+    let rtf = '{\\rtf1\\ansi\\ansicpg1252\\cocoartf2100\n';
+    rtf += '{\\fonttbl\\f0\\fswiss Helvetica;}\n';
+    rtf += '\\margl1440\\margr1440\\f0\\fs24\n';
+    rtf += '{\\b\\fs32 ' + titulo + '}\\par\\par\n';
+    rtf += texto.replace(/\n/g, '\\par\n') + '\\par\\par\n';
+    rtf += '{\\fs16 © 2025 Álvaro Navarro Mingorance | CC BY-NC}\n}';
 
-  let html = '';
+    // Descargar
+    const blob = new Blob([rtf], { type: 'application/rtf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = titulo.replace(/\s/g, '-') + '.rtf';
+    link.click();
+    URL.revokeObjectURL(url);
+  }
 
-  guide.sections.forEach((section, index) => {
-    html += `
+  // Download guide function - shows content in dedicated guide modal
+  function downloadGuide(guideType) {
+    const guide = guideContents[guideType];
+    if (!guide) {
+      alert('Guía no disponible');
+      return;
+    }
+
+    currentGuideType = guideType;
+
+    // Use dedicated guide modal
+    const modal = document.getElementById('guideModal');
+    const modalTitle = document.getElementById('guideTitle');
+    const modalBody = document.getElementById('guideContent');
+
+    modalTitle.textContent = guide.title;
+
+    let html = '';
+
+    guide.sections.forEach((section, index) => {
+      html += `
       <div style="margin-bottom: var(--space-24);">
         <h3>${section.title}</h3>
         <div style="white-space: pre-line;">${section.content}</div>
       </div>
     `;
+    });
+
+    modalBody.innerHTML = html;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Close guide modal
+  function cerrarGuia() {
+    const modal = document.getElementById('guiaModal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+    guiaActual = null;
+    currentGuideType = null;
+  }
+
+  // ESC key handler for guide modal
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      const guiaModal = document.getElementById('guiaModal');
+      if (guiaModal && guiaModal.style.display === 'flex') {
+        cerrarGuia();
+      }
+    }
   });
 
-  modalBody.innerHTML = html;
-  modal.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-}
-
-// Close guide modal
-function cerrarGuia() {
-  const modal = document.getElementById('guiaModal');
-  if (modal) {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-  }
-  guiaActual = null;
-  currentGuideType = null;
-}
-
-// ESC key handler for guide modal
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    const guiaModal = document.getElementById('guiaModal');
-    if (guiaModal && guiaModal.style.display === 'flex') {
-      cerrarGuia();
-    }
-  }
-});
-
-// Download current guide as RTF - UPDATED VERSION
-function descargarGuiaPDF() {
-  try {
-    if (!currentGuideType) {
-      alert('No hay guía seleccionada');
-      return;
-    }
-    const guide = guideContents[currentGuideType];
-    if (!guide) {
-      console.error('Guía no encontrada:', currentGuideType);
-      alert('Error: No se encontró el contenido de la guía');
-      return;
-    }
-    // Construir líneas de texto para la guía
-    const lines = [];
-    lines.push(guide.title);
-    lines.push('© 2025 Alvaro Navarro Mingorance');
-    lines.push('Licencia Creative Commons Atribución-NoComercial 4.0 Internacional');
-    lines.push('');
-    guide.sections.forEach(section => {
-      lines.push(section.title.toUpperCase());
-      // Dividir contenido por saltos de línea para mantener la estructura
-      const parts = section.content.split('\n');
-      parts.forEach(p => lines.push(p));
+  // Download current guide as RTF - UPDATED VERSION
+  function descargarGuiaPDF() {
+    try {
+      if (!currentGuideType) {
+        alert('No hay guía seleccionada');
+        return;
+      }
+      const guide = guideContents[currentGuideType];
+      if (!guide) {
+        console.error('Guía no encontrada:', currentGuideType);
+        alert('Error: No se encontró el contenido de la guía');
+        return;
+      }
+      // Construir líneas de texto para la guía
+      const lines = [];
+      lines.push(guide.title);
+      lines.push('© 2025 Alvaro Navarro Mingorance');
+      lines.push('Licencia Creative Commons Atribución-NoComercial 4.0 Internacional');
       lines.push('');
-    });
-    lines.push('Fin del documento');
-    const fileName = `Guia-${currentGuideType}-CPP.pdf`;
-    generateAndDownloadPDF(fileName, guide.title, lines);
-    alert('¡Guía descargada como PDF correctamente!');
-  } catch (error) {
-    console.error('Error en descargarGuiaPDF:', error);
-    alert('Error al descargar. Por favor, intenta de nuevo. Error: ' + error.message);
-  }
-}
-
-// Funciones para modal de resultados
-function mostrarResultadoEnModal(results) {
-  const tipo = currentEvaluation;
-  const datos = demographicData;
-
-  // Llenar datos
-  document.getElementById('resultadoTitulo').textContent = `Resultados - ${evaluations[tipo].name}`;
-  document.getElementById('resultadoSubtitulo').textContent = `Evaluación completada el ${new Date().toLocaleDateString('es-ES')}`;
-  document.getElementById('resultado-fecha').textContent = new Date().toLocaleDateString('es-ES');
-
-  const professionLabels = {
-    medico: 'Médico/a',
-    enfermero: 'Enfermero/a',
-    psicologo: 'Psicólogo/a',
-    trabajador_social: 'Trabajador/a Social',
-    otro: 'Otro'
-  };
-
-  document.getElementById('resultado-profesion').textContent = professionLabels[datos.profession] || datos.profession || 'No especificada';
-  document.getElementById('resultado-edad').textContent = datos.age || '-';
-  document.getElementById('resultado-experiencia').textContent = datos.experience || '-';
-
-  // Puntuación
-  let puntuacion = '';
-  let interpretacion = '';
-
-  if (results.type === 'burnout') {
-    puntuacion = results.total + '/100';
-    interpretacion = getBurnoutInterpretation(results.level.level);
-  } else if (results.type === 'compassion') {
-    const burnoutSub = results.subscales.find(s => s.name.includes('Burnout'));
-    puntuacion = burnoutSub ? burnoutSub.score + '/25' : 'N/A';
-    interpretacion = 'Ver detalles completos en las recomendaciones';
-  } else if (results.type === 'selfcare') {
-    puntuacion = results.total + '/5';
-    interpretacion = getSelfcareInterpretation(results.level.level);
+      guide.sections.forEach(section => {
+        lines.push(section.title.toUpperCase());
+        // Dividir contenido por saltos de línea para mantener la estructura
+        const parts = section.content.split('\n');
+        parts.forEach(p => lines.push(p));
+        lines.push('');
+      });
+      lines.push('Fin del documento');
+      const fileName = `Guia-${currentGuideType}-CPP.pdf`;
+      generateAndDownloadPDF(fileName, guide.title, lines);
+      alert('¡Guía descargada como PDF correctamente!');
+    } catch (error) {
+      console.error('Error en descargarGuiaPDF:', error);
+      alert('Error al descargar. Por favor, intenta de nuevo. Error: ' + error.message);
+    }
   }
 
-  document.getElementById('resultado-puntuacion').textContent = puntuacion;
-  document.getElementById('resultado-interpretacion').textContent = interpretacion;
+  // Funciones para modal de resultados
+  function mostrarResultadoEnModal(results) {
+    const tipo = currentEvaluation;
+    const datos = demographicData;
 
-  // Recomendaciones
-  const recomendaciones = generarRecomendacionesArray(results);
-  document.getElementById('resultado-recomendaciones').innerHTML =
-    recomendaciones.map(rec => `<li>${rec}</li>`).join('');
+    // Llenar datos
+    document.getElementById('resultadoTitulo').textContent = `Resultados - ${evaluations[tipo].name}`;
+    document.getElementById('resultadoSubtitulo').textContent = `Evaluación completada el ${new Date().toLocaleDateString('es-ES')}`;
+    document.getElementById('resultado-fecha').textContent = new Date().toLocaleDateString('es-ES');
 
-  // Plan
-  const plan = generarPlanAccion(results);
-  document.getElementById('resultado-plan').textContent = plan;
+    const professionLabels = {
+      medico: 'Médico/a',
+      enfermero: 'Enfermero/a',
+      psicologo: 'Psicólogo/a',
+      trabajador_social: 'Trabajador/a Social',
+      otro: 'Otro'
+    };
 
-  // Guardar en// ==========================================
-  // CONFIGURACIÓN DE FIREBASE (BACKEND)
-  // ==========================================
-  // ⚠️ IMPORTANTE: Reemplaza este objeto con tu propia configuración de Firebase
-  // 1. Ve a https://console.firebase.google.com/
-  // 2. Crea un proyecto nuevo
-  // 3. Añade una "Web App"
-  // 4. Copia las claves que te aparecen (firebaseConfig) y pégalas aquí abajo
-  const firebaseConfig = {
-    apiKey: "TU_API_KEY_AQUI",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    projectId: "TU_PROJECT_ID",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "TU_SENDER_ID",
-    appId: "TU_APP_ID"
-  };
+    document.getElementById('resultado-profesion').textContent = professionLabels[datos.profession] || datos.profession || 'No especificada';
+    document.getElementById('resultado-edad').textContent = datos.age || '-';
+    document.getElementById('resultado-experiencia').textContent = datos.experience || '-';
 
-  // Inicializar Firebase
-  let db; // Referencia a Firestore
-  let auth; // Referencia a Auth
-  let currentUser = null;
+    // Puntuación
+    let puntuacion = '';
+    let interpretacion = '';
 
-  try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    auth = firebase.auth();
-    console.log("Firebase inicializado correctamente");
+    if (results.type === 'burnout') {
+      puntuacion = results.total + '/100';
+      interpretacion = getBurnoutInterpretation(results.level.level);
+    } else if (results.type === 'compassion') {
+      const burnoutSub = results.subscales.find(s => s.name.includes('Burnout'));
+      puntuacion = burnoutSub ? burnoutSub.score + '/25' : 'N/A';
+      interpretacion = 'Ver detalles completos en las recomendaciones';
+    } else if (results.type === 'selfcare') {
+      puntuacion = results.total + '/5';
+      interpretacion = getSelfcareInterpretation(results.level.level);
+    }
 
-    // Iniciar sesión anónima automáticamente
-    auth.signInAnonymously()
-      .then(() => {
-        console.log("Sesión anónima iniciada");
-      })
-      .catch((error) => {
-        console.error("Error en autenticación anónima:", error);
+    document.getElementById('resultado-puntuacion').textContent = puntuacion;
+    document.getElementById('resultado-interpretacion').textContent = interpretacion;
+
+    // Recomendaciones
+    const recomendaciones = generarRecomendacionesArray(results);
+    document.getElementById('resultado-recomendaciones').innerHTML =
+      recomendaciones.map(rec => `<li>${rec}</li>`).join('');
+
+    // Plan
+    const plan = generarPlanAccion(results);
+    document.getElementById('resultado-plan').textContent = plan;
+
+    // Guardar en// ==========================================
+    // CONFIGURACIÓN DE FIREBASE (BACKEND)
+    // ==========================================
+    // ⚠️ IMPORTANTE: Reemplaza este objeto con tu propia configuración de Firebase
+    // 1. Ve a https://console.firebase.google.com/
+    // 2. Crea un proyecto nuevo
+    // 3. Añade una "Web App"
+    // 4. Copia las claves que te aparecen (firebaseConfig) y pégalas aquí abajo
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY_AQUI",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      projectId: "TU_PROJECT_ID",
+      storageBucket: "TU_PROYECTO.appspot.com",
+      messagingSenderId: "TU_SENDER_ID",
+      appId: "TU_APP_ID"
+    };
+
+    // Inicializar Firebase
+    let db; // Referencia a Firestore
+    let auth; // Referencia a Auth
+    let currentUser = null;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+      console.log("Firebase inicializado correctamente");
+
+      // Iniciar sesión anónima automáticamente
+      auth.signInAnonymously()
+        .then(() => {
+          console.log("Sesión anónima iniciada");
+        })
+        .catch((error) => {
+          console.error("Error en autenticación anónima:", error);
+        });
+
+      // Escuchar cambios de estado de autenticación
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          currentUser = user;
+          console.log("Usuario conectado (ID):", user.uid);
+          // Cargar historial si existe
+          cargarHistorialFirebase();
+        } else {
+          currentUser = null;
+        }
       });
 
-    // Escuchar cambios de estado de autenticación
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        currentUser = user;
-        console.log("Usuario conectado (ID):", user.uid);
-        // Cargar historial si existe
-        cargarHistorialFirebase();
-      } else {
-        currentUser = null;
+    } catch (error) {
+      console.warn("Firebase no configurado o error de inicialización. La app funcionará en modo local.", error);
+    }
+
+    // ==========================================
+    // FIN CONFIGURACIÓN FIREBASE
+    // ==========================================
+
+    // Variables globales de estadorga
+    window.resultadoActual = {
+      tipo: tipo,
+      datos: datos,
+      resultados: {
+        puntuacion: puntuacion,
+        interpretacion: interpretacion,
+        recomendaciones: recomendaciones,
+        plan: plan
       }
-    });
+    };
 
-  } catch (error) {
-    console.warn("Firebase no configurado o error de inicialización. La app funcionará en modo local.", error);
+    // Mostrar modal
+    document.getElementById('resultadoModal').classList.add('activo');
   }
 
-  // ==========================================
-  // FIN CONFIGURACIÓN FIREBASE
-  // ==========================================
-
-  // Variables globales de estadorga
-  window.resultadoActual = {
-    tipo: tipo,
-    datos: datos,
-    resultados: {
-      puntuacion: puntuacion,
-      interpretacion: interpretacion,
-      recomendaciones: recomendaciones,
-      plan: plan
-    }
-  };
-
-  // Mostrar modal
-  document.getElementById('resultadoModal').classList.add('activo');
-}
-
-function cerrarResultado() {
-  document.getElementById('resultadoModal').classList.remove('activo');
-}
-
-// Cerrar al hacer click fuera del modal
-document.addEventListener('click', function (e) {
-  const modal = document.getElementById('resultadoModal');
-  if (e.target === modal) {
-    cerrarResultado();
-  }
-});
-
-function generarRecomendacionesArray(results) {
-  const recomendaciones = [];
-
-  if (results.type === 'burnout') {
-    if (results.level.level === 'alto' || results.level.level === 'medio') {
-      recomendaciones.push('Habla con tu supervisor sobre ajustar tu carga de trabajo');
-      recomendaciones.push('Programa sesiones de mindfulness diarias (apps: Headspace, Calm)');
-      recomendaciones.push('Considera buscar apoyo psicológico especializado');
-      recomendaciones.push('Participa en espacios de reflexión grupal (Schwartz Rounds)');
-      recomendaciones.push('Toma tiempo de descanso - es prioritario');
-    } else {
-      recomendaciones.push('Mantén equilibrio trabajo-vida: respeta tus límites horarios');
-      recomendaciones.push('Continúa con espacios de supervisión regulares');
-      recomendaciones.push('Actualiza tus habilidades de afrontamiento con formación');
-      recomendaciones.push('Cultiva relaciones de apoyo con colegas');
-    }
-  } else if (results.type === 'compassion') {
-    const hasBurnout = results.subscales.find(s => s.name.includes('Burnout') && (s.level.level === 'alto' || s.level.level === 'medio'));
-    const hasTrauma = results.subscales.find(s => s.name.includes('Traumático') && (s.level.level === 'alto' || s.level.level === 'medio'));
-
-    if (hasBurnout || hasTrauma) {
-      recomendaciones.push('Busca formación en Programa de Resiliencia de Fatiga por Compasión');
-      recomendaciones.push('Establece sesiones de debriefing regulares con tu equipo');
-      recomendaciones.push('Conecta con colegas que comprendan tu experiencia');
-      recomendaciones.push('Trabaja en establecer límites emocionales saludables');
-      recomendaciones.push('Considera terapia cognitivo-conductual centrada en trauma');
-    } else {
-      recomendaciones.push('Mantén práctica diaria de mindfulness (10-15 minutos)');
-      recomendaciones.push('Dedica tiempo semanal a procesar emociones');
-      recomendaciones.push('Revisa periódicamente tus límites profesionales');
-      recomendaciones.push('Mantén hobbies no relacionados con trabajo');
-    }
-  } else if (results.type === 'selfcare') {
-    if (results.level.level === 'bajo' || results.level.level === 'medio') {
-      recomendaciones.push('Crea un plan escrito con actividades específicas semanales');
-      recomendaciones.push('Bloquea tiempo para autocuidado en tu calendario');
-      recomendaciones.push('Reactiva conexiones con familia y amigos');
-      recomendaciones.push('Comienza con 20 minutos de actividad física 3 veces/semana');
-      recomendaciones.push('Establece rutina de higiene del sueño');
-    } else {
-      recomendaciones.push('Continúa con tus estrategias actuales - lo estás haciendo bien');
-      recomendaciones.push('Evalúa tu autocuidado cada 3 meses');
-      recomendaciones.push('Comparte tus estrategias con colegas');
-      recomendaciones.push('Explora nuevas actividades de autocuidado');
-    }
+  function cerrarResultado() {
+    document.getElementById('resultadoModal').classList.remove('activo');
   }
 
+  // Cerrar al hacer click fuera del modal
+  document.addEventListener('click', function (e) {
+    const modal = document.getElementById('resultadoModal');
+    if (e.target === modal) {
+      cerrarResultado();
+    }
+  });
 
-  return recomendaciones;
-}
+  function generarRecomendacionesArray(results) {
+    const recomendaciones = [];
 
-function generarPlanAccion(results) {
-  let plan = '';
+    if (results.type === 'burnout') {
+      if (results.level.level === 'alto' || results.level.level === 'medio') {
+        recomendaciones.push('Habla con tu supervisor sobre ajustar tu carga de trabajo');
+        recomendaciones.push('Programa sesiones de mindfulness diarias (apps: Headspace, Calm)');
+        recomendaciones.push('Considera buscar apoyo psicológico especializado');
+        recomendaciones.push('Participa en espacios de reflexión grupal (Schwartz Rounds)');
+        recomendaciones.push('Toma tiempo de descanso - es prioritario');
+      } else {
+        recomendaciones.push('Mantén equilibrio trabajo-vida: respeta tus límites horarios');
+        recomendaciones.push('Continúa con espacios de supervisión regulares');
+        recomendaciones.push('Actualiza tus habilidades de afrontamiento con formación');
+        recomendaciones.push('Cultiva relaciones de apoyo con colegas');
+      }
+    } else if (results.type === 'compassion') {
+      const hasBurnout = results.subscales.find(s => s.name.includes('Burnout') && (s.level.level === 'alto' || s.level.level === 'medio'));
+      const hasTrauma = results.subscales.find(s => s.name.includes('Traumático') && (s.level.level === 'alto' || s.level.level === 'medio'));
 
-  // Disclaimer inicial para todos los planes
-  const disclaimer = `⚠️ IMPORTANTE: CONSULTA CON TU PSICÓLOGO / A DE REFERENCIA
+      if (hasBurnout || hasTrauma) {
+        recomendaciones.push('Busca formación en Programa de Resiliencia de Fatiga por Compasión');
+        recomendaciones.push('Establece sesiones de debriefing regulares con tu equipo');
+        recomendaciones.push('Conecta con colegas que comprendan tu experiencia');
+        recomendaciones.push('Trabaja en establecer límites emocionales saludables');
+        recomendaciones.push('Considera terapia cognitivo-conductual centrada en trauma');
+      } else {
+        recomendaciones.push('Mantén práctica diaria de mindfulness (10-15 minutos)');
+        recomendaciones.push('Dedica tiempo semanal a procesar emociones');
+        recomendaciones.push('Revisa periódicamente tus límites profesionales');
+        recomendaciones.push('Mantén hobbies no relacionados con trabajo');
+      }
+    } else if (results.type === 'selfcare') {
+      if (results.level.level === 'bajo' || results.level.level === 'medio') {
+        recomendaciones.push('Crea un plan escrito con actividades específicas semanales');
+        recomendaciones.push('Bloquea tiempo para autocuidado en tu calendario');
+        recomendaciones.push('Reactiva conexiones con familia y amigos');
+        recomendaciones.push('Comienza con 20 minutos de actividad física 3 veces/semana');
+        recomendaciones.push('Establece rutina de higiene del sueño');
+      } else {
+        recomendaciones.push('Continúa con tus estrategias actuales - lo estás haciendo bien');
+        recomendaciones.push('Evalúa tu autocuidado cada 3 meses');
+        recomendaciones.push('Comparte tus estrategias con colegas');
+        recomendaciones.push('Explora nuevas actividades de autocuidado');
+      }
+    }
+
+
+    return recomendaciones;
+  }
+
+  function generarPlanAccion(results) {
+    let plan = '';
+
+    // Disclaimer inicial para todos los planes
+    const disclaimer = `⚠️ IMPORTANTE: CONSULTA CON TU PSICÓLOGO / A DE REFERENCIA
     - Este plan es una guía general basada en tus respuestas.
 - No sustituye la valoración de un profesional.
 - Si tienes dudas o malestar, contacta con el psicólogo de tu equipo o solicita derivación.
 
 `;
 
-  if (results.type === 'burnout' && (results.level.level === 'alto' || results.level.level === 'medio')) {
-    plan = disclaimer + `SEMANA 1 - 2: Establece práctica básica
+    if (results.type === 'burnout' && (results.level.level === 'alto' || results.level.level === 'medio')) {
+      plan = disclaimer + `SEMANA 1 - 2: Establece práctica básica
     - Mindfulness diario 5 minutos(DRAW o Respiración Consciente)
       - Identifica 1 actividad restauradora y blóqueala en calendario
         - Habla con supervisor sobre carga de trabajo
@@ -2999,8 +3007,8 @@ SEMANA 5 - 8: Mantén y expande
     - Integra prácticas establecidas
       - Evalúa progreso
         - Considera supervisión profesional`;
-  } else if (results.type === 'compassion') {
-    plan = disclaimer + `SEMANA 1 - 2: Prácticas de anclaje
+    } else if (results.type === 'compassion') {
+      plan = disclaimer + `SEMANA 1 - 2: Prácticas de anclaje
     - Técnica DRAW entre pacientes
       - Los 5 sentidos(grounding) cuando sientas activación
         - Debriefing informal con colega después de casos difíciles
@@ -3019,8 +3027,8 @@ PRÓXIMOS PASOS:
   - Recursos de regulación emocional disponibles
     - Contactos de apoyo profesional
       - Guía de Apoyo Emocional en Equipo`;
-  } else {
-    plan = `SEMANA 1 - 2: Identifica prioridades
+    } else {
+      plan = `SEMANA 1 - 2: Identifica prioridades
     - Evalúa 4 dimensiones: físico, emocional, social, espiritual
       - Elige 2 prácticas concretas para empezar
         - Bloquea tiempo en calendario
@@ -3039,25 +3047,231 @@ PRÓXIMOS PASOS:
   - Descarga Guía de Autocuidado para CPP
     - Explora ejercicios de mindfulness
       - Únete a espacios de apoyo`;
+    }
+
+    return plan;
   }
 
-  return plan;
-}
+  // Descarga en formato RTF
+  function descargarResultadoRTF() {
+    console.log('descargarResultadoRTF llamada');
+    try {
+      if (!window.resultadoActual) {
+        console.error('No hay resultadoActual');
+        alert('No hay resultados para descargar');
+        return;
+      }
+      console.log('Datos resultado:', window.resultadoActual);
 
-// Descarga en formato RTF
-function descargarResultadoRTF() {
-  console.log('descargarResultadoRTF llamada');
-  try {
-    if (!window.resultadoActual) {
-      console.error('No hay resultadoActual');
-      alert('No hay resultados para descargar');
+      const datos = window.resultadoActual.datos;
+      const resultados = window.resultadoActual.resultados;
+      const tipo = window.resultadoActual.tipo;
+
+      const professionLabels = {
+        medico: 'Médico/a',
+        enfermero: 'Enfermero/a',
+        psicologo: 'Psicólogo/a',
+        trabajador_social: 'Trabajador/a Social',
+        otro: 'Otro'
+      };
+
+      const tipoLabels = {
+        burnout: 'Burnout',
+        compassion: 'Fatiga por Compasión',
+        selfcare: 'Autocuidado'
+      };
+
+      // Generar contenido RTF
+      let rtf = '{\\rtf1\\ansi\\ansicpg1252\\cocoartf2100\n';
+      rtf += '{\\fonttbl\\f0\\fswiss Helvetica;}\n';
+      rtf += '{\\colortbl;\\red255\\green255\\blue255;\\red50\\green184\\blue198;}\n';
+      rtf += '\\margl1440\\margr1440\\vieww12000\\viewh15840\\viewkind0\n';
+      rtf += '\\f0\\fs28\n';
+
+      // Título
+      rtf += '{\\b\\fs36 Resultados de Evaluaci\\u243?n - ' + tipoLabels[tipo] + '}\\par\\par\n';
+
+      // Fecha
+      rtf += 'Fecha: ' + new Date().toLocaleDateString('es-ES') + '\\par\n';
+      rtf += 'Profesi\\u243?n: ' + (professionLabels[datos.profession] || 'No especificada') + '\\par\n';
+      rtf += 'Edad: ' + (datos.age || '-') + '\\par\n';
+      rtf += 'Experiencia en CPP: ' + (datos.experience || '-') + '\\par\\par\n';
+
+      // Separador
+      rtf += '\\pard\\pardeftab720\\partightenfactor0\n';
+      rtf += '________________________________\\par\\par\n';
+
+      // Puntuación
+      rtf += '{\\b\\fs32 Puntuaci\\u243?n}\\par\n';
+      rtf += '{\\fs40\\cf2 ' + resultados.puntuacion + '}\\par\n';
+      rtf += resultados.interpretacion.replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
+        const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
+        return map[match] || match;
+      }) + '\\par\\par\n';
+
+      // Separador
+      rtf += '________________________________\\par\\par\n';
+
+      // Recomendaciones
+      rtf += '{\\b\\fs28 Recomendaciones}\\par\n';
+      resultados.recomendaciones.forEach((rec, idx) => {
+        const recEscaped = rec.replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
+          const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
+          return map[match] || match;
+        });
+        rtf += (idx + 1) + '. ' + recEscaped + '\\par\n';
+      });
+      rtf += '\\par\n';
+
+      // Plan
+      rtf += '{\\b\\fs28 Plan de Acci\\u243?n}\\par\n';
+      const planEscaped = resultados.plan.replace(/\n/g, '\\par\n').replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
+        const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
+        return map[match] || match;
+      });
+      rtf += planEscaped + '\\par\\par\n';
+
+      // Footer
+      rtf += '\\par________________________________\\par\n';
+      rtf += '{\\fs20 \\u169? 2025 \\u193?lvaro Navarro Mingorance | CC BY-NC 4.0}\n';
+      rtf += '}';
+
+      // Crear blob y descargar
+      const blob = new Blob([rtf], { type: 'application/rtf' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Resultados - ${tipo} -${new Date().toISOString().slice(0, 10)}.rtf`;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+
+      console.log('Descarga RTF completada exitosamente');
+
+    } catch (error) {
+      console.error('Error descargando RTF:', error);
+      alert('Error al descargar: ' + error.message);
+    }
+  }
+
+  // ESC key handler for modals
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+      // Close result modal if open
+      const resultModal = document.getElementById('resultadoModal');
+      if (resultModal && resultModal.classList.contains('activo')) {
+        cerrarResultado();
+      }
+      // Close guide modal if open
+      const guideModal = document.getElementById('guideModal');
+      if (guideModal && guideModal.style.display === 'flex') {
+        cerrarGuia();
+      }
+      // Close evaluation modal if open
+      const evalModal = document.getElementById('evaluationModal');
+      if (evalModal && evalModal.classList.contains('active')) {
+        closeModal();
+      }
+    }
+  });
+  // ==========================================
+  // FUNCIONES DE FIREBASE
+  // ==========================================
+
+  function cargarHistorialFirebase() {
+    if (!currentUser || !db) return;
+
+    console.log("Cargando historial desde Firebase...");
+
+    db.collection('evaluaciones')
+      .where('userId', '==', currentUser.uid)
+      .orderBy('timestamp', 'desc')
+      .get()
+      .then((querySnapshot) => {
+        // Limpiar historial local antes de cargar el remoto para evitar duplicados
+        evaluacionManager.limpiarHistorial();
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          // Adaptar formato si es necesario
+          const evaluacion = {
+            id: data.id || doc.id,
+            tipo: data.tipo,
+            fecha: data.fecha,
+            datos: data.datos,
+            resultados: data.resultados
+          };
+          evaluacionManager.evaluaciones.push(evaluacion);
+        });
+
+        console.log(`Historial cargado: ${evaluacionManager.evaluaciones.length} evaluaciones.`);
+
+        // Actualizar UI si estamos en la sección de seguimiento
+        if (currentSection === 'seguimiento') {
+          mostrarHistorialEvaluaciones();
+        }
+
+        // Verificar si hay evaluaciones para desbloquear funcionalidades
+        if (evaluacionManager.evaluaciones.length > 0) {
+          hasCompletedEvaluations = true;
+          // Cargar resultados más recientes en evaluationResults
+          // Esto es una simplificación, idealmente procesaríamos todo
+          const ultima = evaluacionManager.evaluaciones[0];
+          evaluationResults[ultima.tipo] = ultima.resultados;
+          evaluationResults.demographics = ultima.datos;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al cargar historial:", error);
+        // Fallback a índices si falta el índice compuesto
+        if (error.code === 'failed-precondition') {
+          console.warn("Falta índice compuesto en Firestore. Intentando consulta simple.");
+          // Intento sin ordenamiento (el cliente ordena)
+          db.collection('evaluaciones')
+            .where('userId', '==', currentUser.uid)
+            .get()
+            .then((querySnapshot) => {
+              evaluacionManager.limpiarHistorial();
+              querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const evaluacion = {
+                  id: data.id || doc.id,
+                  tipo: data.tipo,
+                  fecha: data.fecha,
+                  datos: data.datos,
+                  resultados: data.resultados
+                };
+                evaluacionManager.evaluaciones.push(evaluacion);
+              });
+              // Ordenar localmente
+              evaluacionManager.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+              if (currentSection === 'seguimiento') {
+                mostrarHistorialEvaluaciones();
+              }
+            });
+        }
+      });
+  }
+  // Mostrar historial de evaluaciones
+  function mostrarHistorialEvaluaciones() {
+    console.log('Cargando historial...');
+    const historial = evaluacionManager.obtenerHistorial();
+    console.log('Historial obtenido:', historial);
+    const container = document.getElementById('evaluationHistory');
+
+    if (!container) {
+      console.error('Container evaluationHistory no encontrado');
       return;
     }
-    console.log('Datos resultado:', window.resultadoActual);
 
-    const datos = window.resultadoActual.datos;
-    const resultados = window.resultadoActual.resultados;
-    const tipo = window.resultadoActual.tipo;
+    if (historial.length === 0) {
+      container.innerHTML = '<p class="empty-state">Aún no has completado ninguna evaluación. <a href="#evaluaciones" onclick="showSection(\'evaluaciones\')">Comienza ahora</a></p>';
+      return;
+    }
 
     const professionLabels = {
       medico: 'Médico/a',
@@ -3073,218 +3287,12 @@ function descargarResultadoRTF() {
       selfcare: 'Autocuidado'
     };
 
-    // Generar contenido RTF
-    let rtf = '{\\rtf1\\ansi\\ansicpg1252\\cocoartf2100\n';
-    rtf += '{\\fonttbl\\f0\\fswiss Helvetica;}\n';
-    rtf += '{\\colortbl;\\red255\\green255\\blue255;\\red50\\green184\\blue198;}\n';
-    rtf += '\\margl1440\\margr1440\\vieww12000\\viewh15840\\viewkind0\n';
-    rtf += '\\f0\\fs28\n';
+    container.innerHTML = historial.map((item, idx) => {
+      const fecha = new Date(item.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+      const puntuacion = item.resultados.total || (item.resultados.subscales ? item.resultados.subscales[0].score : 'N/A');
+      const nivel = item.resultados.level ? item.resultados.level.text : (item.resultados.subscales ? item.resultados.subscales[0].level.text : 'N/A');
 
-    // Título
-    rtf += '{\\b\\fs36 Resultados de Evaluaci\\u243?n - ' + tipoLabels[tipo] + '}\\par\\par\n';
-
-    // Fecha
-    rtf += 'Fecha: ' + new Date().toLocaleDateString('es-ES') + '\\par\n';
-    rtf += 'Profesi\\u243?n: ' + (professionLabels[datos.profession] || 'No especificada') + '\\par\n';
-    rtf += 'Edad: ' + (datos.age || '-') + '\\par\n';
-    rtf += 'Experiencia en CPP: ' + (datos.experience || '-') + '\\par\\par\n';
-
-    // Separador
-    rtf += '\\pard\\pardeftab720\\partightenfactor0\n';
-    rtf += '________________________________\\par\\par\n';
-
-    // Puntuación
-    rtf += '{\\b\\fs32 Puntuaci\\u243?n}\\par\n';
-    rtf += '{\\fs40\\cf2 ' + resultados.puntuacion + '}\\par\n';
-    rtf += resultados.interpretacion.replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
-      const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
-      return map[match] || match;
-    }) + '\\par\\par\n';
-
-    // Separador
-    rtf += '________________________________\\par\\par\n';
-
-    // Recomendaciones
-    rtf += '{\\b\\fs28 Recomendaciones}\\par\n';
-    resultados.recomendaciones.forEach((rec, idx) => {
-      const recEscaped = rec.replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
-        const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
-        return map[match] || match;
-      });
-      rtf += (idx + 1) + '. ' + recEscaped + '\\par\n';
-    });
-    rtf += '\\par\n';
-
-    // Plan
-    rtf += '{\\b\\fs28 Plan de Acci\\u243?n}\\par\n';
-    const planEscaped = resultados.plan.replace(/\n/g, '\\par\n').replace(/[\u00e1\u00e9\u00ed\u00f3\u00fa\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00d1]/g, function (match) {
-      const map = { '\u00e1': '\\\\u225?', '\u00e9': '\\\\u233?', '\u00ed': '\\\\u237?', '\u00f3': '\\\\u243?', '\u00fa': '\\\\u250?', '\u00f1': '\\\\u241?', '\u00c1': '\\\\u193?', '\u00c9': '\\\\u201?', '\u00cd': '\\\\u205?', '\u00d3': '\\\\u211?', '\u00da': '\\\\u218?', '\u00d1': '\\\\u209?' };
-      return map[match] || match;
-    });
-    rtf += planEscaped + '\\par\\par\n';
-
-    // Footer
-    rtf += '\\par________________________________\\par\n';
-    rtf += '{\\fs20 \\u169? 2025 \\u193?lvaro Navarro Mingorance | CC BY-NC 4.0}\n';
-    rtf += '}';
-
-    // Crear blob y descargar
-    const blob = new Blob([rtf], { type: 'application/rtf' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Resultados - ${tipo} -${new Date().toISOString().slice(0, 10)}.rtf`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setTimeout(() => URL.revokeObjectURL(url), 100);
-
-    console.log('Descarga RTF completada exitosamente');
-
-  } catch (error) {
-    console.error('Error descargando RTF:', error);
-    alert('Error al descargar: ' + error.message);
-  }
-}
-
-// ESC key handler for modals
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    // Close result modal if open
-    const resultModal = document.getElementById('resultadoModal');
-    if (resultModal && resultModal.classList.contains('activo')) {
-      cerrarResultado();
-    }
-    // Close guide modal if open
-    const guideModal = document.getElementById('guideModal');
-    if (guideModal && guideModal.style.display === 'flex') {
-      cerrarGuia();
-    }
-    // Close evaluation modal if open
-    const evalModal = document.getElementById('evaluationModal');
-    if (evalModal && evalModal.classList.contains('active')) {
-      closeModal();
-    }
-  }
-});
-// ==========================================
-// FUNCIONES DE FIREBASE
-// ==========================================
-
-function cargarHistorialFirebase() {
-  if (!currentUser || !db) return;
-
-  console.log("Cargando historial desde Firebase...");
-
-  db.collection('evaluaciones')
-    .where('userId', '==', currentUser.uid)
-    .orderBy('timestamp', 'desc')
-    .get()
-    .then((querySnapshot) => {
-      // Limpiar historial local antes de cargar el remoto para evitar duplicados
-      evaluacionManager.limpiarHistorial();
-
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        // Adaptar formato si es necesario
-        const evaluacion = {
-          id: data.id || doc.id,
-          tipo: data.tipo,
-          fecha: data.fecha,
-          datos: data.datos,
-          resultados: data.resultados
-        };
-        evaluacionManager.evaluaciones.push(evaluacion);
-      });
-
-      console.log(`Historial cargado: ${evaluacionManager.evaluaciones.length} evaluaciones.`);
-
-      // Actualizar UI si estamos en la sección de seguimiento
-      if (currentSection === 'seguimiento') {
-        mostrarHistorialEvaluaciones();
-      }
-
-      // Verificar si hay evaluaciones para desbloquear funcionalidades
-      if (evaluacionManager.evaluaciones.length > 0) {
-        hasCompletedEvaluations = true;
-        // Cargar resultados más recientes en evaluationResults
-        // Esto es una simplificación, idealmente procesaríamos todo
-        const ultima = evaluacionManager.evaluaciones[0];
-        evaluationResults[ultima.tipo] = ultima.resultados;
-        evaluationResults.demographics = ultima.datos;
-      }
-    })
-    .catch((error) => {
-      console.error("Error al cargar historial:", error);
-      // Fallback a índices si falta el índice compuesto
-      if (error.code === 'failed-precondition') {
-        console.warn("Falta índice compuesto en Firestore. Intentando consulta simple.");
-        // Intento sin ordenamiento (el cliente ordena)
-        db.collection('evaluaciones')
-          .where('userId', '==', currentUser.uid)
-          .get()
-          .then((querySnapshot) => {
-            evaluacionManager.limpiarHistorial();
-            querySnapshot.forEach((doc) => {
-              const data = doc.data();
-              const evaluacion = {
-                id: data.id || doc.id,
-                tipo: data.tipo,
-                fecha: data.fecha,
-                datos: data.datos,
-                resultados: data.resultados
-              };
-              evaluacionManager.evaluaciones.push(evaluacion);
-            });
-            // Ordenar localmente
-            evaluacionManager.evaluaciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-            if (currentSection === 'seguimiento') {
-              mostrarHistorialEvaluaciones();
-            }
-          });
-      }
-    });
-}
-// Mostrar historial de evaluaciones
-function mostrarHistorialEvaluaciones() {
-  console.log('Cargando historial...');
-  const historial = evaluacionManager.obtenerHistorial();
-  console.log('Historial obtenido:', historial);
-  const container = document.getElementById('evaluationHistory');
-
-  if (!container) {
-    console.error('Container evaluationHistory no encontrado');
-    return;
-  }
-
-  if (historial.length === 0) {
-    container.innerHTML = '<p class="empty-state">Aún no has completado ninguna evaluación. <a href="#evaluaciones" onclick="showSection(\'evaluaciones\')">Comienza ahora</a></p>';
-    return;
-  }
-
-  const professionLabels = {
-    medico: 'Médico/a',
-    enfermero: 'Enfermero/a',
-    psicologo: 'Psicólogo/a',
-    trabajador_social: 'Trabajador/a Social',
-    otro: 'Otro'
-  };
-
-  const tipoLabels = {
-    burnout: 'Burnout',
-    compassion: 'Fatiga por Compasión',
-    selfcare: 'Autocuidado'
-  };
-
-  container.innerHTML = historial.map((item, idx) => {
-    const fecha = new Date(item.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-    const puntuacion = item.resultados.total || (item.resultados.subscales ? item.resultados.subscales[0].score : 'N/A');
-    const nivel = item.resultados.level ? item.resultados.level.text : (item.resultados.subscales ? item.resultados.subscales[0].level.text : 'N/A');
-
-    return `
+      return `
     < div style = "background: var(--color-surface); padding: var(--space-20); margin-bottom: var(--space-16); border-radius: var(--radius-lg); border-left: 4px solid var(--color-primary); border: 1px solid var(--color-card-border);" >
         <h4 style="margin-top: 0; color: var(--color-text); margin-bottom: var(--space-8);">${tipoLabels[item.tipo] || item.tipo}</h4>
         <p style="color: var(--color-text-secondary); margin: var(--space-4) 0; font-size: var(--font-size-sm);">
@@ -3296,31 +3304,31 @@ function mostrarHistorialEvaluaciones() {
         <p style="color: var(--color-text); margin: var(--space-12) 0;"><strong>Puntuación:</strong> ${puntuacion} (${nivel})</p>
       </div >
     `;
-  }).join('');
-}
-
-function limpiarHistorial() {
-  if (confirm('¿Estás seguro de que quieres eliminar todo tu historial de evaluaciones?')) {
-    evaluacionManager.limpiarHistorial();
-    mostrarHistorialEvaluaciones();
-    alert('Historial eliminado correctamente.');
-  }
-}
-
-// Initialize app on load
-window.addEventListener('DOMContentLoaded', () => {
-  // Show inicio section by default
-  showSection('inicio');
-
-  // Check if there are any saved evaluations
-  const generateBtn = document.getElementById('generatePlanBtn');
-  if (generateBtn) {
-    generateBtn.disabled = !hasCompletedEvaluations;
+    }).join('');
   }
 
-  // Load evaluation history if on seguimiento section
-  const historyContainer = document.getElementById('evaluationHistory');
-  if (historyContainer) {
-    mostrarHistorialEvaluaciones();
+  function limpiarHistorial() {
+    if (confirm('¿Estás seguro de que quieres eliminar todo tu historial de evaluaciones?')) {
+      evaluacionManager.limpiarHistorial();
+      mostrarHistorialEvaluaciones();
+      alert('Historial eliminado correctamente.');
+    }
   }
-});
+
+  // Initialize app on load
+  window.addEventListener('DOMContentLoaded', () => {
+    // Show inicio section by default
+    showSection('inicio');
+
+    // Check if there are any saved evaluations
+    const generateBtn = document.getElementById('generatePlanBtn');
+    if (generateBtn) {
+      generateBtn.disabled = !hasCompletedEvaluations;
+    }
+
+    // Load evaluation history if on seguimiento section
+    const historyContainer = document.getElementById('evaluationHistory');
+    if (historyContainer) {
+      mostrarHistorialEvaluaciones();
+    }
+  });
