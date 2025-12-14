@@ -897,9 +897,156 @@ window.addEventListener('DOMContentLoaded', () => {
   if (histContainer) mostrarHistorialEvaluaciones();
 });
 // ==========================================
+// NAVIGATION & INTERACTION LOGIC
+// ==========================================
+
+function showResourceTab(tabId) {
+  // Hide all resource tabs
+  document.querySelectorAll('.resource-tab').forEach(tab => {
+    tab.classList.remove('active');
+    tab.style.display = 'none'; // Ensure hidden
+  });
+
+  // Show selected tab
+  const selectedTab = document.getElementById(tabId + '-tab');
+  if (selectedTab) {
+    selectedTab.classList.add('active');
+    selectedTab.style.display = 'block';
+  }
+
+  // Update button states
+  // We assume buttons have onClick="showResourceTab('id')" so we can find them by context or querying
+  // Easier: Query all buttons in .resources-tabs
+  const resourceBtns = document.querySelector('#recursos .resources-tabs')?.querySelectorAll('.tab-btn');
+  if (resourceBtns) {
+    resourceBtns.forEach(btn => {
+      // Check if this button's onclick string contains the tabId
+      if (btn.getAttribute('onclick')?.includes(tabId)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+}
+
+function showLibraryTab(tabId) {
+  // Hide all library tabs
+  document.querySelectorAll('.library-tab').forEach(tab => {
+    tab.classList.remove('active');
+    tab.style.display = 'none';
+  });
+
+  // Show selected tab
+  const selectedTab = document.getElementById(tabId + '-tab');
+  if (selectedTab) {
+    selectedTab.classList.add('active');
+    selectedTab.style.display = 'block';
+  }
+
+  // Update button states
+  const libraryBtns = document.querySelector('#biblioteca .resources-tabs')?.querySelectorAll('.tab-btn');
+  if (libraryBtns) {
+    libraryBtns.forEach(btn => {
+      if (btn.getAttribute('onclick')?.includes(tabId)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+}
+
+// Content for guides (Simulated as we don't have external files yet)
+const guideContentMap = {
+  autocuidado: {
+    title: "Plan de Autocuidado para CPP",
+    content: `<h3>1. Fundamentos del Autocuidado</h3>
+    <p>El autocuidado no es un lujo, es una responsabilidad ética.</p>
+    <ul>
+      <li><strong>Físico:</strong> Dormir 7-8h, comer sentado y despacio, hidratación constante.</li>
+      <li><strong>Emocional:</strong> Permitirse llorar, tener un "compañero de batalla", terapia personal.</li>
+    </ul>
+    <h3>2. Estrategias en Turno</h3>
+    <p>Usa la regla de los 90 minutos: cada 90 min de trabajo intenso, toma 5 min de desconexión.</p>`
+  },
+  alertas: {
+    title: "Señales de Alerta Temprana",
+    content: `<h3>Identifica tus Señales</h3>
+    <p>El burnout no aparece de golpe. Busca estos signos:</p>
+    <ul>
+      <li>Cinismo o sarcasmo excesivo con pacientes.</li>
+      <li>Temor al ir a trabajar ("síndrome del domingo por la noche").</li>
+      <li>Alteraciones del sueño recurrentes.</li>
+      <li>Aislamiento del equipo.</li>
+    </ul>`
+  },
+  equipo: {
+    title: "Apoyo en Equipo",
+    content: `<h3>Cuidar al Cuidador en Grupo</h3>
+    <p>Estrategias para líderes y compañeros:</p>
+    <ul>
+      <li><strong>Check-in:</strong> Iniciar reuniones preguntando "¿Cómo llegamos hoy?".</li>
+      <li><strong>Debriefing:</strong> Espacio seguro tras fallecimientos.</li>
+      <li><strong>Celebración:</strong> Reconocer pequeños éxitos y cumpleaños.</li>
+    </ul>`
+  },
+  mindfulness: {
+    title: "Guía de Mindfulness",
+    content: `<h3>Mindfulness en Acción</h3>
+    <p>No necesitas 30 minutos. Prueba esto:</p>
+    <ul>
+      <li><strong>Respiración 4-7-8:</strong> Inhala 4, reten 7, exhala 8.</li>
+      <li><strong>STOP:</strong> Stop (para), Take a breath (respira), Observe (observa), Proceed (prosigue).</li>
+    </ul>`
+  }
+};
+
+let currentGuideType = null;
+
+function leerGuia(type) {
+  const guide = guideContentMap[type];
+  if (!guide) {
+    alert("Contenido no disponible actualmente.");
+    return;
+  }
+
+  currentGuideType = type;
+  document.getElementById('guiaTitle').textContent = guide.title;
+  document.getElementById('guiaContent').innerHTML = guide.content;
+
+  const modal = document.getElementById('guiaModal');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+}
+
+function cerrarGuia() {
+  document.getElementById('guiaModal').style.display = 'none';
+}
+
+function descargarGuia(type) {
+  // Simulación de descarga
+  const guide = guideContentMap[type];
+  if (!guide) return;
+
+  alert(`Iniciando descarga de: ${guide.title}.pdf\n(Simulación: En producción esto descargaría el archivo real)`);
+}
+
+function descargarGuiaActual() {
+  if (currentGuideType) {
+    descargarGuia(currentGuideType);
+  }
+}
+
+function startGuidedExercise(type) {
+  alert("Iniciando ejercicio guiado: " + type + "\n(Aquí se abriría el reproductor de audio o el paso a paso interactivo)");
+}
+
+// ==========================================
 // EXPOSE FUNCTIONS GLOBALLY
 // ==========================================
-// Solo exponemos funciones que realmente existen para evitar errores de referencia.
+// Update existing exports and add new ones
 const _globalFns = {
   showSection,
   abrirEvaluacion,
@@ -909,37 +1056,20 @@ const _globalFns = {
   cerrarResultado,
   mostrarHistorialEvaluaciones,
   cargarHistorialFirebase,
-  generatePersonalPlan
+  generatePersonalPlan,
+  showResourceTab,
+  showLibraryTab,
+  leerGuia,
+  cerrarGuia,
+  descargarGuia,
+  descargarGuiaActual,
+  startGuidedExercise,
+  toggleMenu: function () {
+    const menu = document.getElementById('navMenu');
+    if (menu) menu.classList.toggle('active');
+  }
 };
-Object.keys(_globalFns).forEach(key => {
-  if (typeof _globalFns[key] === 'function') {
-    window[key] = _globalFns[key];
-  }
-});
 
-// De manera opcional, exponemos funciones no críticas si existen para que
-// el HTML pueda llamarlas. Esto previene errores si algunas no están definidas.
-const optionalFns = [
-  'seleccionarRespuesta',
-  'descargarResultadoRTF',
-  'limpiarHistorial',
-  'showResourceTab',
-  'showLibraryTab',
-  'toggleMenu',
-  'startGuidedExercise',
-  'descargarGuiaPDF',
-  'downloadGuide',
-  'cerrarGuia',
-  'descargarGuiaActual'
-];
-optionalFns.forEach(name => {
-  if (typeof globalThis[name] === 'function') {
-    // Si existe una implementación definida anteriormente, exponerla
-    window[name] = globalThis[name];
-  } else {
-    // Crear una función de stub para evitar errores si se invoca desde el HTML.
-    window[name] = function () {
-      console.warn(`${name} no está implementado actualmente.`);
-    };
-  }
+Object.keys(_globalFns).forEach(key => {
+  window[key] = _globalFns[key];
 });
