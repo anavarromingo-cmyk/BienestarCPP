@@ -3618,113 +3618,108 @@
   <div id="creditosModal" class="credits-modal">
     <div class="credits-modal-content">
       <div class="credits-header">
-        <!-- MODAL CRÉDITOS -->
-        <div id="creditosModal" class="modal-overlay" style="z-index: 10000; display: none;">
-          <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-              <h3 style="color: var(--color-primary); margin: 0;">Créditos y Referencias</h3>
-              <button class="close-modal"
-                onclick="document.getElementById('creditosModal').classList.remove('activo'); document.getElementById('creditosModal').style.display='none';">×</button>
-            </div>
-            <div class="modal-body" style="text-align: left; padding: 20px;">
-              <h4 style="margin-top: 0;">Herramientas de Evaluación Validadas</h4>
-              <p><strong>Maslach Burnout Inventory (MBI-HSS):</strong><br>
-                Maslach, C., Jackson, S. E., & Leiter, M. P. (1996). <em>Maslach Burnout Inventory Manual</em> (3rd
-                ed.). Consulting Psychologists Press.<br>
-                <span style="font-size: 0.9em; color: #666;">Adaptación española utilizada: Seisdedos, N. (1997). Manual
-                  MBI, Inventario de Burnout de Maslach. Madrid: TEA Ediciones.</span>
-              </p>
+        <h3 style="color: var(--color-primary); margin: 0;">Créditos y Referencias</h3>
+        <button class="close-modal" onclick="document.getElementById('creditosModal').style.display='none';">×</button>
+      </div>
+      <div class="credits-body">
+        <h4 style="margin-top: 0;">Herramientas de Evaluación Validadas</h4>
+        <p><strong>Maslach Burnout Inventory (MBI-HSS):</strong><br>
+          Maslach, C., Jackson, S. E., & Leiter, M. P. (1996). <em>Maslach Burnout Inventory Manual</em> (3rd
+          ed.). Consulting Psychologists Press.<br>
+          <span style="font-size: 0.9em; color: #666;">Adaptación española utilizada: Seisdedos, N. (1997). Manual
+            MBI, Inventario de Burnout de Maslach. Madrid: TEA Ediciones.</span>
+        </p>
 
-              <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
-                Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
-                <span style="font-size: 0.9em; color: #666;">Traducción y validación española: Galiana et al.
-                  (2017).</span>
-              </p>
+        <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
+          Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
+          <span style="font-size: 0.9em; color: #666;">Traducción y validación española: Galiana et al.
+            (2017).</span>
+        </p>
 
-              <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
-              <h4>Propiedad Intelectual y Desarrollo</h4>
-              <p><strong>© 2025 Álvaro Navarro Mingorance</strong><br>
-                Psicólogo General Sanitario. Especialista en Cuidados Paliativos Pediátricos.</p>
+        <h4>Propiedad Intelectual y Desarrollo</h4>
+        <p><strong>© 2025 Álvaro Navarro Mingorance</strong><br>
+          Psicólogo General Sanitario. Especialista en Cuidados Paliativos Pediátricos.</p>
 
-              <p style="font-size: 0.9em;">Esta aplicación es una herramienta de apoyo desarrollada para uso exclusivo
-                de investigación y soporte profesional. No comercializar.</p>
+        <p style="font-size: 0.9em;">Esta aplicación es una herramienta de apoyo desarrollada para uso exclusivo
+          de investigación y soporte profesional. No comercializar.</p>
 
-              <div style="background: #f0f7fc; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.85em;">
-                <strong>Aviso Legal:</strong> El almacenamiento de datos se realiza de forma local y/o anónima en
-                servidores seguros (Firebase), cumpliendo con la normativa vigente de protección de datos.</p>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button class="btn btn-secondary"
-                onclick="document.getElementById('creditosModal').classList.remove('activo'); document.getElementById('creditosModal').style.display='none';">Cerrar</button>
-            </div>
+        <div style="background: #f0f7fc; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.85em;">
+          <strong>Aviso Legal:</strong> El almacenamiento de datos se realiza de forma local y/o anónima en
+          servidores seguros (Firebase), cumpliendo con la normativa vigente de protección de datos.</p>
+        </div>
+      </div>
+      <div class="credits-footer">
+        <button class="btn btn-secondary"
+          onclick="document.getElementById('creditosModal').style.display='none';">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE RESULTADOS -->
+  <div id="resultadoModal" class="resultado-modal">
+    <div class="resultado-contenedor">
+      <div class="resultado-header">
+        <button class="close-btn" onclick="cerrarResultado()" aria-label="Cerrar">×</button>
+        <h2 id="resultadoTitulo">Tus Resultados</h2>
+        <p id="resultadoSubtitulo" style="margin: 0; opacity: 0.9; font-size: 14px; color: white;"></p>
+      </div>
+
+      <div class="resultado-body">
+        <!-- Datos de la evaluación -->
+        <div class="resultado-seccion">
+          <h3>📋 Datos de la Evaluación</h3>
+          <p style="margin: 5px 0;"><strong>Fecha:</strong> <span id="resultado-fecha"></span></p>
+          <p style="margin: 5px 0;"><strong>Profesión:</strong> <span id="resultado-profesion"></span></p>
+          <p style="margin: 5px 0;"><strong>Edad:</strong> <span id="resultado-edad"></span></p>
+          <p style="margin: 5px 0;"><strong>Experiencia:</strong> <span id="resultado-experiencia"></span></p>
+        </div>
+
+        <!-- Puntuación -->
+        <div class="resultado-seccion">
+          <h3>📊 Tu Puntuación</h3>
+          <div class="resultado-puntuacion" id="resultado-puntuacion-container">
+            <div class="numero" id="resultado-puntuacion" style="color: white;">--</div>
+            <div class="interpretacion" id="resultado-interpretacion" style="color: white;"></div>
           </div>
         </div>
 
-        <!-- MODAL DE RESULTADOS -->
-        <div id="resultadoModal" class="resultado-modal">
-          <div class="resultado-contenedor">
-            <div class="resultado-header">
-              <button class="close-btn" onclick="cerrarResultado()" aria-label="Cerrar">×</button>
-              <h2 id="resultadoTitulo">Tus Resultados</h2>
-              <p id="resultadoSubtitulo" style="margin: 0; opacity: 0.9; font-size: 14px; color: white;"></p>
-            </div>
-
-            <div class="resultado-body">
-              <!-- Datos de la evaluación -->
-              <div class="resultado-seccion">
-                <h3>📋 Datos de la Evaluación</h3>
-                <p style="margin: 5px 0;"><strong>Fecha:</strong> <span id="resultado-fecha"></span></p>
-                <p style="margin: 5px 0;"><strong>Profesión:</strong> <span id="resultado-profesion"></span></p>
-                <p style="margin: 5px 0;"><strong>Edad:</strong> <span id="resultado-edad"></span></p>
-                <p style="margin: 5px 0;"><strong>Experiencia:</strong> <span id="resultado-experiencia"></span></p>
-              </div>
-
-              <!-- Puntuación -->
-              <div class="resultado-seccion">
-                <h3>📊 Tu Puntuación</h3>
-                <div class="resultado-puntuacion" id="resultado-puntuacion-container">
-                  <div class="numero" id="resultado-puntuacion" style="color: white;">--</div>
-                  <div class="interpretacion" id="resultado-interpretacion" style="color: white;"></div>
-                </div>
-              </div>
-
-              <!-- Recomendaciones -->
-              <div class="resultado-seccion">
-                <h3>💡 Recomendaciones Personalizadas</h3>
-                <div class="resultado-recomendaciones">
-                  <ul id="resultado-recomendaciones"></ul>
-                </div>
-              </div>
-
-              <!-- Plan personalizado -->
-              <div class="resultado-seccion">
-                <h3>📅 Tu Plan de Acción</h3>
-                <div id="resultado-plan"
-                  style="background: var(--color-background); padding: 15px; border-radius: 6px; line-height: 1.8;">
-                </div>
-              </div>
-            </div>
-
-            <div class="resultado-botones">
-              <!-- Botón para descargar los resultados en PDF -->
-              <button class="btn-descargar" onclick="descargarResultadoPDF()">
-                ⬇️ Descargar PDF
-              </button>
-              <button class="btn-cerrar" onclick="cerrarResultado()">
-                ✕ Cerrar
-              </button>
-            </div>
+        <!-- Recomendaciones -->
+        <div class="resultado-seccion">
+          <h3>💡 Recomendaciones Personalizadas</h3>
+          <div class="resultado-recomendaciones">
+            <ul id="resultado-recomendaciones"></ul>
           </div>
         </div>
 
-        <!-- Firebase SDKs -->
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+        <!-- Plan personalizado -->
+        <div class="resultado-seccion">
+          <h3>📅 Tu Plan de Acción</h3>
+          <div id="resultado-plan"
+            style="background: var(--color-background); padding: 15px; border-radius: 6px; line-height: 1.8;">
+          </div>
+        </div>
+      </div>
 
-        <script src="app.js"></script>
+      <div class="resultado-botones">
+        <!-- Botón para descargar los resultados en PDF -->
+        <button class="btn-descargar" onclick="descargarResultadoPDF()">
+          ⬇️ Descargar PDF
+        </button>
+        <button class="btn-cerrar" onclick="cerrarResultado()">
+          ✕ Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script src="app.js"></script>
 </body>
 
 </html>

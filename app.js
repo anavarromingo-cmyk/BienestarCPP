@@ -560,7 +560,18 @@ function mostrarResultados() {
     recList.appendChild(li);
   });
 
-  document.getElementById('resultado-plan').textContent = "Recuerda: Este resultado es orientativo. Consulta con un profesional.";
+  // Generar un mini-plan inmediato para el modal
+  let planTexto = '';
+  if (r.tipo === 'burnout' && r.puntuacion > 26) {
+    planTexto = "Recomendación inmediata: Agenda una cita con salud laboral o tu supervisor. Prioriza el descanso físico.";
+  } else if (r.tipo === 'compassion' && (window.resultadoActual.subscales?.sts?.level === 'Alto')) {
+    planTexto = "Recomendación inmediata: Practica la técnica de 'Grounding' (Bibliotheca > Recursos) ahora mismo.";
+  } else if (r.tipo === 'selfcare' && r.puntuacion < 50) {
+    planTexto = "Recomendación inmediata: Elige una acción pequeña de autocuidado (ej. beber agua, estirar) y hazla hoy.";
+  } else {
+    planTexto = "Revisa las recomendaciones arriba y consulta la sección de 'Mi Seguimiento' para un plan detallado.";
+  }
+  document.getElementById('resultado-plan').innerHTML = `<p>${planTexto}</p>`;
 
   const modal = document.getElementById('resultadoModal');
   modal.classList.add('activo');
@@ -774,8 +785,84 @@ function mostrarHistorialEvaluaciones() {
 }
 
 // Generate Plan Logic (Placeholder for full generation logic)
+// Generate Plan Logic
 function generatePersonalPlan() {
-  alert("Generando plan personalizado (Simulado)...");
+  const planContainer = document.getElementById('personalPlan');
+  if (!planContainer) return;
+
+  const history = evaluacionManager.obtenerHistorial();
+  if (history.length === 0) {
+    alert("Para generar un plan personalizado, primero debes completar al menos una evaluación.");
+    return;
+  }
+
+  // Análisis simple de la última evaluación de cada tipo
+  const latestBurnout = history.find(h => h.tipo === 'burnout');
+  const latestCompassion = history.find(h => h.tipo === 'compassion');
+  const latestSelfcare = history.find(h => h.tipo === 'selfcare');
+
+  let planHTML = '<div style="text-align: left;">';
+  let acciones = [];
+
+  // Lógica de generación de recomendaciones
+  if (latestBurnout) {
+    const score = latestBurnout.resultados.total; // AE Score mainly
+    if (score > 26) {
+      acciones.push("<strong>🚨 Prioridad Burnout:</strong> Tus niveles de agotamiento son altos. Programa 2 días de desconexión total este mes.");
+      acciones.push("🗣️ <strong>Supervisión:</strong> Solicita una reunión de supervisión clínica para revisar casos difíciles.");
+    } else if (score > 18) {
+      acciones.push("⚠️ <strong>Atención Burnout:</strong> Estás en zona de riesgo. Revisa tus límites horarios esta semana.");
+    }
+  }
+
+  if (latestCompassion) {
+    const csScore = latestCompassion.resultados.subscales?.cs?.score || 0;
+    const stsScore = latestCompassion.resultados.subscales?.sts?.score || 0;
+
+    if (stsScore > 40) { // High STS (using approx percentage logic if raw score)
+      acciones.push("🛡️ <strong>Trauma Secundario:</strong> Reduce la exposición a historias traumáticas fuera del trabajo (noticias, redes).");
+      acciones.push("🧘 <strong>Regulación:</strong> Practica la técnica DRAW tras cada encuentro difícil.");
+    }
+    if (csScore < 35) { // Low Compassion Satisfaction
+      acciones.push("❤️ <strong>Reconexión:</strong> Escribe cada viernes 3 cosas que agradeces de tu trabajo.");
+    }
+  }
+
+  if (latestSelfcare) {
+    const score = latestSelfcare.resultados.total; // 0-100
+    if (score < 50) {
+      acciones.push("🥗 <strong>Básicos:</strong> Tu autocuidado necesita refuerzo inmediato. Enfócate solo en dormir 7h y comer sentado.");
+    } else if (score < 75) {
+      acciones.push("🏃 <strong>Mantenimiento:</strong> Añade una actividad física de 20 min a tu rutina semanal.");
+    }
+  }
+
+  // Fallback si todo está bien
+  if (acciones.length === 0) {
+    acciones.push("🌟 <strong>Mantenimiento:</strong> Tus niveles son saludables. Continúa con tus rutinas actuales y comparte tus estrategias con compañeros.");
+    acciones.push("📚 <strong>Formación:</strong> Considera mentorizar a colegas más jóvenes.");
+  }
+
+  // Construir HTML
+  planHTML += '<ul style="list-style: none; padding: 0;">';
+  acciones.forEach(accion => {
+    planHTML += `<li style="margin-bottom: 12px; padding: 10px; background: var(--color-background); border-left: 3px solid var(--color-primary); border-radius: 4px;">${accion}</li>`;
+  });
+  planHTML += '</ul>';
+
+  // Agregar botón de descarga o acción extra
+  planHTML += `<div style="margin-top: 15px; font-size: 0.9em; color: var(--color-text-secondary);">
+    Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}
+  </div></div>`;
+
+  planContainer.innerHTML = planHTML;
+
+  // Visual feedback
+  const btn = document.getElementById('generatePlanBtn');
+  if (btn) {
+    btn.textContent = "Plan Actualizado ✅";
+    setTimeout(() => btn.textContent = "Regenerar Plan Personalizado", 3000);
+  }
 }
 
 function saveDemographicsAndStart() {
