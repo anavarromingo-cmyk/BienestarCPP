@@ -1171,6 +1171,34 @@
       border-radius: 0 0 12px 12px;
     }
 
+    /* Mobile Text Contrast Fix */
+    .eval-question-item p {
+      color: #1a202c !important;
+      /* Force dark color */
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .eval-question-item label {
+      color: #2d3748 !important;
+      /* Force dark color for options */
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+      .eval-question-item p,
+      .eval-question-item label {
+        color: #1a202c !important;
+        /* Stay dark if background is white, or adjust if background dark */
+      }
+
+      /* Ensure modal background is white or controlled so dark text is visible */
+      .modal-content {
+        background: white !important;
+        color: #1a202c !important;
+      }
+    }
+
     /* Resultado modal - overlay */
     .resultado-modal {
       display: none;
