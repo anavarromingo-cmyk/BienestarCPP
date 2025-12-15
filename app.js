@@ -552,6 +552,42 @@ function mostrarResultados() {
   document.getElementById('resultado-puntuacion').textContent = r.puntuacion;
   document.getElementById('resultado-interpretacion').textContent = r.interpretacion;
 
+  // Mostrar subescalas si existen
+  const scoreContainer = document.getElementById('resultado-puntuacion-container');
+  // Limpiar subescalas previas si las hubiera (manteniendo el total)
+  const existingSubscales = scoreContainer.querySelectorAll('.subscale-item');
+  existingSubscales.forEach(el => el.remove());
+
+  if (r.subscales) {
+    const subscaleWrapper = document.createElement('div');
+    subscaleWrapper.className = 'subscale-item'; // Clase para facil limpieza
+    subscaleWrapper.style.marginTop = '20px';
+    subscaleWrapper.style.textAlign = 'left';
+    subscaleWrapper.style.fontSize = '0.9em';
+    subscaleWrapper.style.borderTop = '1px solid rgba(255,255,255,0.3)';
+    subscaleWrapper.style.paddingTop = '10px';
+
+    Object.entries(r.subscales).forEach(([key, val]) => {
+      // Map keys to readable names
+      const names = {
+        ae: 'Agotamiento Emocional',
+        d: 'Despersonalización',
+        rp: 'Realización Personal',
+        cs: 'Satisfacción por Compasión',
+        bo: 'Burnout (ProQOL)',
+        sts: 'Estrés Traumático Secundario'
+      };
+
+      const p = document.createElement('p');
+      p.style.margin = '4px 0';
+      p.style.display = 'flex';
+      p.style.justifyContent = 'space-between';
+      p.innerHTML = `<span>${names[key] || key.toUpperCase()}:</span> <strong>${val.score} (${val.level})</strong>`;
+      subscaleWrapper.appendChild(p);
+    });
+    scoreContainer.appendChild(subscaleWrapper);
+  }
+
   const recList = document.getElementById('resultado-recomendaciones');
   recList.innerHTML = '';
   r.recomendaciones.forEach(rec => {
