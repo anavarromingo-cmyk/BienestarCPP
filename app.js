@@ -527,7 +527,8 @@ function calcularResultados() {
     profesion: profesion,
     edad: edad,
     experiencia: experiencia,
-    fecha: new Date().toLocaleDateString('es-ES')
+    fecha: new Date().toLocaleDateString('es-ES'),
+    subscales: (evaluacionActual === 'burnout') ? burnoutSubResultados : ((evaluacionActual === 'compassion') ? proqolSubResultados : null)
   };
 
   const modal = document.getElementById('evalModal');
