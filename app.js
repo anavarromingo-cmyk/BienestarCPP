@@ -440,42 +440,69 @@ function calcularResultados() {
     puntuacion = aeSum;
 
   } else if (evaluacionActual === 'compassion') {
-    // ProQOL v5 Scoring
-    // CS:Compassion Satisfaction (Items: 3, 6, 12, 16, 18, 20, 22, 24, 27, 30) -> Index: 2, 5, 11, 15, 17, 19, 21, 23, 26, 29
-    // BO:Burnout (Items: 1, 4, 8, 10, 15, 17, 19, 21, 26, 29)
-    // STS:Secondary Traumatic Stress (Items: 2, 5, 7, 9, 11, 13, 14, 23, 25, 28)
+    // ProQOL v5 Scoring Standard (Stamm, 2010)
+    // Escala 1-5 (Nunca=1, ..., Muy a menudo=5)
 
-    const csItems = [0, 2, 3, 5, 8, 11, 14, 15, 16, 17, 19, 21, 23, 26, 28, 29]; // 0-based
-    const boItems = [1, 9, 18, 20, 25]; // 0-based
-    const stsItems = [4, 6, 7, 10, 12, 13, 22, 24, 27]; // 0-based
+    // COMPASSION SATISFACTION (CS)
+    // Items: 3, 6, 12, 16, 18, 20, 22, 24, 27, 30
+    // Indices (0-based): 2, 5, 11, 15, 17, 19, 21, 23, 26, 29
+    const csIndices = [2, 5, 11, 15, 17, 19, 21, 23, 26, 29];
 
-    // No reverse scoring needed for BO items in this specific Spanish translation based on typical ProQOL v5.
+    // BURNOUT (BO)
+    // Items: 1, 4, 8, 10, 15, 17, 19, 21, 26, 29
+    // Indices (0-based): 0, 3, 7, 9, 14, 16, 18, 20, 25, 28
+    // *Reverse scored items*: 1, 4, 15, 17, 29 (Indices: 0, 3, 14, 16, 28)
+    const boIndices = [0, 3, 7, 9, 14, 16, 18, 20, 25, 28];
+    const boReverseIndices = [0, 3, 14, 16, 28];
+
+    // SECONDARY TRAUMATIC STRESS (STS)
+    // Items: 2, 5, 7, 9, 11, 13, 14, 23, 25, 28
+    // Indices (0-based): 1, 4, 6, 8, 10, 12, 13, 22, 24, 27
+    const stsIndices = [1, 4, 6, 8, 10, 12, 13, 22, 24, 27];
 
     let csSum = 0, boSum = 0, stsSum = 0;
 
     answers.forEach((val, idx) => {
-      // Val is 1-5
-      if (csItems.includes(idx)) csSum += val;
-      if (boItems.includes(idx)) boSum += val;
-      if (stsItems.includes(idx)) stsSum += val;
+      // CS Calculation
+      if (csIndices.includes(idx)) {
+        csSum += val;
+      }
+
+      // BO Calculation
+      if (boIndices.includes(idx)) {
+        if (boReverseIndices.includes(idx)) {
+          boSum += (6 - val); // Reverse scoring (1->5, 5->1)
+        } else {
+          boSum += val;
+        }
+      }
+
+      // STS Calculation
+      if (stsIndices.includes(idx)) {
+        stsSum += val;
+      }
     });
 
-    // Cutoffs (Stamm, 2010)
-    // For simplicity, let's use a general "low, medium, high" based on percentage of max score.
-    const getLevel = (score, maxScore) => {
-      const percent = (score / maxScore) * 100;
-      if (percent < 40) return 'Bajo';
-      if (percent < 70) return 'Medio';
+    // Niveles según Manual ProQOL v5 (Stamm, 2010)
+    // Puntuaciones brutas:
+    // Bajo: <= 22
+    // Medio: 23 - 41
+    // Alto: >= 42
+
+    const getProQOLLevel = (score) => {
+      if (score <= 22) return 'Bajo';
+      if (score <= 41) return 'Medio';
       return 'Alto';
     };
 
-    const levelCS = getLevel(csSum, 80); // Max 80 for 16 items
-    const levelBO = getLevel(boSum, 25); // Max 25 for 5 items
-    const levelSTS = getLevel(stsSum, 45); // Max 45 for 9 items
+    const levelCS = getProQOLLevel(csSum);
+    const levelBO = getProQOLLevel(boSum);
+    const levelSTS = getProQOLLevel(stsSum);
 
+    // Interpretación combinada
     if (levelBO === 'Alto' || levelSTS === 'Alto') {
       interpretacion = 'Riesgo Alto de Fatiga por Compasión / Estrés Traumático Secundario.';
-      recomendaciones = ['Plan de autocuidado inmediato', 'Búsqueda de apoyo terapéutico', 'Reducción de exposición traumática temporaria'];
+      recomendaciones = ['Plan de autocuidado inmediato', 'Búsqueda de apoyo terapéutico', 'Reducción de exposición traumática temporal'];
     } else if (levelCS === 'Bajo') {
       interpretacion = 'Baja Satisfacción por Compasión (Riesgo de Burnout).';
       recomendaciones = ['Reconectar con el propósito', 'Recordar logros pasados', 'Formación y desarrollo'];
