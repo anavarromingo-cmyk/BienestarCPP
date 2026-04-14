@@ -2352,6 +2352,277 @@
       margin-bottom: var(--space-12);
     }
 
+    /* Research Disclaimer Banner */
+    .research-disclaimer {
+      background: linear-gradient(135deg, rgba(var(--color-teal-500-rgb), 0.08), rgba(var(--color-teal-500-rgb), 0.15));
+      border: 1px solid rgba(var(--color-teal-500-rgb), 0.3);
+      border-left: 4px solid var(--color-primary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-24);
+      margin: var(--space-24) var(--space-16) var(--space-32);
+      display: flex;
+      gap: var(--space-16);
+      align-items: flex-start;
+    }
+
+    .research-disclaimer .disclaimer-icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+
+    .research-disclaimer h4 {
+      margin-bottom: var(--space-8);
+      color: var(--color-primary);
+      font-size: var(--font-size-lg);
+    }
+
+    .research-disclaimer p {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    .research-disclaimer strong {
+      color: var(--color-text);
+    }
+
+    /* Dashboard Section */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--space-16);
+      margin-bottom: var(--space-32);
+    }
+
+    .kpi-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-20);
+      text-align: center;
+      transition: transform var(--duration-normal) var(--ease-standard), box-shadow var(--duration-normal) var(--ease-standard);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-icon {
+      font-size: 28px;
+      margin-bottom: var(--space-8);
+    }
+
+    .kpi-value {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .kpi-label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: var(--space-24);
+      margin-bottom: var(--space-32);
+    }
+
+    .chart-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-24);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-card h4 {
+      margin-bottom: var(--space-16);
+      color: var(--color-text);
+      font-size: var(--font-size-lg);
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-height: 300px;
+    }
+
+    .dashboard-loading {
+      text-align: center;
+      padding: var(--space-32);
+      color: var(--color-text-secondary);
+    }
+
+    .dashboard-loading .spinner {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--color-card-border);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: var(--space-12);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .risk-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--space-16);
+      font-size: var(--font-size-sm);
+    }
+
+    .risk-table th, .risk-table td {
+      padding: var(--space-10) var(--space-12);
+      text-align: left;
+      border-bottom: 1px solid var(--color-card-border);
+    }
+
+    .risk-table th {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .risk-badge.alto { background: rgba(var(--color-error-rgb), 0.15); color: var(--color-error); }
+    .risk-badge.medio { background: rgba(var(--color-warning-rgb), 0.15); color: var(--color-warning); }
+    .risk-badge.bajo { background: rgba(var(--color-success-rgb), 0.15); color: var(--color-success); }
+
+    .dashboard-timestamp {
+      text-align: center;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      margin-top: var(--space-16);
+      padding-top: var(--space-12);
+      border-top: 1px solid var(--color-card-border);
+    }
+
+    /* Dashboard Filters */
+    .dashboard-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-12);
+      align-items: center;
+      margin-bottom: var(--space-24);
+      padding: var(--space-16) var(--space-20);
+      background: var(--color-surface);
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .dashboard-filters .filter-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .dashboard-filters select {
+      padding: 8px 32px 8px 12px;
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-background);
+      color: var(--color-text);
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 8px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      min-width: 160px;
+    }
+
+    .dashboard-filters select:hover {
+      border-color: var(--color-primary);
+    }
+
+    .dashboard-filters select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb, 42, 120, 120), 0.15);
+    }
+
+    .filter-separator {
+      width: 1px;
+      height: 28px;
+      background: var(--color-card-border);
+    }
+
+    .filter-reset-btn {
+      padding: 7px 14px;
+      border: 1px solid var(--color-card-border);
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-xs);
+      font-family: inherit;
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      white-space: nowrap;
+    }
+
+    .filter-reset-btn:hover {
+      background: var(--color-error);
+      color: white;
+      border-color: var(--color-error);
+    }
+
+    .filter-active-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-primary);
+      background: rgba(var(--color-primary-rgb, 42, 120, 120), 0.1);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .dashboard-filters select {
+        min-width: 100%;
+      }
+      .filter-separator {
+        display: none;
+      }
+    }
+
     /* Tracking */
     .tracking-container {
       display: grid;
@@ -2547,6 +2818,7 @@
         <li><a href="#biblioteca" onclick="showSection('biblioteca')">📚 Biblioteca</a></li>
         <li><a href="#comunidad" onclick="showSection('comunidad')">👥 Comunidad</a></li>
         <li><a href="#seguimiento" onclick="showSection('seguimiento')">📊 Mi Seguimiento</a></li>
+        <li><a href="#dashboard" onclick="showSection('dashboard')">📈 Situación actual</a></li>
         <li><a href="#" onclick="document.getElementById('creditosModal').style.display='flex'; return false;">©
             Créditos</a></li>
       </ul>
@@ -2600,6 +2872,15 @@
         </div>
       </div>
 
+      <!-- Research Disclaimer -->
+      <div class="research-disclaimer">
+        <div class="disclaimer-icon">🔬</div>
+        <div>
+          <h4>Recomendación para la investigación</h4>
+          <p>Para poder realizar <strong>correlaciones entre instrumentos</strong> y obtener datos más robustos, se recomienda completar las <strong>tres escalas</strong> (Burnout, Fatiga por Compasión y Autocuidado), no solo una. Esto nos permitirá comparar y cruzar resultados para mejorar la evidencia sobre el bienestar profesional.</p>
+        </div>
+      </div>
+
       <!-- Acceso Rápido a Otros Recursos -->
       <div class="resources-quickaccess">
         <h3>Acceso rápido a otros recursos</h3>
@@ -2616,9 +2897,9 @@
             <h4>👥 Comunidad</h4>
             <p>Foro, contactos y testimonios de otros profesionales</p>
           </div>
-          <div class="quickaccess-card" onclick="showSection('seguimiento')">
-            <h4>📊 Mi Seguimiento</h4>
-            <p>Gráficos de evolución y tu plan personalizado</p>
+          <div class="quickaccess-card" onclick="showSection('dashboard')">
+            <h4>📈 Situación actual</h4>
+            <p>Estadísticas en tiempo real de todas las evaluaciones</p>
           </div>
         </div>
       </div>
@@ -3552,6 +3833,155 @@
     </div>
   </section>
 
+  <!-- SECCIÓN: DASHBOARD -->
+  <section id="dashboard" class="app-section">
+    <div class="section-header">
+      <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
+      <h2>📈 Situación actual en tiempo real</h2>
+      <p class="section-description">Estadísticas en tiempo real de todas las evaluaciones completadas por profesionales sanitarios</p>
+    </div>
+
+    <div id="dashboard-loading" class="dashboard-loading">
+      <div class="spinner"></div>
+      <p>Cargando datos desde Firebase...</p>
+    </div>
+
+    <div id="dashboard-content" style="display: none;">
+      <!-- Filters -->
+      <div class="dashboard-filters" id="dashboard-filters">
+        <span class="filter-label">🔍 Filtros</span>
+
+        <select id="filter-region" onchange="applyDashboardFilters()">
+          <option value="all">🌍 Todas las regiones</option>
+          <option value="europa">🇪🇺 Europa</option>
+          <option value="latam">🌎 Latinoamérica</option>
+        </select>
+
+        <div class="filter-separator"></div>
+
+        <select id="filter-profesion" onchange="applyDashboardFilters()">
+          <option value="all">👩‍⚕️ Todas las profesiones</option>
+          <option value="medico">Médico/a</option>
+          <option value="enfermero">Enfermero/a</option>
+          <option value="psicologo">Psicólogo/a</option>
+          <option value="fisioterapeuta">Fisioterapeuta</option>
+          <option value="trabajador">Trabajador/a Social</option>
+          <option value="otro">Otro profesional</option>
+        </select>
+
+        <div class="filter-separator"></div>
+
+        <select id="filter-ambito" onchange="applyDashboardFilters()">
+          <option value="all">🏥 Todos los ámbitos</option>
+          <option value="paliativos_pediatricos">Paliativos pediátricos</option>
+          <option value="paliativos_adultos">Paliativos de adultos</option>
+          <option value="otras_pediatricas">Otras esp. pediátricas</option>
+          <option value="otras_adultos">Otras esp. de adultos</option>
+        </select>
+
+        <div class="filter-separator"></div>
+
+        <button class="filter-reset-btn" onclick="resetDashboardFilters()">✕ Limpiar filtros</button>
+        <span class="filter-active-count" id="filter-count" style="display:none;">0 de 0</span>
+      </div>
+      <!-- KPIs -->
+      <div class="dashboard-grid" id="kpi-container">
+        <div class="kpi-card">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-value" id="kpi-total">0</div>
+          <div class="kpi-label">Total Evaluaciones</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🔥</div>
+          <div class="kpi-value" id="kpi-burnout">0</div>
+          <div class="kpi-label">Burnout (MBI)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💔</div>
+          <div class="kpi-value" id="kpi-compassion">0</div>
+          <div class="kpi-label">Compasión (ProQOL)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💚</div>
+          <div class="kpi-value" id="kpi-selfcare">0</div>
+          <div class="kpi-label">Autocuidado</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">👩‍⚕️</div>
+          <div class="kpi-value" id="kpi-professionals">0</div>
+          <div class="kpi-label">Profesionales únicos</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🌍</div>
+          <div class="kpi-value" id="kpi-countries">0</div>
+          <div class="kpi-label">Países</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h4>👩‍⚕️ Distribución por Profesión</h4>
+          <div class="chart-container"><canvas id="chart-profesion"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>🏥 Distribución por Ámbito de Trabajo</h4>
+          <div class="chart-container"><canvas id="chart-ambito"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>🔥 Niveles de Riesgo MBI (Burnout)</h4>
+          <div class="chart-container"><canvas id="chart-mbi-risk"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>💔 Niveles ProQOL</h4>
+          <div class="chart-container"><canvas id="chart-proqol-risk"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>📅 Evaluaciones por Mes</h4>
+          <div class="chart-container"><canvas id="chart-timeline"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h4>🌍 Distribución por País</h4>
+          <div class="chart-container"><canvas id="chart-pais"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Risk breakdown tables -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h4>🔥 Detalle MBI por subescala</h4>
+          <table class="risk-table">
+            <thead>
+              <tr><th>Subescala</th><th>Bajo</th><th>Medio</th><th>Alto</th></tr>
+            </thead>
+            <tbody id="mbi-detail-table">
+              <tr><td>Agotamiento Emocional</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td>Despersonalización</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td>Realización Personal</td><td>-</td><td>-</td><td>-</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chart-card">
+          <h4>💔 Detalle ProQOL por subescala</h4>
+          <table class="risk-table">
+            <thead>
+              <tr><th>Subescala</th><th>Bajo</th><th>Medio</th><th>Alto</th></tr>
+            </thead>
+            <tbody id="proqol-detail-table">
+              <tr><td>Satisfacción por Compasión</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td>Burnout</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td>Estrés Traumático Secundario</td><td>-</td><td>-</td><td>-</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="dashboard-timestamp">
+        🔄 Datos actualizados en tiempo real · Última carga: <span id="dashboard-timestamp">—</span>
+      </div>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="footer-button">
       <!-- Enlace para valorar la utilidad de la aplicación -->
@@ -3594,7 +4024,16 @@
             <option value="medico">Médico/a</option>
             <option value="enfermero">Enfermero/a</option>
             <option value="psicologo">Psicólogo/a</option>
+            <option value="fisioterapeuta">Fisioterapeuta</option>
             <option value="trabajador">Trabajador/a Social</option>
+            <option value="otro">Otro profesional sanitario</option>
+          </select>
+          <select id="eval-ambito" class="form-input">
+            <option value="">Ámbito de trabajo...</option>
+            <option value="paliativos_pediatricos">Paliativos pediátricos</option>
+            <option value="paliativos_adultos">Paliativos de adultos</option>
+            <option value="otras_pediatricas">Otras especialidades pediátricas</option>
+            <option value="otras_adultos">Otras especialidades de adultos</option>
           </select>
           <input type="number" id="eval-edad" class="form-input" placeholder="Edad">
           <select id="eval-experiencia" class="form-input">
@@ -3700,6 +4139,7 @@
           <h3>📋 Datos de la Evaluación</h3>
           <p style="margin: 5px 0;"><strong>Fecha:</strong> <span id="resultado-fecha"></span></p>
           <p style="margin: 5px 0;"><strong>Profesión:</strong> <span id="resultado-profesion"></span></p>
+          <p style="margin: 5px 0;"><strong>Ámbito:</strong> <span id="resultado-ambito"></span></p>
           <p style="margin: 5px 0;"><strong>Edad:</strong> <span id="resultado-edad"></span></p>
           <p style="margin: 5px 0;"><strong>Experiencia:</strong> <span id="resultado-experiencia"></span></p>
         </div>
@@ -3741,6 +4181,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>

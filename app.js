@@ -90,6 +90,7 @@ class EvaluacionManager {
       fecha: new Date().toISOString(),
       datos: {
         profesion: datos.profession || 'No especificada',
+        ambito: datos.ambito || 'No especificado',
         edad: datos.age || 'No especificada',
         experiencia: datos.experience || 'No especificada',
         pais: datos.country || 'No especificado'
@@ -155,10 +156,12 @@ let answers = [];
  */
 function resetDemographicsFields() {
   const profesionEl = document.getElementById('eval-profesion');
+  const ambitoEl = document.getElementById('eval-ambito');
   const edadEl = document.getElementById('eval-edad');
   const experienciaEl = document.getElementById('eval-experiencia');
   const paisEl = document.getElementById('eval-pais');
   if (profesionEl) profesionEl.value = '';
+  if (ambitoEl) ambitoEl.value = '';
   if (edadEl) edadEl.value = '';
   if (experienciaEl) experienciaEl.value = '';
   if (paisEl) paisEl.value = '';
@@ -256,6 +259,9 @@ function showSection(sectionId) {
     } else {
       mostrarHistorialEvaluaciones();
     }
+  }
+  if (sectionId === 'dashboard' && !dashboardLoaded) {
+    cargarDashboard();
   }
 
   // Update nav active state (mobile friendly)
@@ -368,11 +374,12 @@ function calcularResultados() {
 
   // Obtener datos demográficos de los campos del modal
   const profesion = (document.getElementById('eval-profesion')?.value || '').trim() || 'No especificada';
+  const ambito = (document.getElementById('eval-ambito')?.value || '').trim() || 'No especificado';
   const edad = (document.getElementById('eval-edad')?.value || '').trim() || 'No especificada';
   const experiencia = (document.getElementById('eval-experiencia')?.value || '').trim() || 'No especificada';
   const pais = (document.getElementById('eval-pais')?.value || '').trim() || 'No especificado';
 
-  demographicData = { profession: profesion, age: edad, experience: experiencia, country: pais };
+  demographicData = { profession: profesion, ambito: ambito, age: edad, experience: experiencia, country: pais };
 
   // Recoger respuestas de cada pregunta (radios)
   const config = evaluations[evaluacionActual];
@@ -552,6 +559,7 @@ function calcularResultados() {
     interpretacion: interpretacion,
     recomendaciones: recomendaciones,
     profesion: profesion,
+    ambito: ambito,
     edad: edad,
     experiencia: experiencia,
     fecha: new Date().toLocaleDateString('es-ES'),
@@ -575,6 +583,13 @@ function mostrarResultados() {
   document.getElementById('resultadoSubtitulo').textContent = 'Evaluación completada el ' + r.fecha;
   document.getElementById('resultado-fecha').textContent = r.fecha;
   document.getElementById('resultado-profesion').textContent = r.profesion;
+  const ambitoNames = {
+    'paliativos_pediatricos': 'Paliativos pediátricos',
+    'paliativos_adultos': 'Paliativos de adultos',
+    'otras_pediatricas': 'Otras especialidades pediátricas',
+    'otras_adultos': 'Otras especialidades de adultos'
+  };
+  document.getElementById('resultado-ambito').textContent = ambitoNames[r.ambito] || r.ambito || 'No especificado';
   document.getElementById('resultado-edad').textContent = r.edad || '-';
   document.getElementById('resultado-experiencia').textContent = r.experiencia || '-';
   document.getElementById('resultado-puntuacion').textContent = r.puntuacion;
@@ -1128,6 +1143,8 @@ const _globalFns = {
   descargarGuia,
   descargarGuiaActual,
   startGuidedExercise,
+  applyDashboardFilters,
+  resetDashboardFilters,
   toggleMenu: function () {
     const menu = document.getElementById('navMenu');
     if (menu) menu.classList.toggle('active');
@@ -1137,3 +1154,364 @@ const _globalFns = {
 Object.keys(_globalFns).forEach(key => {
   window[key] = _globalFns[key];
 });
+
+// ==========================================
+// DASHBOARD (Real-time with Firebase)
+// ==========================================
+let dashboardCharts = {};
+let dashboardLoaded = false;
+let dashboardRawData = []; // Store raw data for filtering
+
+// Continent mapping for countries
+const CONTINENT_MAP = {
+  // Europe
+  'España': 'europa', 'ESPAÑA': 'europa', 'Espala': 'europa', 'spain': 'europa',
+  'Portugal': 'europa', 'Italia': 'europa', 'Francia': 'europa', 'Alemania': 'europa',
+  'Reino Unido': 'europa', 'Holanda': 'europa', 'Bélgica': 'europa', 'Suiza': 'europa',
+  'Austria': 'europa', 'Irlanda': 'europa', 'Suecia': 'europa', 'Noruega': 'europa',
+  'Dinamarca': 'europa', 'Finlandia': 'europa', 'Polonia': 'europa', 'Grecia': 'europa',
+  'Rumanía': 'europa', 'Hungría': 'europa', 'Chequia': 'europa',
+  // Latin America
+  'Argentina': 'latam', 'México': 'latam', 'Mexico': 'latam', 'uruguay': 'latam',
+  'Uruguay': 'latam', 'Chile': 'latam', 'Colombia': 'latam', 'Perú': 'latam',
+  'Peru': 'latam', 'Ecuador': 'latam', 'Brasil': 'latam', 'Venezuela': 'latam',
+  'Bolivia': 'latam', 'Paraguay': 'latam', 'Costa Rica': 'latam',
+  'Panamá': 'latam', 'Guatemala': 'latam', 'Honduras': 'latam',
+  'El Salvador': 'latam', 'Nicaragua': 'latam', 'Cuba': 'latam',
+  'República Dominicana': 'latam', 'Puerto Rico': 'latam'
+};
+
+function getContinent(pais) {
+  if (!pais || pais === 'No especificado' || pais === '?' || pais === 'Prueba') return 'otro';
+  return CONTINENT_MAP[pais] || 'otro';
+}
+
+function applyDashboardFilters() {
+  const regionFilter = document.getElementById('filter-region')?.value || 'all';
+  const profFilter = document.getElementById('filter-profesion')?.value || 'all';
+  const ambitoFilter = document.getElementById('filter-ambito')?.value || 'all';
+
+  let filtered = dashboardRawData;
+
+  if (regionFilter !== 'all') {
+    filtered = filtered.filter(d => {
+      const pais = d.datos?.pais || 'No especificado';
+      return getContinent(pais) === regionFilter;
+    });
+  }
+
+  if (profFilter !== 'all') {
+    filtered = filtered.filter(d => {
+      const prof = d.datos?.profesion || '';
+      return prof === profFilter;
+    });
+  }
+
+  if (ambitoFilter !== 'all') {
+    filtered = filtered.filter(d => {
+      const ambito = d.datos?.ambito || 'paliativos_pediatricos';
+      return ambito === ambitoFilter;
+    });
+  }
+
+  // Update filter counter
+  const activeFilters = [regionFilter, profFilter, ambitoFilter].filter(f => f !== 'all').length;
+  const countEl = document.getElementById('filter-count');
+  if (countEl) {
+    if (activeFilters > 0) {
+      countEl.textContent = `${filtered.length} de ${dashboardRawData.length} evaluaciones`;
+      countEl.style.display = 'inline-block';
+    } else {
+      countEl.style.display = 'none';
+    }
+  }
+
+  renderDashboard(filtered);
+}
+
+function resetDashboardFilters() {
+  document.getElementById('filter-region').value = 'all';
+  document.getElementById('filter-profesion').value = 'all';
+  document.getElementById('filter-ambito').value = 'all';
+  document.getElementById('filter-count').style.display = 'none';
+  renderDashboard(dashboardRawData);
+}
+
+// Correct scoring thresholds per validated manuals
+const SCORING = {
+  // MBI-HSS (Maslach, Jackson & Leiter, 1996; Seisdedos, 1997)
+  mbi: {
+    ae: { bajo: [0, 18], medio: [19, 26], alto: [27, Infinity] },
+    d:  { bajo: [0, 5],  medio: [6, 9],   alto: [10, Infinity] },
+    rp: { alto: [0, 33], medio: [34, 39], bajo: [40, Infinity] } // Inverted: low score = high burnout
+  },
+  // ProQOL v5 (Stamm, 2010)
+  proqol: {
+    cs:  { bajo: [0, 22], medio: [23, 41], alto: [42, Infinity] },
+    bo:  { bajo: [0, 22], medio: [23, 41], alto: [42, Infinity] },
+    sts: { bajo: [0, 22], medio: [23, 41], alto: [42, Infinity] }
+  }
+};
+
+function classifyScore(score, thresholds) {
+  if (score >= thresholds.alto[0] && score <= thresholds.alto[1]) return 'Alto';
+  if (score >= thresholds.medio[0] && score <= thresholds.medio[1]) return 'Medio';
+  return 'Bajo';
+}
+
+function cargarDashboard() {
+  if (!db) {
+    document.getElementById('dashboard-loading').innerHTML = '<p>⚠️ Firebase no conectado. El dashboard requiere conexión a Firebase.</p>';
+    return;
+  }
+
+  // Use onSnapshot for real-time updates
+  db.collection('evaluaciones').onSnapshot((snapshot) => {
+    const allData = [];
+    snapshot.forEach(doc => allData.push(doc.data()));
+    dashboardRawData = allData; // Store for filtering
+    applyDashboardFilters(); // Apply current filters (or show all)
+  }, (error) => {
+    console.error('Error loading dashboard:', error);
+    // Fallback: try without ordering
+    db.collection('evaluaciones').get().then(snapshot => {
+      const allData = [];
+      snapshot.forEach(doc => allData.push(doc.data()));
+      dashboardRawData = allData;
+      applyDashboardFilters();
+    }).catch(err => {
+      document.getElementById('dashboard-loading').innerHTML = `<p>⚠️ Error: ${err.message}</p>`;
+    });
+  });
+}
+
+function renderDashboard(data) {
+  if (data.length === 0) {
+    document.getElementById('dashboard-loading').innerHTML = '<p>📭 Aún no hay evaluaciones registradas. ¡Sé el primero!</p>';
+    return;
+  }
+
+  document.getElementById('dashboard-loading').style.display = 'none';
+  document.getElementById('dashboard-content').style.display = 'block';
+
+  // Classify evaluations
+  const burnoutEvals = data.filter(d => d.tipo === 'burnout');
+  const compassionEvals = data.filter(d => d.tipo === 'compassion');
+  const selfcareEvals = data.filter(d => d.tipo === 'selfcare');
+
+  // Unique users and countries
+  const uniqueUsers = new Set(data.map(d => d.userId).filter(Boolean));
+  const countries = {};
+  data.forEach(d => {
+    const c = d.datos?.pais || 'No especificado';
+    if (c && c !== 'No especificado') countries[c] = (countries[c] || 0) + 1;
+  });
+
+  // KPIs
+  document.getElementById('kpi-total').textContent = data.length;
+  document.getElementById('kpi-burnout').textContent = burnoutEvals.length;
+  document.getElementById('kpi-compassion').textContent = compassionEvals.length;
+  document.getElementById('kpi-selfcare').textContent = selfcareEvals.length;
+  document.getElementById('kpi-professionals').textContent = uniqueUsers.size;
+  document.getElementById('kpi-countries').textContent = Object.keys(countries).length;
+
+  // Profession distribution
+  const professionLabels = {
+    medico: 'Médico/a', enfermero: 'Enfermero/a', psicologo: 'Psicólogo/a',
+    fisioterapeuta: 'Fisioterapeuta', trabajador: 'Trabajador/a Social',
+    otro: 'Otro', 'No especificada': 'No especificada'
+  };
+  const profCounts = {};
+  data.forEach(d => {
+    const p = d.datos?.profesion || 'No especificada';
+    const label = professionLabels[p] || p;
+    profCounts[label] = (profCounts[label] || 0) + 1;
+  });
+
+  // Ámbito distribution
+  const ambitoLabels = {
+    paliativos_pediatricos: 'Paliativos pediátricos',
+    paliativos_adultos: 'Paliativos de adultos',
+    otras_pediatricas: 'Otras esp. pediátricas',
+    otras_adultos: 'Otras esp. de adultos',
+    'No especificado': 'No especificado'
+  };
+  const ambitoCounts = {};
+  data.forEach(d => {
+    // Existing records without ámbito are all from pediatric palliative care
+    const a = d.datos?.ambito || 'paliativos_pediatricos';
+    const label = ambitoLabels[a] || a;
+    ambitoCounts[label] = (ambitoCounts[label] || 0) + 1;
+  });
+
+  // MBI risk levels recalculated from subscales
+  const mbiLevels = { ae: {Bajo:0, Medio:0, Alto:0}, d: {Bajo:0, Medio:0, Alto:0}, rp: {Bajo:0, Medio:0, Alto:0} };
+  const mbiGlobalRisk = { Bajo: 0, Moderado: 0, Alto: 0 };
+  burnoutEvals.forEach(ev => {
+    const sub = ev.resultados?.subscales;
+    if (sub) {
+      const aeScore = sub.ae?.score ?? 0;
+      const dScore = sub.d?.score ?? 0;
+      const rpScore = sub.rp?.score ?? 0;
+      const aeLevel = classifyScore(aeScore, SCORING.mbi.ae);
+      const dLevel = classifyScore(dScore, SCORING.mbi.d);
+      const rpLevel = classifyScore(rpScore, SCORING.mbi.rp);
+      mbiLevels.ae[aeLevel]++;
+      mbiLevels.d[dLevel]++;
+      mbiLevels.rp[rpLevel]++;
+      // Global risk
+      if (aeLevel === 'Alto' && dLevel === 'Alto' && rpLevel === 'Alto') mbiGlobalRisk.Alto++;
+      else if (aeLevel === 'Alto' || dLevel === 'Alto') mbiGlobalRisk.Moderado++;
+      else mbiGlobalRisk.Bajo++;
+    } else {
+      // Use level_text or total from older records
+      const txt = ev.resultados?.level?.text || '';
+      if (txt.includes('Alto')) mbiGlobalRisk.Alto++;
+      else if (txt.includes('moderado') || txt.includes('Moderado')) mbiGlobalRisk.Moderado++;
+      else mbiGlobalRisk.Bajo++;
+    }
+  });
+
+  // ProQOL risk levels recalculated
+  const proqolLevels = { cs: {Bajo:0, Medio:0, Alto:0}, bo: {Bajo:0, Medio:0, Alto:0}, sts: {Bajo:0, Medio:0, Alto:0} };
+  const proqolGlobalRisk = { Bajo: 0, Moderado: 0, Alto: 0 };
+  compassionEvals.forEach(ev => {
+    const sub = ev.resultados?.subscales;
+    if (sub) {
+      const csScore = sub.cs?.score ?? 0;
+      const boScore = sub.bo?.score ?? 0;
+      const stsScore = sub.sts?.score ?? 0;
+      const csLevel = classifyScore(csScore, SCORING.proqol.cs);
+      const boLevel = classifyScore(boScore, SCORING.proqol.bo);
+      const stsLevel = classifyScore(stsScore, SCORING.proqol.sts);
+      proqolLevels.cs[csLevel]++;
+      proqolLevels.bo[boLevel]++;
+      proqolLevels.sts[stsLevel]++;
+      if (boLevel === 'Alto' || stsLevel === 'Alto') proqolGlobalRisk.Alto++;
+      else if (csLevel === 'Bajo') proqolGlobalRisk.Moderado++;
+      else proqolGlobalRisk.Bajo++;
+    } else {
+      const txt = ev.resultados?.level?.text || '';
+      if (txt.includes('Alto')) proqolGlobalRisk.Alto++;
+      else if (txt.includes('Baja')) proqolGlobalRisk.Moderado++;
+      else proqolGlobalRisk.Bajo++;
+    }
+  });
+
+  // Timeline (evaluations per month)
+  const timeline = {};
+  data.forEach(d => {
+    const dateStr = d.fecha || d.timestamp?.toDate?.()?.toISOString?.() || '';
+    if (dateStr) {
+      const month = dateStr.substring(0, 7); // YYYY-MM
+      timeline[month] = (timeline[month] || 0) + 1;
+    }
+  });
+  const sortedMonths = Object.keys(timeline).sort();
+
+  // Chart colors
+  const palette = [
+    'rgba(33,128,141,0.75)', 'rgba(255,84,89,0.75)', 'rgba(230,129,97,0.75)',
+    'rgba(98,108,113,0.75)', 'rgba(147,51,234,0.75)', 'rgba(34,197,94,0.75)',
+    'rgba(245,158,11,0.75)', 'rgba(236,72,153,0.75)'
+  ];
+  const riskColors = { Bajo: 'rgba(33,128,141,0.75)', Medio: 'rgba(245,158,11,0.75)', Moderado: 'rgba(245,158,11,0.75)', Alto: 'rgba(255,84,89,0.75)' };
+
+  // Destroy existing charts
+  Object.values(dashboardCharts).forEach(c => c?.destroy?.());
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, font: { size: 11 } } } }
+  };
+
+  // 1. Profession chart (doughnut)
+  dashboardCharts.profesion = new Chart(document.getElementById('chart-profesion'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(profCounts),
+      datasets: [{ data: Object.values(profCounts), backgroundColor: palette.slice(0, Object.keys(profCounts).length), borderWidth: 1 }]
+    },
+    options: { ...chartOptions, cutout: '55%' }
+  });
+
+  // 2. Ámbito chart (bar)
+  dashboardCharts.ambito = new Chart(document.getElementById('chart-ambito'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(ambitoCounts),
+      datasets: [{ label: 'Evaluaciones', data: Object.values(ambitoCounts), backgroundColor: palette.slice(0, Object.keys(ambitoCounts).length), borderWidth: 0, borderRadius: 6 }]
+    },
+    options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+
+  // 3. MBI risk chart (bar)
+  dashboardCharts.mbiRisk = new Chart(document.getElementById('chart-mbi-risk'), {
+    type: 'bar',
+    data: {
+      labels: ['Bajo', 'Moderado', 'Alto'],
+      datasets: [{ label: 'Evaluaciones', data: [mbiGlobalRisk.Bajo, mbiGlobalRisk.Moderado, mbiGlobalRisk.Alto], backgroundColor: [riskColors.Bajo, riskColors.Moderado, riskColors.Alto], borderWidth: 0, borderRadius: 6 }]
+    },
+    options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+
+  // 4. ProQOL risk chart (bar)
+  dashboardCharts.proqolRisk = new Chart(document.getElementById('chart-proqol-risk'), {
+    type: 'bar',
+    data: {
+      labels: ['Favorable', 'Moderado', 'Riesgo Alto'],
+      datasets: [{ label: 'Evaluaciones', data: [proqolGlobalRisk.Bajo, proqolGlobalRisk.Moderado, proqolGlobalRisk.Alto], backgroundColor: [riskColors.Bajo, riskColors.Moderado, riskColors.Alto], borderWidth: 0, borderRadius: 6 }]
+    },
+    options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+
+  // 5. Timeline chart (line)
+  dashboardCharts.timeline = new Chart(document.getElementById('chart-timeline'), {
+    type: 'line',
+    data: {
+      labels: sortedMonths.map(m => {
+        const [y, mo] = m.split('-');
+        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        return `${monthNames[parseInt(mo)-1]} ${y.substring(2)}`;
+      }),
+      datasets: [{ label: 'Evaluaciones', data: sortedMonths.map(m => timeline[m]), borderColor: 'rgba(33,128,141,1)', backgroundColor: 'rgba(33,128,141,0.1)', fill: true, tension: 0.3, pointRadius: 4 }]
+    },
+    options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+
+  // 6. Country chart (doughnut)
+  const countryKeys = Object.keys(countries);
+  dashboardCharts.pais = new Chart(document.getElementById('chart-pais'), {
+    type: 'doughnut',
+    data: {
+      labels: countryKeys.length > 0 ? countryKeys : ['Sin datos'],
+      datasets: [{ data: countryKeys.length > 0 ? Object.values(countries) : [1], backgroundColor: countryKeys.length > 0 ? palette.slice(0, countryKeys.length) : ['#ccc'], borderWidth: 1 }]
+    },
+    options: { ...chartOptions, cutout: '55%' }
+  });
+
+  // Detail tables
+  const mkBadge = (n, cls) => `<span class="risk-badge ${cls}">${n}</span>`;
+  const mbiTbody = document.getElementById('mbi-detail-table');
+  if (mbiTbody && burnoutEvals.length > 0) {
+    mbiTbody.innerHTML = `
+      <tr><td>Agotamiento Emocional</td><td>${mkBadge(mbiLevels.ae.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.ae.Medio,'medio')}</td><td>${mkBadge(mbiLevels.ae.Alto,'alto')}</td></tr>
+      <tr><td>Despersonalización</td><td>${mkBadge(mbiLevels.d.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.d.Medio,'medio')}</td><td>${mkBadge(mbiLevels.d.Alto,'alto')}</td></tr>
+      <tr><td>Realización Personal</td><td>${mkBadge(mbiLevels.rp.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.rp.Medio,'medio')}</td><td>${mkBadge(mbiLevels.rp.Alto,'alto')}</td></tr>
+    `;
+  }
+
+  const proqolTbody = document.getElementById('proqol-detail-table');
+  if (proqolTbody && compassionEvals.length > 0) {
+    proqolTbody.innerHTML = `
+      <tr><td>Satisfacción por Compasión</td><td>${mkBadge(proqolLevels.cs.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.cs.Medio,'medio')}</td><td>${mkBadge(proqolLevels.cs.Alto,'alto')}</td></tr>
+      <tr><td>Burnout</td><td>${mkBadge(proqolLevels.bo.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.bo.Medio,'medio')}</td><td>${mkBadge(proqolLevels.bo.Alto,'alto')}</td></tr>
+      <tr><td>Estrés Traumático Secundario</td><td>${mkBadge(proqolLevels.sts.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.sts.Medio,'medio')}</td><td>${mkBadge(proqolLevels.sts.Alto,'alto')}</td></tr>
+    `;
+  }
+
+  // Timestamp
+  document.getElementById('dashboard-timestamp').textContent = new Date().toLocaleString('es-ES');
+  dashboardLoaded = true;
+}
