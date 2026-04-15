@@ -165,6 +165,11 @@ function resetDemographicsFields() {
   if (edadEl) edadEl.value = '';
   if (experienciaEl) experienciaEl.value = '';
   if (paisEl) paisEl.value = '';
+  // Reset consent checkbox
+  const consentEl = document.getElementById('eval-consent');
+  const consentErr = document.getElementById('consent-error');
+  if (consentEl) consentEl.checked = false;
+  if (consentErr) consentErr.style.display = 'none';
 }
 
 /**
@@ -368,6 +373,17 @@ function selectOption(value) {
 
 function calcularResultados() {
   console.log('calcularResultados iniciado');
+
+  // Validar consentimiento RGPD
+  const consentCheckbox = document.getElementById('eval-consent');
+  const consentError = document.getElementById('consent-error');
+  if (consentCheckbox && !consentCheckbox.checked) {
+    if (consentError) consentError.style.display = 'block';
+    consentCheckbox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (consentError) consentError.style.display = 'none';
+
   let puntuacion = 0;
   let interpretacion = '';
   let recomendaciones = [];

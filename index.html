@@ -4047,6 +4047,23 @@
           <input type="text" id="eval-pais" class="form-input" placeholder="País de trabajo">
         </div>
 
+        <!-- Consentimiento RGPD -->
+        <div class="form-section" style="background: var(--color-background); border: 1px solid var(--color-card-border); border-radius: var(--radius-md); padding: 16px; margin-top: 12px;">
+          <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <input type="checkbox" id="eval-consent" style="margin-top: 4px; min-width: 18px; min-height: 18px; accent-color: var(--color-primary); cursor: pointer;">
+            <label for="eval-consent" style="font-size: 0.85em; line-height: 1.5; color: var(--color-text-secondary); cursor: pointer;">
+              <strong style="color: var(--color-text);">Consentimiento informado:</strong> Declaro que participo de forma voluntaria y autorizo el tratamiento de los datos introducidos con fines de <strong>autoevaluación personal</strong> e <strong>investigación científica</strong>. Entiendo que:
+              <ul style="margin: 8px 0 4px 0; padding-left: 18px;">
+                <li>Los datos son <strong>completamente anónimos</strong>: no se recoge nombre, email ni ningún dato identificativo.</li>
+                <li>Se utilizan exclusivamente para autoevaluación y análisis estadístico agregado.</li>
+                <li>Se almacenan en servidores seguros (Firebase/Google Cloud) conforme al <strong>Reglamento General de Protección de Datos (RGPD — UE 2016/679)</strong> y la <strong>Ley Orgánica 3/2018 de Protección de Datos y Garantía de los Derechos Digitales (LOPD-GDD)</strong>.</li>
+                <li>Al ser datos anónimos no vinculados a ninguna identidad, no es posible ejercer los derechos de acceso, rectificación o supresión sobre un registro individual.</li>
+              </ul>
+            </label>
+          </div>
+          <p id="consent-error" style="color: var(--color-error); font-size: 0.8em; margin: 8px 0 0 28px; display: none;">⚠️ Debes aceptar el consentimiento informado para continuar.</p>
+        </div>
+
         <!-- Preguntas -->
         <div id="evalItemsContainer"></div>
       </div>
@@ -4112,9 +4129,15 @@
         <p style="font-size: 0.9em;">Esta aplicación es una herramienta de apoyo desarrollada para uso exclusivo
           de investigación y soporte profesional. No comercializar.</p>
 
-        <div style="background: #f0f7fc; padding: 10px; border-radius: 6px; margin-top: 15px; font-size: 0.85em;">
-          <strong>Aviso Legal:</strong> El almacenamiento de datos se realiza de forma local y/o anónima en
-          servidores seguros (Firebase), cumpliendo con la normativa vigente de protección de datos.</p>
+        <div style="background: #f0f7fc; padding: 14px; border-radius: 6px; margin-top: 15px; font-size: 0.85em; line-height: 1.6;">
+          <strong>📋 Protección de datos:</strong><br>
+          Responsable: Álvaro Navarro Mingorance.<br>
+          Finalidad: Autoevaluación profesional e investigación científica sobre bienestar en cuidados paliativos.<br>
+          Base jurídica: Consentimiento explícito del interesado (Art. 6.1.a RGPD — UE 2016/679) y Ley Orgánica 3/2018 (LOPD-GDD).<br>
+          Datos recogidos: Profesión, ámbito, edad, experiencia, país y respuestas a las escalas. <strong>No se recoge ningún dato identificativo</strong> (nombre, email, IP).<br>
+          Almacenamiento: Firebase (Google Cloud), servidores en la UE.<br>
+          Derechos: Al tratarse de datos anónimos no vinculados a identidad alguna, no es posible ejercer derechos de acceso, rectificación o supresión sobre registros individuales (Art. 11 RGPD).<br>
+          Conservación: Los datos se conservarán de forma indefinida con fines de investigación.
         </div>
       </div>
       <div class="credits-footer">
