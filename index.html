@@ -2808,18 +2808,22 @@
     <!-- Navigation Menu -->
     <nav class="main-nav">
       <div class="nav-brand">CPP Bienestar</div>
+      <select id="lang-select" onchange="setLanguage(this.value)" style="margin-left:auto;margin-right:12px;padding:4px 8px;border-radius:6px;border:1px solid var(--color-card-border);background:var(--color-surface);color:var(--color-text);font-size:13px;cursor:pointer;">
+        <option value="es">🇪🇸 ES</option>
+        <option value="en">🇬🇧 EN</option>
+      </select>
       <button class="nav-toggle" onclick="toggleMenu()" aria-label="Menú">
         <span class="hamburger"></span>
       </button>
       <ul class="nav-menu" id="navMenu">
-        <li><a href="#inicio" onclick="showSection('inicio')">🏠 Inicio</a></li>
-        <li><a href="#evaluaciones" onclick="showSection('evaluaciones')">📋 Evaluaciones</a></li>
-        <li><a href="#recursos" onclick="showSection('recursos')">💆 Recursos Inmediatos</a></li>
-        <li><a href="#biblioteca" onclick="showSection('biblioteca')">📚 Biblioteca</a></li>
-        <li><a href="#comunidad" onclick="showSection('comunidad')">👥 Comunidad</a></li>
-        <li><a href="#seguimiento" onclick="showSection('seguimiento')">📊 Mi Seguimiento</a></li>
-        <li><a href="#dashboard" onclick="showSection('dashboard')">📈 Situación actual</a></li>
-        <li><a href="#" onclick="document.getElementById('creditosModal').style.display='flex'; return false;">©
+        <li><a href="#inicio" onclick="showSection('inicio')" data-i18n="nav.home">🏠 Inicio</a></li>
+        <li><a href="#evaluaciones" onclick="showSection('evaluaciones')" data-i18n="nav.evaluations">📋 Evaluaciones</a></li>
+        <li><a href="#recursos" onclick="showSection('recursos')" data-i18n="nav.resources">💆 Recursos Inmediatos</a></li>
+        <li><a href="#biblioteca" onclick="showSection('biblioteca')" data-i18n="nav.library">📚 Biblioteca</a></li>
+        <li><a href="#comunidad" onclick="showSection('comunidad')" data-i18n="nav.community">👥 Comunidad</a></li>
+        <li><a href="#seguimiento" onclick="showSection('seguimiento')" data-i18n="nav.tracking">📊 Mi Seguimiento</a></li>
+        <li><a href="#dashboard" onclick="showSection('dashboard')" data-i18n="nav.dashboard">📈 Situación actual</a></li>
+        <li><a href="#" onclick="document.getElementById('creditosModal').style.display='flex'; return false;" data-i18n="nav.credits">©
             Créditos</a></li>
       </ul>
     </nav>
@@ -2828,45 +2832,46 @@
     <section id="inicio" class="app-section active">
       <!-- Hero Section -->
       <div class="hero-section">
-        <h1>¿Cómo te afecta tu trabajo? Descúbrelo</h1>
-        <p>Trabajar en paliativos pediátricos es maravilloso, pero a veces puede afectarte. Descubre cómo estás y cómo
+        <h1 data-i18n="hero.title">¿Cómo te afecta tu trabajo? Descúbrelo</h1>
+        <p data-i18n="hero.subtitle">Trabajar en paliativos pediátricos es maravilloso, pero a veces puede afectarte. Descubre cómo estás y cómo
           protegerte.</p>
       </div>
 
       <!-- Tarjetas de Evaluación -->
       <div class="evaluations-grid-home">
-        <!-- TARJETA 1: BURNOUT -->
+        <!-- TARJETA 1: FATIGA POR COMPASIÓN (ProQOL — primera posición) -->
         <div class="evaluation-card-home">
           <div class="card-header-home">
-            <h3>🔥 Burnout o Desgaste Profesional</h3>
-            <p>Síndrome de agotamiento emocional, despersonalización y reducción del logro personal. Te sientes
-              exhausto, cínico y con sensación de ineficacia profesional.</p>
+            <h3 data-i18n="home.compassion.title">💔 Fatiga por Compasión</h3>
+            <p data-i18n="home.compassion.desc">Desgaste emocional por exposición continuada al sufrimiento de niños y familias. Incluye estrés
+              traumático secundario y síntomas similares al TEPT.</p>
           </div>
-          <button class="btn-evaluate-home" onclick="abrirEvaluacion('burnout')">
-            🎯 Evalúa tu Burnout
+          <button class="btn-evaluate-home" onclick="abrirEvaluacion('compasion')" data-i18n="home.compassion.btn">
+            🎯 Evalúa tu Fatiga por Compasión
           </button>
         </div>
 
-        <!-- TARJETA 2: FATIGA POR COMPASIÓN -->
+        <!-- TARJETA 2: BURNOUT -->
         <div class="evaluation-card-home">
           <div class="card-header-home">
-            <h3>💔 Fatiga por Compasión</h3>
-            <p>Desgaste emocional por exposición continuada al sufrimiento de niños y familias. Incluye estrés
-              traumático secundario y síntomas similares al TEPT.</p>
+            <h3 data-i18n="home.burnout.title">🔥 Burnout o Desgaste Profesional</h3>
+            <p data-i18n="home.burnout.desc">Síndrome de agotamiento emocional, despersonalización y reducción del logro personal. Te sientes
+              exhausto, cínico y con sensación de ineficacia profesional.</p>
           </div>
-          <button class="btn-evaluate-home" onclick="abrirEvaluacion('compasion')">
-            🎯 Evalúa tu Fatiga por Compasión
+          <button class="btn-evaluate-home" onclick="abrirEvaluacion('burnout')" data-i18n="home.burnout.btn">
+            🎯 Evalúa tu Burnout
           </button>
         </div>
 
         <!-- TARJETA 3: AUTOCUIDADO -->
         <div class="evaluation-card-home">
           <div class="card-header-home">
-            <h3>💚 Déficit de Autocuidado</h3>
-            <p>Insuficiente atención a tu bienestar físico, emocional, social y espiritual. Priorizas necesidades de
+            <h3 data-i18n="home.selfcare.title">💚 Déficit de Autocuidado</h3>
+            <p data-i18n="home.selfcare.desc">Insuficiente atención a tu bienestar físico, emocional, social y espiritual. Priorizas necesidades de
               pacientes sobre las tuyas propias.</p>
+            <p style="font-size:0.85em;color:var(--color-warning);margin-top:8px;" data-i18n="home.selfcare.disclaimer">⚠️ <em>Escala de concepción propia (no validada).</em> Rellénala para poder correlacionar los datos con los instrumentos validados.</p>
           </div>
-          <button class="btn-evaluate-home" onclick="abrirEvaluacion('autocuidado')">
+          <button class="btn-evaluate-home" onclick="abrirEvaluacion('autocuidado')" data-i18n="home.selfcare.btn">
             🎯 Evalúa tu Autocuidado
           </button>
         </div>
@@ -2876,13 +2881,13 @@
       <div class="research-disclaimer">
         <div class="disclaimer-icon">🔬</div>
         <div>
-          <h4>Recomendación para la investigación</h4>
-          <p>Para poder realizar <strong>correlaciones entre instrumentos</strong> y obtener datos más robustos, se recomienda completar las <strong>tres escalas</strong> (Burnout, Fatiga por Compasión y Autocuidado), no solo una. Esto nos permitirá comparar y cruzar resultados para mejorar la evidencia sobre el bienestar profesional.</p>
+          <h4 data-i18n="research.title">Recomendación para la investigación</h4>
+          <p data-i18n="research.text">Para poder realizar <strong>correlaciones entre instrumentos</strong> y obtener datos más robustos, se recomienda completar las <strong>tres escalas</strong> (Burnout, Fatiga por Compasión y Autocuidado), no solo una. Esto nos permitirá comparar y cruzar resultados para mejorar la evidencia sobre el bienestar profesional.</p>
         </div>
       </div>
 
       <!-- Acceso Rápido a Otros Recursos -->
-      <div class="resources-quickaccess">
+      <div class="resources-quickaccess" data-i18n-section="quick-access">
         <h3>Acceso rápido a otros recursos</h3>
         <div class="quickaccess-grid">
           <div class="quickaccess-card" onclick="showSection('biblioteca')">
@@ -2907,13 +2912,13 @@
 
     <!-- SECCIÓN 2: EVALUACIONES -->
     <section id="evaluaciones" class="app-section">
-      <div class="section-header">
+      <div class="section-header" data-i18n-section="eval-header">
         <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
         <h2>Autoevaluaciones</h2>
         <p class="section-description">Conoce tu estado actual con instrumentos validados científicamente</p>
       </div>
 
-      <div class="education-section">
+      <div class="education-section" data-i18n-section="eval-education">
         <div class="cards-grid">
           <div class="info-card burnout">
             <div class="info-card-icon">🔥</div>
@@ -2957,27 +2962,25 @@
         </div>
       </div>
 
-      <div class="evaluation-section">
+      <div class="evaluation-section" data-i18n-section="eval-buttons">
         <h2>Autoevaluación: Descubre cómo estás</h2>
         <div class="evaluation-buttons">
+          <button class="btn btn-primary" onclick="abrirEvaluacion('compasion')">Conoce tu nivel de Fatiga por Compasión</button>
           <button class="btn btn-primary" onclick="abrirEvaluacion('burnout')">Conoce tu nivel de Burnout</button>
-          <button class="btn btn-primary" onclick="abrirEvaluacion('compasion')">Conoce tu nivel de Fatiga por
-            Compasión</button>
-          <button class="btn btn-primary" onclick="abrirEvaluacion('autocuidado')">¿Realmente ejerces el autocuidado?
-            Descúbrelo</button>
+          <button class="btn btn-primary" onclick="abrirEvaluacion('autocuidado')">¿Realmente ejerces el autocuidado? Descúbrelo</button>
         </div>
       </div>
     </section>
 
     <!-- SECCIÓN 3: RECURSOS INMEDIATOS -->
     <section id="recursos" class="app-section">
-      <div class="section-header">
+      <div class="section-header" data-i18n-section="resources-header">
         <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
         <h2>Herramientas para Cuidarte Ahora Mismo</h2>
         <p class="section-description">Ejercicios prácticos, rutinas diarias y técnicas de regulación emocional</p>
       </div>
 
-      <div class="resources-tabs">
+      <div class="resources-tabs" data-i18n-section="resources-tabs">
         <button class="tab-btn active" onclick="showResourceTab('mindfulness')">Mindfulness</button>
         <button class="tab-btn" onclick="showResourceTab('rutinas')">Rutinas Diarias</button>
         <button class="tab-btn" onclick="showResourceTab('regulacion')">Regulación Emocional</button>
@@ -2985,7 +2988,7 @@
 
       <!-- Mindfulness Exercises -->
       <div id="mindfulness-tab" class="resource-tab active">
-        <div class="exercises-grid">
+        <div class="exercises-grid" data-i18n-section="mindfulness-content">
           <div class="exercise-card">
             <div class="exercise-header">
               <h3>🌬️ Respiración Consciente Abdominal</h3>
@@ -3103,7 +3106,7 @@
 
       <!-- Rutinas Diarias -->
       <div id="rutinas-tab" class="resource-tab">
-        <div class="routines-container">
+        <div class="routines-container" data-i18n-section="routines-content">
           <div class="routine-card">
             <div class="routine-header">
               <h3>🌅 Rutina Matutina</h3>
@@ -3191,7 +3194,7 @@
 
       <!-- Regulación Emocional -->
       <div id="regulacion-tab" class="resource-tab">
-        <div class="regulation-grid">
+        <div class="regulation-grid" data-i18n-section="regulation-content">
           <div class="technique-card">
             <h3>🌡️ Termómetro Emocional</h3>
             <p class="technique-desc">Evalúa la intensidad de tu emoción y aplica la técnica adecuada</p>
@@ -3257,13 +3260,13 @@
 
     <!-- SECCIÓN 4: BIBLIOTECA -->
     <section id="biblioteca" class="app-section">
-      <div class="section-header">
+      <div class="section-header" data-i18n-section="library-header">
         <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
         <h2>Biblioteca de Recursos Educativos</h2>
         <p class="section-description">Guías prácticas, referencias académicas y apps recomendadas</p>
       </div>
 
-      <div class="resources-tabs">
+      <div class="resources-tabs" data-i18n-section="library-tabs">
         <button class="tab-btn active" onclick="showLibraryTab('guias')">Guías Descargables</button>
         <button class="tab-btn" onclick="showLibraryTab('referencias')">Referencias Académicas</button>
         <button class="tab-btn" onclick="showLibraryTab('apps')">Apps Recomendadas</button>
@@ -3271,7 +3274,7 @@
 
       <!-- Guías Descargables -->
       <div id="guias-tab" class="library-tab active">
-        <div class="guides-grid">
+        <div class="guides-grid" data-i18n-section="guides-content">
           <div class="guide-card">
             <div class="guide-icon">💚</div>
             <h3>Autocuidado para CPP</h3>
@@ -3684,7 +3687,7 @@
 
   <!-- SECCIÓN 5: COMUNIDAD -->
   <section id="comunidad" class="app-section">
-    <div class="section-header">
+    <div class="section-header" data-i18n-section="community-header">
       <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
       <h2>No Estás Solo: Comunidad y Apoyo</h2>
       <p class="section-description">Conecta, comparte y encuentra apoyo profesional</p>
@@ -3785,7 +3788,7 @@
     </div>
     </div>
 
-    <div class="disclaimer-box">
+    <div class="disclaimer-box" data-i18n-section="community-disclaimer">
       <h4>⚠️ Importante</h4>
       <p>Esta herramienta no sustituye una evaluación clínica profesional. Si experimentas dificultades significativas
         que afectan tu vida diaria, trabajo o bienestar, por favor busca apoyo de un profesional de la salud mental
@@ -3795,13 +3798,13 @@
 
   <!-- SECCIÓN 6: SEGUIMIENTO -->
   <section id="seguimiento" class="app-section">
-    <div class="section-header">
+    <div class="section-header" data-i18n-section="tracking-header">
       <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
       <h2>Mi Seguimiento Personal</h2>
       <p class="section-description">Monitorea tu progreso y genera planes personalizados</p>
     </div>
 
-    <div class="tracking-container">
+    <div class="tracking-container" data-i18n-section="tracking-content">
       <div class="tracking-card">
         <h3>📋 Historial de Evaluaciones</h3>
         <p>Aquí aparecerán tus evaluaciones completadas y su evolución en el tiempo.</p>
@@ -3835,7 +3838,7 @@
 
   <!-- SECCIÓN: DASHBOARD -->
   <section id="dashboard" class="app-section">
-    <div class="section-header">
+    <div class="section-header" data-i18n-section="dashboard-header">
       <button class="btn-back" onclick="showSection('inicio')">← Volver</button>
       <h2>📈 Situación actual en tiempo real</h2>
       <p class="section-description">Estadísticas en tiempo real de todas las evaluaciones completadas por profesionales sanitarios</p>
@@ -3982,7 +3985,7 @@
     </div>
   </section>
 
-  <footer class="footer">
+  <footer class="footer" data-i18n-section="footer-content">
     <div class="footer-button">
       <!-- Enlace para valorar la utilidad de la aplicación -->
       <button class="btn btn-primary" onclick="window.open('https://forms.gle/y2mSUMvSM6wsN8RN7', '_blank')">
@@ -4214,6 +4217,12 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <!-- i18n (debe cargarse ANTES de app.js) -->
+  <script src="i18n-en.js"></script>
+  <script src="i18n-sections.js"></script>
+  <script src="i18n-sections2.js"></script>
+  <script src="i18n.js"></script>
 
   <script src="app.js"></script>
 </body>

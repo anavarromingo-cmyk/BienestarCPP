@@ -183,7 +183,7 @@ function renderEvaluationForm(evalKey) {
   if (!container) return;
   container.innerHTML = '';
 
-  const config = evaluations[evalKey];
+  const config = typeof getEvalConfig === 'function' ? getEvalConfig(evalKey) : evaluations[evalKey];
   if (!config) return;
 
   // Crear un progreso simple opcional
@@ -303,7 +303,10 @@ function abrirEvaluacion(type) {
 
   // Actualizar título del modal
   const titleElement = document.getElementById('evalTitle');
-  if (titleElement) titleElement.textContent = evaluations[evaluacionActual].title;
+  if (titleElement) {
+    const cfg = typeof getEvalConfig === 'function' ? getEvalConfig(evaluacionActual) : evaluations[evaluacionActual];
+    titleElement.textContent = cfg.title;
+  }
 
   // Renderizar preguntas en el contenedor del modal
   renderEvaluationForm(evaluacionActual);
@@ -398,7 +401,7 @@ function calcularResultados() {
   demographicData = { profession: profesion, ambito: ambito, age: edad, experience: experiencia, country: pais };
 
   // Recoger respuestas de cada pregunta (radios)
-  const config = evaluations[evaluacionActual];
+  const config = typeof getEvalConfig === 'function' ? getEvalConfig(evaluacionActual) : evaluations[evaluacionActual];
   answers = [];
   if (config) {
     config.questions.forEach((_, idx) => {
@@ -441,14 +444,14 @@ function calcularResultados() {
     // Interpretación global (simplificada)
     // Alto Burnout habitualmente es Alto AE + Alto D + Bajo RP
     if (levelAE === 'Alto' && levelD === 'Alto' && levelRP === 'Bajo') {
-      interpretacion = 'Alto riesgo de Burnout (Síndrome completo).';
-      recomendaciones = ['Consulta con un especialista', 'Revisión urgente de condiciones laborales', 'Prioridad absoluta al descanso'];
+      interpretacion = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'High Burnout risk (Complete syndrome).' : 'Alto riesgo de Burnout (Síndrome completo).';
+      recomendaciones = (currentLang === 'en') ? ['Consult a specialist', 'Urgent review of working conditions', 'Absolute priority on rest'] : ['Consulta con un especialista', 'Revisión urgente de condiciones laborales', 'Prioridad absoluta al descanso'];
     } else if (levelAE === 'Alto' || levelD === 'Alto') {
-      interpretacion = 'Riesgo moderado/alto de Burnout. Signos de alerta presentes.';
-      recomendaciones = ['Incrementa actividades de desconexión', 'Supervisión de casos', 'Fortalece red de apoyo'];
+      interpretacion = (currentLang === 'en') ? 'Moderate/high Burnout risk. Warning signs present.' : 'Riesgo moderado/alto de Burnout. Signos de alerta presentes.';
+      recomendaciones = (currentLang === 'en') ? ['Increase disconnection activities', 'Case supervision', 'Strengthen support network'] : ['Incrementa actividades de desconexión', 'Supervisión de casos', 'Fortalece red de apoyo'];
     } else {
-      interpretacion = 'Bajo riesgo de Burnout. Perfil saludable.';
-      recomendaciones = ['Mantén tus estrategias actuales', 'Comparte tu bienestar con el equipo'];
+      interpretacion = (currentLang === 'en') ? 'Low Burnout risk. Healthy profile.' : 'Bajo riesgo de Burnout. Perfil saludable.';
+      recomendaciones = (currentLang === 'en') ? ['Maintain your current strategies', 'Share your well-being with the team'] : ['Mantén tus estrategias actuales', 'Comparte tu bienestar con el equipo'];
     }
 
     // Guardado detallado
@@ -524,14 +527,14 @@ function calcularResultados() {
 
     // Interpretación combinada
     if (levelBO === 'Alto' || levelSTS === 'Alto') {
-      interpretacion = 'Riesgo Alto de Fatiga por Compasión / Estrés Traumático Secundario.';
-      recomendaciones = ['Plan de autocuidado inmediato', 'Búsqueda de apoyo terapéutico', 'Reducción de exposición traumática temporal'];
+      interpretacion = (currentLang === 'en') ? 'High risk of Compassion Fatigue / Secondary Traumatic Stress.' : 'Riesgo Alto de Fatiga por Compasión / Estrés Traumático Secundario.';
+      recomendaciones = (currentLang === 'en') ? ['Immediate self-care plan', 'Seek therapeutic support', 'Temporary reduction of traumatic exposure'] : ['Plan de autocuidado inmediato', 'Búsqueda de apoyo terapéutico', 'Reducción de exposición traumática temporal'];
     } else if (levelCS === 'Bajo') {
-      interpretacion = 'Baja Satisfacción por Compasión (Riesgo de Burnout).';
-      recomendaciones = ['Reconectar con el propósito', 'Recordar logros pasados', 'Formación y desarrollo'];
+      interpretacion = (currentLang === 'en') ? 'Low Compassion Satisfaction (Burnout risk).' : 'Baja Satisfacción por Compasión (Riesgo de Burnout).';
+      recomendaciones = (currentLang === 'en') ? ['Reconnect with your purpose', 'Remember past achievements', 'Training and development'] : ['Reconectar con el propósito', 'Recordar logros pasados', 'Formación y desarrollo'];
     } else {
-      interpretacion = 'Calidad de Vida Profesional Equilibrada.';
-      recomendaciones = ['Continúa monitoreando tu bienestar', 'Mantén rutinas saludables'];
+      interpretacion = (currentLang === 'en') ? 'Balanced Professional Quality of Life.' : 'Calidad de Vida Profesional Equilibrada.';
+      recomendaciones = (currentLang === 'en') ? ['Continue monitoring your well-being', 'Maintain healthy routines'] : ['Continúa monitoreando tu bienestar', 'Mantén rutinas saludables'];
     }
 
     var proqolSubResultados = {
@@ -547,14 +550,14 @@ function calcularResultados() {
     puntuacion = Math.round((answers.reduce((a, b) => a + b, 0) / (answers.length * 5)) * 100);
 
     if (puntuacion > 70) {
-      interpretacion = 'Excelente rutina de autocuidado.';
-      recomendaciones = ['Mantén tu rutina', 'Sé mentor de otros'];
+      interpretacion = (currentLang === 'en') ? 'Excellent self-care routine.' : 'Excelente rutina de autocuidado.';
+      recomendaciones = (currentLang === 'en') ? ['Maintain your routine', 'Be a mentor to others'] : ['Mantén tu rutina', 'Sé mentor de otros'];
     } else if (puntuacion > 40) {
-      interpretacion = 'Autocuidado moderado, áreas de mejora.';
-      recomendaciones = ['Identifica 1-2 áreas para mejorar', 'Pequeños cambios diarios'];
+      interpretacion = (currentLang === 'en') ? 'Moderate self-care, areas for improvement.' : 'Autocuidado moderado, áreas de mejora.';
+      recomendaciones = (currentLang === 'en') ? ['Identify 1-2 areas to improve', 'Small daily changes'] : ['Identifica 1-2 áreas para mejorar', 'Pequeños cambios diarios'];
     } else {
-      interpretacion = 'Autocuidado insuficiente. Riesgo de salud.';
-      recomendaciones = ['Prioridad absoluta: dormir y comer bien', 'Buscar apoyo'];
+      interpretacion = (currentLang === 'en') ? 'Insufficient self-care. Health risk.' : 'Autocuidado insuficiente. Riesgo de salud.';
+      recomendaciones = (currentLang === 'en') ? ['Absolute priority: sleep and eat well', 'Seek support'] : ['Prioridad absoluta: dormir y comer bien', 'Buscar apoyo'];
     }
   }
 
@@ -1531,3 +1534,17 @@ function renderDashboard(data) {
   document.getElementById('dashboard-timestamp').textContent = new Date().toLocaleString('es-ES');
   dashboardLoaded = true;
 }
+
+// ==========================================
+// INICIALIZACIÓN i18n
+// ==========================================
+document.addEventListener('DOMContentLoaded', function() {
+  // Restaurar idioma guardado
+  if (typeof currentLang !== 'undefined' && typeof applyTranslations === 'function') {
+    const sel = document.getElementById('lang-select');
+    if (sel) sel.value = currentLang;
+    if (currentLang !== 'es') {
+      applyTranslations();
+    }
+  }
+});
