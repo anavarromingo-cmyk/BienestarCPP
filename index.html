@@ -3820,15 +3820,15 @@
 
     <div id="dashboard-loading" class="dashboard-loading">
       <div class="spinner"></div>
-      <p>Cargando datos desde Firebase...</p>
+      <p data-i18n="dashboard.loading">Cargando datos desde Firebase...</p>
     </div>
 
     <div id="dashboard-content" style="display: none;">
       <!-- Filters -->
       <div class="dashboard-filters" id="dashboard-filters">
-        <span class="filter-label">🔍 Filtros</span>
+        <span class="filter-label" data-i18n="dashboard.filters">🔍 Filtros</span>
 
-        <select id="filter-region" onchange="applyDashboardFilters()">
+        <select id="filter-region" onchange="applyDashboardFilters()" data-i18n-options="region">
           <option value="all">🌍 Todas las regiones</option>
           <option value="europa">🇪🇺 Europa</option>
           <option value="latam">🌎 Latinoamérica</option>
@@ -3836,7 +3836,7 @@
 
         <div class="filter-separator"></div>
 
-        <select id="filter-profesion" onchange="applyDashboardFilters()">
+        <select id="filter-profesion" onchange="applyDashboardFilters()" data-i18n-options="filterProfesion">
           <option value="all">👩‍⚕️ Todas las profesiones</option>
           <option value="medico">Médico/a</option>
           <option value="enfermero">Enfermero/a</option>
@@ -3848,7 +3848,7 @@
 
         <div class="filter-separator"></div>
 
-        <select id="filter-ambito" onchange="applyDashboardFilters()">
+        <select id="filter-ambito" onchange="applyDashboardFilters()" data-i18n-options="filterAmbito">
           <option value="all">🏥 Todos los ámbitos</option>
           <option value="paliativos_pediatricos">Paliativos pediátricos</option>
           <option value="paliativos_adultos">Paliativos de adultos</option>
@@ -3858,7 +3858,7 @@
 
         <div class="filter-separator"></div>
 
-        <button class="filter-reset-btn" onclick="resetDashboardFilters()">✕ Limpiar filtros</button>
+        <button class="filter-reset-btn" onclick="resetDashboardFilters()" data-i18n="dashboard.reset">✕ Limpiar filtros</button>
         <span class="filter-active-count" id="filter-count" style="display:none;">0 de 0</span>
       </div>
       <!-- KPIs -->
@@ -3866,50 +3866,50 @@
         <div class="kpi-card">
           <div class="kpi-icon">📊</div>
           <div class="kpi-value" id="kpi-total">0</div>
-          <div class="kpi-label">Total Evaluaciones</div>
+          <div class="kpi-label" data-i18n="dashboard.kpi.total">Total Evaluaciones</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">💔</div>
           <div class="kpi-value" id="kpi-compassion">0</div>
-          <div class="kpi-label">Compasión (ProQOL)</div>
+          <div class="kpi-label" data-i18n="dashboard.kpi.compassion">Compasión (ProQOL)</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">💚</div>
           <div class="kpi-value" id="kpi-selfcare">0</div>
-          <div class="kpi-label">Autocuidado</div>
+          <div class="kpi-label" data-i18n="dashboard.kpi.selfcare">Autocuidado</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">👩‍⚕️</div>
           <div class="kpi-value" id="kpi-professionals">0</div>
-          <div class="kpi-label">Profesionales únicos</div>
+          <div class="kpi-label" data-i18n="dashboard.kpi.professionals">Profesionales únicos</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-icon">🌍</div>
           <div class="kpi-value" id="kpi-countries">0</div>
-          <div class="kpi-label">Países</div>
+          <div class="kpi-label" data-i18n="dashboard.kpi.countries">Países</div>
         </div>
       </div>
 
       <!-- Charts -->
       <div class="charts-grid">
         <div class="chart-card">
-          <h4>👩‍⚕️ Distribución por Profesión</h4>
+          <h4 data-i18n="dashboard.chart.profession">👩‍⚕️ Distribución por Profesión</h4>
           <div class="chart-container"><canvas id="chart-profesion"></canvas></div>
         </div>
         <div class="chart-card">
-          <h4>🏥 Distribución por Ámbito de Trabajo</h4>
+          <h4 data-i18n="dashboard.chart.scope">🏥 Distribución por Ámbito de Trabajo</h4>
           <div class="chart-container"><canvas id="chart-ambito"></canvas></div>
         </div>
         <div class="chart-card">
-          <h4>💔 Niveles ProQOL</h4>
+          <h4 data-i18n="dashboard.chart.proqol">💔 Niveles ProQOL</h4>
           <div class="chart-container"><canvas id="chart-proqol-risk"></canvas></div>
         </div>
         <div class="chart-card">
-          <h4>📅 Evaluaciones por Mes</h4>
+          <h4 data-i18n="dashboard.chart.timeline">📅 Evaluaciones por Mes</h4>
           <div class="chart-container"><canvas id="chart-timeline"></canvas></div>
         </div>
         <div class="chart-card">
-          <h4>🌍 Distribución por País</h4>
+          <h4 data-i18n="dashboard.chart.country">🌍 Distribución por País</h4>
           <div class="chart-container"><canvas id="chart-pais"></canvas></div>
         </div>
       </div>
@@ -3917,22 +3917,27 @@
       <!-- Risk breakdown tables -->
       <div class="charts-grid">
         <div class="chart-card">
-          <h4>💔 Detalle ProQOL por subescala</h4>
+          <h4 data-i18n="dashboard.table.title">💔 Detalle ProQOL por subescala</h4>
           <table class="risk-table">
             <thead>
-              <tr><th>Subescala</th><th>Bajo</th><th>Medio</th><th>Alto</th></tr>
+              <tr>
+                <th data-i18n="dashboard.table.subscale">Subescala</th>
+                <th data-i18n="dashboard.table.low">Bajo</th>
+                <th data-i18n="dashboard.table.medium">Medio</th>
+                <th data-i18n="dashboard.table.high">Alto</th>
+              </tr>
             </thead>
             <tbody id="proqol-detail-table">
-              <tr><td>Satisfacción por Compasión</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td data-i18n="dashboard.table.cs">Satisfacción por Compasión</td><td>-</td><td>-</td><td>-</td></tr>
               <tr><td>Burnout</td><td>-</td><td>-</td><td>-</td></tr>
-              <tr><td>Estrés Traumático Secundario</td><td>-</td><td>-</td><td>-</td></tr>
+              <tr><td data-i18n="dashboard.table.sts">Estrés Traumático Secundario</td><td>-</td><td>-</td><td>-</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
       <div class="dashboard-timestamp">
-        🔄 Datos actualizados en tiempo real · Última carga: <span id="dashboard-timestamp">—</span>
+        <span data-i18n="dashboard.timestamp">🔄 Datos actualizados en tiempo real · Última carga:</span> <span id="dashboard-timestamp">—</span>
       </div>
     </div>
   </section>
@@ -4058,10 +4063,10 @@
   <div id="creditosModal" class="credits-modal">
     <div class="credits-modal-content">
       <div class="credits-header">
-        <h3 style="color: var(--color-primary); margin: 0;">Créditos y Referencias</h3>
+        <h3 style="color: var(--color-primary); margin: 0;" data-i18n="credits.title">Créditos y Referencias</h3>
         <button class="close-modal" onclick="document.getElementById('creditosModal').style.display='none';">×</button>
       </div>
-      <div class="credits-body">
+      <div class="credits-body" data-i18n-section="credits-body">
         <h4 style="margin-top: 0;">Herramientas de Evaluación Validadas</h4>
         <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
           Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
@@ -4091,7 +4096,7 @@
         </div>
       </div>
       <div class="credits-footer">
-        <button class="btn btn-secondary"
+        <button class="btn btn-secondary" data-i18n="credits.close"
           onclick="document.getElementById('creditosModal').style.display='none';">Cerrar</button>
       </div>
     </div>

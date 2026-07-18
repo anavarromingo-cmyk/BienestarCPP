@@ -1126,7 +1126,9 @@ function applyDashboardFilters() {
   const countEl = document.getElementById('filter-count');
   if (countEl) {
     if (activeFilters > 0) {
-      countEl.textContent = `${filtered.length} de ${dashboardRawData.length} evaluaciones`;
+      countEl.textContent = (currentLang === 'en')
+        ? `${filtered.length} of ${dashboardRawData.length} assessments`
+        : `${filtered.length} de ${dashboardRawData.length} evaluaciones`;
       countEl.style.display = 'inline-block';
     } else {
       countEl.style.display = 'none';
@@ -1162,7 +1164,9 @@ function classifyScore(score, thresholds) {
 
 function cargarDashboard() {
   if (!db) {
-    document.getElementById('dashboard-loading').innerHTML = '<p>⚠️ Firebase no conectado. El dashboard requiere conexión a Firebase.</p>';
+    document.getElementById('dashboard-loading').innerHTML = (currentLang === 'en')
+      ? '<p>⚠️ Firebase not connected. The dashboard requires a Firebase connection.</p>'
+      : '<p>⚠️ Firebase no conectado. El dashboard requiere conexión a Firebase.</p>';
     return;
   }
 
@@ -1188,7 +1192,9 @@ function cargarDashboard() {
 
 function renderDashboard(data) {
   if (data.length === 0) {
-    document.getElementById('dashboard-loading').innerHTML = '<p>📭 Aún no hay evaluaciones registradas. ¡Sé el primero!</p>';
+    document.getElementById('dashboard-loading').innerHTML = (currentLang === 'en')
+      ? '<p>📭 No assessments recorded yet. Be the first!</p>'
+      : '<p>📭 Aún no hay evaluaciones registradas. ¡Sé el primero!</p>';
     return;
   }
 
@@ -1215,7 +1221,11 @@ function renderDashboard(data) {
   document.getElementById('kpi-countries').textContent = Object.keys(countries).length;
 
   // Profession distribution
-  const professionLabels = {
+  const professionLabels = (currentLang === 'en') ? {
+    medico: 'Physician', enfermero: 'Nurse', psicologo: 'Psychologist',
+    fisioterapeuta: 'Physiotherapist', trabajador: 'Social Worker',
+    otro: 'Other', 'No especificada': 'Not specified'
+  } : {
     medico: 'Médico/a', enfermero: 'Enfermero/a', psicologo: 'Psicólogo/a',
     fisioterapeuta: 'Fisioterapeuta', trabajador: 'Trabajador/a Social',
     otro: 'Otro', 'No especificada': 'No especificada'
@@ -1228,7 +1238,13 @@ function renderDashboard(data) {
   });
 
   // Ámbito distribution
-  const ambitoLabels = {
+  const ambitoLabels = (currentLang === 'en') ? {
+    paliativos_pediatricos: 'Paediatric palliative care',
+    paliativos_adultos: 'Adult palliative care',
+    otras_pediatricas: 'Other paediatric sp.',
+    otras_adultos: 'Other adult sp.',
+    'No especificado': 'Not specified'
+  } : {
     paliativos_pediatricos: 'Paliativos pediátricos',
     paliativos_adultos: 'Paliativos de adultos',
     otras_pediatricas: 'Otras esp. pediátricas',
@@ -1287,6 +1303,10 @@ function renderDashboard(data) {
     'rgba(245,158,11,0.75)', 'rgba(236,72,153,0.75)'
   ];
   const riskColors = { Bajo: 'rgba(33,128,141,0.75)', Medio: 'rgba(245,158,11,0.75)', Moderado: 'rgba(245,158,11,0.75)', Alto: 'rgba(255,84,89,0.75)' };
+  const evalLabel = (currentLang === 'en') ? 'Assessments' : 'Evaluaciones';
+  const proqolRiskLabels = (currentLang === 'en') ? ['Favourable', 'Moderate', 'High Risk'] : ['Favorable', 'Moderado', 'Riesgo Alto'];
+  const monthNames = (currentLang === 'en') ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const noDataLabel = (currentLang === 'en') ? 'No data' : 'Sin datos';
 
   // Destroy existing charts
   Object.values(dashboardCharts).forEach(c => c?.destroy?.());
@@ -1312,7 +1332,7 @@ function renderDashboard(data) {
     type: 'bar',
     data: {
       labels: Object.keys(ambitoCounts),
-      datasets: [{ label: 'Evaluaciones', data: Object.values(ambitoCounts), backgroundColor: palette.slice(0, Object.keys(ambitoCounts).length), borderWidth: 0, borderRadius: 6 }]
+      datasets: [{ label: evalLabel, data: Object.values(ambitoCounts), backgroundColor: palette.slice(0, Object.keys(ambitoCounts).length), borderWidth: 0, borderRadius: 6 }]
     },
     options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
   });
@@ -1321,8 +1341,8 @@ function renderDashboard(data) {
   dashboardCharts.proqolRisk = new Chart(document.getElementById('chart-proqol-risk'), {
     type: 'bar',
     data: {
-      labels: ['Favorable', 'Moderado', 'Riesgo Alto'],
-      datasets: [{ label: 'Evaluaciones', data: [proqolGlobalRisk.Bajo, proqolGlobalRisk.Moderado, proqolGlobalRisk.Alto], backgroundColor: [riskColors.Bajo, riskColors.Moderado, riskColors.Alto], borderWidth: 0, borderRadius: 6 }]
+      labels: proqolRiskLabels,
+      datasets: [{ label: evalLabel, data: [proqolGlobalRisk.Bajo, proqolGlobalRisk.Moderado, proqolGlobalRisk.Alto], backgroundColor: [riskColors.Bajo, riskColors.Moderado, riskColors.Alto], borderWidth: 0, borderRadius: 6 }]
     },
     options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
   });
@@ -1333,10 +1353,9 @@ function renderDashboard(data) {
     data: {
       labels: sortedMonths.map(m => {
         const [y, mo] = m.split('-');
-        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
         return `${monthNames[parseInt(mo)-1]} ${y.substring(2)}`;
       }),
-      datasets: [{ label: 'Evaluaciones', data: sortedMonths.map(m => timeline[m]), borderColor: 'rgba(33,128,141,1)', backgroundColor: 'rgba(33,128,141,0.1)', fill: true, tension: 0.3, pointRadius: 4 }]
+      datasets: [{ label: evalLabel, data: sortedMonths.map(m => timeline[m]), borderColor: 'rgba(33,128,141,1)', backgroundColor: 'rgba(33,128,141,0.1)', fill: true, tension: 0.3, pointRadius: 4 }]
     },
     options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
   });
@@ -1346,7 +1365,7 @@ function renderDashboard(data) {
   dashboardCharts.pais = new Chart(document.getElementById('chart-pais'), {
     type: 'doughnut',
     data: {
-      labels: countryKeys.length > 0 ? countryKeys : ['Sin datos'],
+      labels: countryKeys.length > 0 ? countryKeys : [noDataLabel],
       datasets: [{ data: countryKeys.length > 0 ? Object.values(countries) : [1], backgroundColor: countryKeys.length > 0 ? palette.slice(0, countryKeys.length) : ['#ccc'], borderWidth: 1 }]
     },
     options: { ...chartOptions, cutout: '55%' }
@@ -1354,17 +1373,20 @@ function renderDashboard(data) {
 
   // Detail tables
   const mkBadge = (n, cls) => `<span class="risk-badge ${cls}">${n}</span>`;
+  const proqolRowLabels = (currentLang === 'en')
+    ? ['Compassion Satisfaction', 'Burnout', 'Secondary Traumatic Stress']
+    : ['Satisfacción por Compasión', 'Burnout', 'Estrés Traumático Secundario'];
   const proqolTbody = document.getElementById('proqol-detail-table');
   if (proqolTbody && compassionEvals.length > 0) {
     proqolTbody.innerHTML = `
-      <tr><td>Satisfacción por Compasión</td><td>${mkBadge(proqolLevels.cs.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.cs.Medio,'medio')}</td><td>${mkBadge(proqolLevels.cs.Alto,'alto')}</td></tr>
-      <tr><td>Burnout</td><td>${mkBadge(proqolLevels.bo.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.bo.Medio,'medio')}</td><td>${mkBadge(proqolLevels.bo.Alto,'alto')}</td></tr>
-      <tr><td>Estrés Traumático Secundario</td><td>${mkBadge(proqolLevels.sts.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.sts.Medio,'medio')}</td><td>${mkBadge(proqolLevels.sts.Alto,'alto')}</td></tr>
+      <tr><td>${proqolRowLabels[0]}</td><td>${mkBadge(proqolLevels.cs.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.cs.Medio,'medio')}</td><td>${mkBadge(proqolLevels.cs.Alto,'alto')}</td></tr>
+      <tr><td>${proqolRowLabels[1]}</td><td>${mkBadge(proqolLevels.bo.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.bo.Medio,'medio')}</td><td>${mkBadge(proqolLevels.bo.Alto,'alto')}</td></tr>
+      <tr><td>${proqolRowLabels[2]}</td><td>${mkBadge(proqolLevels.sts.Bajo,'bajo')}</td><td>${mkBadge(proqolLevels.sts.Medio,'medio')}</td><td>${mkBadge(proqolLevels.sts.Alto,'alto')}</td></tr>
     `;
   }
 
   // Timestamp
-  document.getElementById('dashboard-timestamp').textContent = new Date().toLocaleString('es-ES');
+  document.getElementById('dashboard-timestamp').textContent = new Date().toLocaleString(currentLang === 'en' ? 'en-GB' : 'es-ES');
   dashboardLoaded = true;
 }
 
@@ -1378,6 +1400,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sel) sel.value = currentLang;
     if (currentLang !== 'es') {
       applyTranslations();
+      if (typeof applySectionTranslations === 'function') applySectionTranslations();
     }
   }
 });

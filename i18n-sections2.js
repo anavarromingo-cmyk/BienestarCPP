@@ -256,3 +256,31 @@ EN_SECTIONS['eval-consent'] = `
     </label>
   </div>
   <p id="consent-error" style="color:var(--color-error);font-size:0.8em;margin:8px 0 0 28px;display:none;">⚠️ You must accept the informed consent to continue.</p>`;
+
+// --- CREDITS MODAL ---
+EN_SECTIONS['credits-body'] = `
+  <h4 style="margin-top: 0;">Validated Assessment Tools</h4>
+  <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
+    Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
+    <span style="font-size: 0.9em; color: #666;">Spanish translation and validation: Galiana et al. (2017).</span>
+  </p>
+
+  <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+  <h4>Intellectual Property and Development</h4>
+  <p><strong>© 2025 Álvaro Navarro Mingorance</strong><br>
+    Paediatrician. Specialist in Paediatric Palliative Care.</p>
+
+  <p style="font-size: 0.9em;">This application is a support tool developed exclusively for research and professional support purposes. Not for commercial use.</p>
+
+  <div style="background: #f0f7fc; padding: 14px; border-radius: 6px; margin-top: 15px; font-size: 0.85em; line-height: 1.6;">
+    <strong>📋 Data protection:</strong><br>
+    Data controller: Álvaro Navarro Mingorance.<br>
+    Purpose: Professional self-assessment and scientific research on well-being in palliative care.<br>
+    Legal basis: Explicit consent of the data subject (Art. 6.1.a GDPR — EU 2016/679).<br>
+    Data collected: Profession, work setting, age, experience, country, and answers to the scales. <strong>No identifying data is collected</strong> (name, email, IP).<br>
+    Storage: Firebase (Google Cloud), servers in the EU.<br>
+    Rights: As the data is anonymous and not linked to any identity, it is not possible to exercise rights of access, rectification, or deletion on individual records (Art. 11 GDPR).<br>
+    Data access: <strong>Only the principal investigator</strong> (Álvaro Navarro Mingorance) will have access to raw individual data. The public dashboard shows only aggregated statistics.<br>
+    Retention: Data will be retained indefinitely for research purposes.
+  </div>`;

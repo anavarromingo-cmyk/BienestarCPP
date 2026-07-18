@@ -10,6 +10,9 @@ function setLanguage(lang) {
   applySectionTranslations();
   const sel = document.getElementById('lang-select');
   if (sel) sel.value = lang;
+  if (typeof dashboardLoaded !== 'undefined' && dashboardLoaded && typeof applyDashboardFilters === 'function') {
+    applyDashboardFilters();
+  }
 }
 
 function applyTranslations() {

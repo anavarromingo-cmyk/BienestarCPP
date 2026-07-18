@@ -105,6 +105,23 @@ const EN = {
   'dashboard.kpi.selfcare': 'Self-Care',
   'dashboard.kpi.professionals': 'Unique professionals',
   'dashboard.kpi.countries': 'Countries',
+  'dashboard.chart.profession': '👩‍⚕️ Distribution by Profession',
+  'dashboard.chart.scope': '🏥 Distribution by Work Setting',
+  'dashboard.chart.proqol': '💔 ProQOL Levels',
+  'dashboard.chart.timeline': '📅 Assessments per Month',
+  'dashboard.chart.country': '🌍 Distribution by Country',
+  'dashboard.table.title': '💔 ProQOL Detail by Subscale',
+  'dashboard.table.subscale': 'Subscale',
+  'dashboard.table.low': 'Low',
+  'dashboard.table.medium': 'Medium',
+  'dashboard.table.high': 'High',
+  'dashboard.table.cs': 'Compassion Satisfaction',
+  'dashboard.table.sts': 'Secondary Traumatic Stress',
+  'dashboard.timestamp': '🔄 Real-time data · Last updated:',
+
+  // -- Credits modal --
+  'credits.title': 'Credits and References',
+  'credits.close': 'Close',
 
   // -- Footer --
   'footer.btn': 'Share your results for the research project',
