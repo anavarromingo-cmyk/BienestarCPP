@@ -412,60 +412,7 @@ function calcularResultados() {
   }
 
   // Cálculo específico según tipo
-  if (evaluacionActual === 'burnout') {
-    // MBI Scoring
-    // Subscales: Emotional Exhaustion (AE), Depersonalization (D), Personal Accomplishment (RP)
-    // Items indices (0-based) for each subscale
-    const aeItems = [0, 1, 2, 5, 7, 12, 13, 15, 19];
-    const dItems = [4, 9, 10, 14, 21];
-    const rpItems = [3, 6, 8, 11, 16, 17, 18, 20];
-
-    let aeSum = 0, dSum = 0, rpSum = 0;
-
-    answers.forEach((val, idx) => {
-      if (aeItems.includes(idx)) aeSum += val;
-      if (dItems.includes(idx)) dSum += val;
-      if (rpItems.includes(idx)) rpSum += val;
-    });
-
-    // Niveles (basados en manual MBI servicios humanos)
-    // AE: Bajo 0-18, Medio 19-26, Alto >26
-    // D: Bajo 0-5, Medio 6-9, Alto >9
-    // RP: Bajo 0-33, Medio 34-39, Alto >39 (RP es inversa: bajo score = alto burnout)
-
-    const getLevelAE = (s) => s > 26 ? 'Alto' : (s >= 19 ? 'Medio' : 'Bajo');
-    const getLevelD = (s) => s > 9 ? 'Alto' : (s >= 6 ? 'Medio' : 'Bajo');
-    const getLevelRP = (s) => s < 34 ? 'Bajo' : (s <= 39 ? 'Medio' : 'Alto');
-
-    const levelAE = getLevelAE(aeSum);
-    const levelD = getLevelD(dSum);
-    const levelRP = getLevelRP(rpSum);
-
-    // Interpretación global (simplificada)
-    // Alto Burnout habitualmente es Alto AE + Alto D + Bajo RP
-    if (levelAE === 'Alto' && levelD === 'Alto' && levelRP === 'Bajo') {
-      interpretacion = (typeof currentLang !== 'undefined' && currentLang === 'en') ? 'High Burnout risk (Complete syndrome).' : 'Alto riesgo de Burnout (Síndrome completo).';
-      recomendaciones = (currentLang === 'en') ? ['Consult a specialist', 'Urgent review of working conditions', 'Absolute priority on rest'] : ['Consulta con un especialista', 'Revisión urgente de condiciones laborales', 'Prioridad absoluta al descanso'];
-    } else if (levelAE === 'Alto' || levelD === 'Alto') {
-      interpretacion = (currentLang === 'en') ? 'Moderate/high Burnout risk. Warning signs present.' : 'Riesgo moderado/alto de Burnout. Signos de alerta presentes.';
-      recomendaciones = (currentLang === 'en') ? ['Increase disconnection activities', 'Case supervision', 'Strengthen support network'] : ['Incrementa actividades de desconexión', 'Supervisión de casos', 'Fortalece red de apoyo'];
-    } else {
-      interpretacion = (currentLang === 'en') ? 'Low Burnout risk. Healthy profile.' : 'Bajo riesgo de Burnout. Perfil saludable.';
-      recomendaciones = (currentLang === 'en') ? ['Maintain your current strategies', 'Share your well-being with the team'] : ['Mantén tus estrategias actuales', 'Comparte tu bienestar con el equipo'];
-    }
-
-    // Guardado detallado
-    // (Podríamos guardar subescalas en el objeto de resultados)
-    var burnoutSubResultados = {
-      ae: { score: aeSum, level: levelAE },
-      d: { score: dSum, level: levelD },
-      rp: { score: rpSum, level: levelRP }
-    };
-
-    // Asignamos puntuación principal AE para gráfica simple
-    puntuacion = aeSum;
-
-  } else if (evaluacionActual === 'compassion') {
+  if (evaluacionActual === 'compassion') {
     // ProQOL v5 Scoring Standard (Stamm, 2010)
     // Escala 1-5 (Nunca=1, ..., Muy a menudo=5)
 
@@ -566,14 +513,16 @@ function calcularResultados() {
     total: puntuacion,
     level: { text: interpretacion.split('.')[0] },
     recomendaciones: recomendaciones,
-    subscales: (evaluacionActual === 'burnout') ? burnoutSubResultados : ((evaluacionActual === 'compassion') ? proqolSubResultados : null)
+    subscales: (evaluacionActual === 'compassion') ? proqolSubResultados : null
   };
   evaluacionManager.guardarEvaluacion(evaluacionActual, demographicData, resultadosHist);
   hasCompletedEvaluations = true;
 
+  const evalTitleConfig = typeof getEvalConfig === 'function' ? getEvalConfig(evaluacionActual) : evaluations[evaluacionActual];
+
   window.resultadoActual = {
     tipo: evaluacionActual,
-    titulo: evaluations[evaluacionActual].title,
+    titulo: evalTitleConfig.title,
     puntuacion: puntuacion,
     interpretacion: interpretacion,
     recomendaciones: recomendaciones,
@@ -582,7 +531,7 @@ function calcularResultados() {
     edad: edad,
     experiencia: experiencia,
     fecha: new Date().toLocaleDateString('es-ES'),
-    subscales: (evaluacionActual === 'burnout') ? burnoutSubResultados : ((evaluacionActual === 'compassion') ? proqolSubResultados : null)
+    subscales: (evaluacionActual === 'compassion') ? proqolSubResultados : null
   };
 
   const modal = document.getElementById('evalModal');
@@ -632,9 +581,6 @@ function mostrarResultados() {
     Object.entries(r.subscales).forEach(([key, val]) => {
       // Map keys to readable names
       const names = {
-        ae: 'Agotamiento Emocional',
-        d: 'Despersonalización',
-        rp: 'Realización Personal',
         cs: 'Satisfacción por Compasión',
         bo: 'Burnout (ProQOL)',
         sts: 'Estrés Traumático Secundario'
@@ -660,9 +606,7 @@ function mostrarResultados() {
 
   // Generar un mini-plan inmediato para el modal
   let planTexto = '';
-  if (r.tipo === 'burnout' && r.puntuacion > 26) {
-    planTexto = "Recomendación inmediata: Agenda una cita con salud laboral o tu supervisor. Prioriza el descanso físico.";
-  } else if (r.tipo === 'compassion' && (window.resultadoActual.subscales?.sts?.level === 'Alto')) {
+  if (r.tipo === 'compassion' && (window.resultadoActual.subscales?.sts?.level === 'Alto')) {
     planTexto = "Recomendación inmediata: Practica la técnica de 'Grounding' (Bibliotheca > Recursos) ahora mismo.";
   } else if (r.tipo === 'selfcare' && r.puntuacion < 50) {
     planTexto = "Recomendación inmediata: Elige una acción pequeña de autocuidado (ej. beber agua, estirar) y hazla hoy.";
@@ -688,51 +632,6 @@ function cerrarEvaluacion() {
 
 // Data structures
 const evaluations = {
-  burnout: {
-    name: 'Burnout',
-    title: 'Evaluación de Burnout',
-    // MBI-HSS (Human Services Survey) - 22 items
-    questions: [
-      'Me siento emocionalmente agotado/a por mi trabajo.', // 1. AE
-      'Me siento cansado al final de la jornada de trabajo.', // 2. AE
-      'Cuando me levanto por la mañana y me enfrento a otra jornada de trabajo me siento fatigado.', // 3. AE
-      'Siento que puedo entender fácilmente a las personas que tengo que atender.', // 4. RP
-      'Siento que estoy tratando a algunos pacientes como si fuesen objetos impersonales.', // 5. D
-      'Siento que trabajar todo el día con la gente me cansa.', // 6. AE
-      'Siento que trato con mucha efectividad los problemas de las personas a las que tengo que atender.', // 7. RP
-      'Siento que mi trabajo me está desgastando.', // 8. AE
-      'Siento que estoy influyendo positivamente en las vidas de otras personas a través de mi trabajo.', // 9. RP
-      'Me he vuelto más insensible con la gente desde que ejerzo la profesión.', // 10. D
-      'Me preocupa que este trabajo me esté endureciendo emocionalmente.', // 11. D
-      'Me siento muy enérgico/a en mi trabajo.', // 12. RP
-      'Me siento frustrado/a por el trabajo.', // 13. AE
-      'Siento que estoy demasiado tiempo en mi trabajo.', // 14. AE
-      'Siento que realmente no me importa lo que les ocurra a las personas a las que tengo que atender profesionalmente.', // 15. D
-      'Trabajar en contacto directo con las personas me produce bastante estrés.', // 16. AE
-      'Tengo facilidad para crear una atmósfera relajada a mis pacientes.', // 17. RP
-      'Me encuentro animado/a después de trabajar junto con los pacientes.', // 18. RP
-      'He realizado muchas cosas que merecen la pena en este trabajo.', // 19. RP
-      'En el trabajo siento que estoy al límite de mis posibilidades.', // 20. AE
-      'En mi trabajo trato los problemas emocionalmente con mucha calma.', // 21. RP
-      'Creo que los pacientes me culpan de algunos de sus problemas.' // 22. D
-    ],
-    // Escala de frecuencia 0-6
-    options: [
-      { text: "Nunca", value: 0 },
-      { text: "Pocas veces al año o menos", value: 1 },
-      { text: "Una vez al mes o menos", value: 2 },
-      { text: "Unas pocas veces al mes", value: 3 },
-      { text: "Una vez a la semana", value: 4 },
-      { text: "Unas pocas veces a la semana", value: 5 },
-      { text: "Todos los días", value: 6 }
-    ],
-    // Indices para subescalas (0-indexed based on the array above)
-    indices: {
-      AE: [0, 1, 2, 5, 7, 12, 13, 15, 19], // Agotamiento Emocional (9 items)
-      D: [4, 9, 10, 14, 21], // Despersonalización (5 items)
-      RP: [3, 6, 8, 11, 16, 17, 18, 20] // Realización Personal (8 items)
-    }
-  },
   compassion: {
     name: 'Fatiga por Compasión',
     title: 'Evaluación de Fatiga por Compasión',
@@ -895,7 +794,6 @@ function generatePersonalPlan() {
   }
 
   // Análisis simple de la última evaluación de cada tipo
-  const latestBurnout = history.find(h => h.tipo === 'burnout');
   const latestCompassion = history.find(h => h.tipo === 'compassion');
   const latestSelfcare = history.find(h => h.tipo === 'selfcare');
 
@@ -903,16 +801,6 @@ function generatePersonalPlan() {
   let acciones = [];
 
   // Lógica de generación de recomendaciones
-  if (latestBurnout) {
-    const score = latestBurnout.resultados.total; // AE Score mainly
-    if (score > 26) {
-      acciones.push("<strong>🚨 Prioridad Burnout:</strong> Tus niveles de agotamiento son altos. Programa 2 días de desconexión total este mes.");
-      acciones.push("🗣️ <strong>Supervisión:</strong> Solicita una reunión de supervisión clínica para revisar casos difíciles.");
-    } else if (score > 18) {
-      acciones.push("⚠️ <strong>Atención Burnout:</strong> Estás en zona de riesgo. Revisa tus límites horarios esta semana.");
-    }
-  }
-
   if (latestCompassion) {
     const csScore = latestCompassion.resultados.subscales?.cs?.score || 0;
     const stsScore = latestCompassion.resultados.subscales?.sts?.score || 0;
@@ -1258,12 +1146,6 @@ function resetDashboardFilters() {
 
 // Correct scoring thresholds per validated manuals
 const SCORING = {
-  // MBI-HSS (Maslach, Jackson & Leiter, 1996; Seisdedos, 1997)
-  mbi: {
-    ae: { bajo: [0, 18], medio: [19, 26], alto: [27, Infinity] },
-    d:  { bajo: [0, 5],  medio: [6, 9],   alto: [10, Infinity] },
-    rp: { alto: [0, 33], medio: [34, 39], bajo: [40, Infinity] } // Inverted: low score = high burnout
-  },
   // ProQOL v5 (Stamm, 2010)
   proqol: {
     cs:  { bajo: [0, 22], medio: [23, 41], alto: [42, Infinity] },
@@ -1314,7 +1196,6 @@ function renderDashboard(data) {
   document.getElementById('dashboard-content').style.display = 'block';
 
   // Classify evaluations
-  const burnoutEvals = data.filter(d => d.tipo === 'burnout');
   const compassionEvals = data.filter(d => d.tipo === 'compassion');
   const selfcareEvals = data.filter(d => d.tipo === 'selfcare');
 
@@ -1328,7 +1209,6 @@ function renderDashboard(data) {
 
   // KPIs
   document.getElementById('kpi-total').textContent = data.length;
-  document.getElementById('kpi-burnout').textContent = burnoutEvals.length;
   document.getElementById('kpi-compassion').textContent = compassionEvals.length;
   document.getElementById('kpi-selfcare').textContent = selfcareEvals.length;
   document.getElementById('kpi-professionals').textContent = uniqueUsers.size;
@@ -1361,34 +1241,6 @@ function renderDashboard(data) {
     const a = d.datos?.ambito || 'paliativos_pediatricos';
     const label = ambitoLabels[a] || a;
     ambitoCounts[label] = (ambitoCounts[label] || 0) + 1;
-  });
-
-  // MBI risk levels recalculated from subscales
-  const mbiLevels = { ae: {Bajo:0, Medio:0, Alto:0}, d: {Bajo:0, Medio:0, Alto:0}, rp: {Bajo:0, Medio:0, Alto:0} };
-  const mbiGlobalRisk = { Bajo: 0, Moderado: 0, Alto: 0 };
-  burnoutEvals.forEach(ev => {
-    const sub = ev.resultados?.subscales;
-    if (sub) {
-      const aeScore = sub.ae?.score ?? 0;
-      const dScore = sub.d?.score ?? 0;
-      const rpScore = sub.rp?.score ?? 0;
-      const aeLevel = classifyScore(aeScore, SCORING.mbi.ae);
-      const dLevel = classifyScore(dScore, SCORING.mbi.d);
-      const rpLevel = classifyScore(rpScore, SCORING.mbi.rp);
-      mbiLevels.ae[aeLevel]++;
-      mbiLevels.d[dLevel]++;
-      mbiLevels.rp[rpLevel]++;
-      // Global risk
-      if (aeLevel === 'Alto' && dLevel === 'Alto' && rpLevel === 'Alto') mbiGlobalRisk.Alto++;
-      else if (aeLevel === 'Alto' || dLevel === 'Alto') mbiGlobalRisk.Moderado++;
-      else mbiGlobalRisk.Bajo++;
-    } else {
-      // Use level_text or total from older records
-      const txt = ev.resultados?.level?.text || '';
-      if (txt.includes('Alto')) mbiGlobalRisk.Alto++;
-      else if (txt.includes('moderado') || txt.includes('Moderado')) mbiGlobalRisk.Moderado++;
-      else mbiGlobalRisk.Bajo++;
-    }
   });
 
   // ProQOL risk levels recalculated
@@ -1465,16 +1317,6 @@ function renderDashboard(data) {
     options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
   });
 
-  // 3. MBI risk chart (bar)
-  dashboardCharts.mbiRisk = new Chart(document.getElementById('chart-mbi-risk'), {
-    type: 'bar',
-    data: {
-      labels: ['Bajo', 'Moderado', 'Alto'],
-      datasets: [{ label: 'Evaluaciones', data: [mbiGlobalRisk.Bajo, mbiGlobalRisk.Moderado, mbiGlobalRisk.Alto], backgroundColor: [riskColors.Bajo, riskColors.Moderado, riskColors.Alto], borderWidth: 0, borderRadius: 6 }]
-    },
-    options: { ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-  });
-
   // 4. ProQOL risk chart (bar)
   dashboardCharts.proqolRisk = new Chart(document.getElementById('chart-proqol-risk'), {
     type: 'bar',
@@ -1512,15 +1354,6 @@ function renderDashboard(data) {
 
   // Detail tables
   const mkBadge = (n, cls) => `<span class="risk-badge ${cls}">${n}</span>`;
-  const mbiTbody = document.getElementById('mbi-detail-table');
-  if (mbiTbody && burnoutEvals.length > 0) {
-    mbiTbody.innerHTML = `
-      <tr><td>Agotamiento Emocional</td><td>${mkBadge(mbiLevels.ae.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.ae.Medio,'medio')}</td><td>${mkBadge(mbiLevels.ae.Alto,'alto')}</td></tr>
-      <tr><td>Despersonalización</td><td>${mkBadge(mbiLevels.d.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.d.Medio,'medio')}</td><td>${mkBadge(mbiLevels.d.Alto,'alto')}</td></tr>
-      <tr><td>Realización Personal</td><td>${mkBadge(mbiLevels.rp.Bajo,'bajo')}</td><td>${mkBadge(mbiLevels.rp.Medio,'medio')}</td><td>${mkBadge(mbiLevels.rp.Alto,'alto')}</td></tr>
-    `;
-  }
-
   const proqolTbody = document.getElementById('proqol-detail-table');
   if (proqolTbody && compassionEvals.length > 0) {
     proqolTbody.innerHTML = `

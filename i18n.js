@@ -80,14 +80,6 @@ const EN_EVALUATIONS = {
       { text: "Never", value: 1 },{ text: "Rarely", value: 2 },{ text: "Sometimes", value: 3 },{ text: "Often", value: 4 },{ text: "Very Often", value: 5 }
     ]
   },
-  burnout: {
-    name: 'Burnout',
-    title: 'Burnout Assessment (MBI-HSS)',
-    questions: null, // PENDIENTE LICENCIA MIND GARDEN
-    options: [
-      { text: "Never", value: 0 },{ text: "A few times a year or less", value: 1 },{ text: "Once a month or less", value: 2 },{ text: "A few times a month", value: 3 },{ text: "Once a week", value: 4 },{ text: "A few times a week", value: 5 },{ text: "Every day", value: 6 }
-    ]
-  },
   selfcare: {
     name: 'Self-Care',
     title: 'Self-Care Assessment',

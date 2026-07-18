@@ -19,9 +19,6 @@ const EN = {
   'hero.subtitle': 'Working in paediatric palliative care is wonderful, but sometimes it can take a toll. Discover how you are doing and how to protect yourself.',
 
   // -- Home evaluation cards --
-  'home.burnout.title': '🔥 Burnout',
-  'home.burnout.desc': 'A syndrome of emotional exhaustion, depersonalisation, and reduced personal accomplishment. You feel exhausted, cynical, and professionally ineffective.',
-  'home.burnout.btn': '🎯 Assess your Burnout',
   'home.compassion.title': '💔 Compassion Fatigue',
   'home.compassion.desc': 'Emotional wear from continuous exposure to the suffering of children and families. Includes secondary traumatic stress and PTSD-like symptoms.',
   'home.compassion.btn': '🎯 Assess your Compassion Fatigue',
@@ -32,7 +29,7 @@ const EN = {
 
   // -- Research disclaimer --
   'research.title': 'Recommendation for research',
-  'research.text': 'To enable <strong>cross-instrument correlations</strong> and obtain more robust data, we recommend completing all <strong>three scales</strong> (Burnout, Compassion Fatigue, and Self-Care), not just one. This will allow us to compare and cross-reference results to improve evidence on professional well-being.',
+  'research.text': 'To enable <strong>cross-instrument correlations</strong> and obtain more robust data, we recommend completing both <strong>scales</strong> (Compassion Fatigue and Self-Care), not just one. This will allow us to compare and cross-reference results to improve evidence on professional well-being.',
 
   // -- Quick access --
   'quick.title': 'Quick access to other resources',
@@ -49,14 +46,11 @@ const EN = {
   'eval.back': '← Back',
   'eval.title': 'Self-Assessments',
   'eval.desc': 'Learn about your current state with scientifically validated instruments',
-  'eval.burnout.info.title': 'Burnout',
-  'eval.burnout.info.desc': 'Burnout is a syndrome of emotional exhaustion, depersonalisation, and reduced personal accomplishment. It emerges when work demands exceed your coping resources. You feel exhausted, cynical, and professionally ineffective.',
   'eval.compassion.info.title': 'Compassion Fatigue',
   'eval.compassion.info.desc': 'The emotional wear that arises from continuous exposure to the suffering of children and their families. Includes secondary traumatic stress. Unlike burnout, it relates specifically to empathy towards others\' pain.',
   'eval.selfcare.info.title': 'Self-Care Deficit',
   'eval.selfcare.info.desc': 'Occurs when you prioritise your patients\' needs over your own, neglecting your physical, emotional, and spiritual well-being. Self-care is not selfish — it is essential to care well for others.',
   'eval.section.title': 'Self-Assessment: Discover how you are',
-  'eval.btn.burnout': 'Check your Burnout level',
   'eval.btn.compassion': 'Check your Compassion Fatigue level',
   'eval.btn.selfcare': 'Do you really practise self-care? Find out',
 
@@ -107,7 +101,6 @@ const EN = {
   'dashboard.filters': '🔍 Filters',
   'dashboard.reset': '✕ Clear filters',
   'dashboard.kpi.total': 'Total Assessments',
-  'dashboard.kpi.burnout': 'Burnout (MBI)',
   'dashboard.kpi.compassion': 'Compassion (ProQOL)',
   'dashboard.kpi.selfcare': 'Self-Care',
   'dashboard.kpi.professionals': 'Unique professionals',
@@ -123,9 +116,6 @@ const EN = {
   'footer.connecting': 'Connecting...',
 
   // -- Subscale names (results) --
-  'subscale.ae': 'Emotional Exhaustion',
-  'subscale.d': 'Depersonalisation',
-  'subscale.rp': 'Personal Accomplishment',
   'subscale.cs': 'Compassion Satisfaction',
   'subscale.bo': 'Burnout (ProQOL)',
   'subscale.sts': 'Secondary Traumatic Stress',
@@ -136,9 +126,6 @@ const EN = {
   'level.bajo': 'Low',
 
   // -- Interpretations --
-  'interp.burnout.high': 'High Burnout risk (Complete syndrome).',
-  'interp.burnout.mod': 'Moderate/high Burnout risk. Warning signs present.',
-  'interp.burnout.low': 'Low Burnout risk. Healthy profile.',
   'interp.compassion.high': 'High risk of Compassion Fatigue / Secondary Traumatic Stress.',
   'interp.compassion.lowcs': 'Low Compassion Satisfaction (Burnout risk).',
   'interp.compassion.ok': 'Balanced Professional Quality of Life.',

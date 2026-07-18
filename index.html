@@ -2851,18 +2851,6 @@
           </button>
         </div>
 
-        <!-- TARJETA 2: BURNOUT -->
-        <div class="evaluation-card-home">
-          <div class="card-header-home">
-            <h3 data-i18n="home.burnout.title">🔥 Burnout o Desgaste Profesional</h3>
-            <p data-i18n="home.burnout.desc">Síndrome de agotamiento emocional, despersonalización y reducción del logro personal. Te sientes
-              exhausto, cínico y con sensación de ineficacia profesional.</p>
-          </div>
-          <button class="btn-evaluate-home" onclick="abrirEvaluacion('burnout')" data-i18n="home.burnout.btn">
-            🎯 Evalúa tu Burnout
-          </button>
-        </div>
-
         <!-- TARJETA 3: AUTOCUIDADO -->
         <div class="evaluation-card-home">
           <div class="card-header-home">
@@ -2882,7 +2870,7 @@
         <div class="disclaimer-icon">🔬</div>
         <div>
           <h4 data-i18n="research.title">Recomendación para la investigación</h4>
-          <p data-i18n="research.text">Para poder realizar <strong>correlaciones entre instrumentos</strong> y obtener datos más robustos, se recomienda completar las <strong>tres escalas</strong> (Burnout, Fatiga por Compasión y Autocuidado), no solo una. Esto nos permitirá comparar y cruzar resultados para mejorar la evidencia sobre el bienestar profesional.</p>
+          <p data-i18n="research.text">Para poder realizar <strong>correlaciones entre instrumentos</strong> y obtener datos más robustos, se recomienda completar las <strong>dos escalas</strong> (Fatiga por Compasión y Autocuidado), no solo una. Esto nos permitirá comparar y cruzar resultados para mejorar la evidencia sobre el bienestar profesional.</p>
         </div>
       </div>
 
@@ -2920,19 +2908,6 @@
 
       <div class="education-section" data-i18n-section="eval-education">
         <div class="cards-grid">
-          <div class="info-card burnout">
-            <div class="info-card-icon">🔥</div>
-            <h3>Burnout o Desgaste Profesional</h3>
-            <p>El burnout es un síndrome de agotamiento emocional, despersonalización y reducción del logro personal.
-              Surge cuando las demandas del trabajo superan tus recursos para afrontarlas. Te sientes exhausto, cínico y
-              con sensación de ineficacia profesional.</p>
-            <ul>
-              <li><strong>Agotamiento emocional:</strong> Fatiga extrema y falta de energía</li>
-              <li><strong>Despersonalización:</strong> Actitud distante y cínica</li>
-              <li><strong>Baja realización personal:</strong> Sensación de ineficacia</li>
-            </ul>
-          </div>
-
           <div class="info-card compassion">
             <div class="info-card-icon">💚</div>
             <h3>Fatiga por Compasión</h3>
@@ -2966,7 +2941,6 @@
         <h2>Autoevaluación: Descubre cómo estás</h2>
         <div class="evaluation-buttons">
           <button class="btn btn-primary" onclick="abrirEvaluacion('compasion')">Conoce tu nivel de Fatiga por Compasión</button>
-          <button class="btn btn-primary" onclick="abrirEvaluacion('burnout')">Conoce tu nivel de Burnout</button>
           <button class="btn btn-primary" onclick="abrirEvaluacion('autocuidado')">¿Realmente ejerces el autocuidado? Descúbrelo</button>
         </div>
       </div>
@@ -3895,11 +3869,6 @@
           <div class="kpi-label">Total Evaluaciones</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">🔥</div>
-          <div class="kpi-value" id="kpi-burnout">0</div>
-          <div class="kpi-label">Burnout (MBI)</div>
-        </div>
-        <div class="kpi-card">
           <div class="kpi-icon">💔</div>
           <div class="kpi-value" id="kpi-compassion">0</div>
           <div class="kpi-label">Compasión (ProQOL)</div>
@@ -3932,10 +3901,6 @@
           <div class="chart-container"><canvas id="chart-ambito"></canvas></div>
         </div>
         <div class="chart-card">
-          <h4>🔥 Niveles de Riesgo MBI (Burnout)</h4>
-          <div class="chart-container"><canvas id="chart-mbi-risk"></canvas></div>
-        </div>
-        <div class="chart-card">
           <h4>💔 Niveles ProQOL</h4>
           <div class="chart-container"><canvas id="chart-proqol-risk"></canvas></div>
         </div>
@@ -3951,19 +3916,6 @@
 
       <!-- Risk breakdown tables -->
       <div class="charts-grid">
-        <div class="chart-card">
-          <h4>🔥 Detalle MBI por subescala</h4>
-          <table class="risk-table">
-            <thead>
-              <tr><th>Subescala</th><th>Bajo</th><th>Medio</th><th>Alto</th></tr>
-            </thead>
-            <tbody id="mbi-detail-table">
-              <tr><td>Agotamiento Emocional</td><td>-</td><td>-</td><td>-</td></tr>
-              <tr><td>Despersonalización</td><td>-</td><td>-</td><td>-</td></tr>
-              <tr><td>Realización Personal</td><td>-</td><td>-</td><td>-</td></tr>
-            </tbody>
-          </table>
-        </div>
         <div class="chart-card">
           <h4>💔 Detalle ProQOL por subescala</h4>
           <table class="risk-table">
@@ -4111,13 +4063,6 @@
       </div>
       <div class="credits-body">
         <h4 style="margin-top: 0;">Herramientas de Evaluación Validadas</h4>
-        <p><strong>Maslach Burnout Inventory (MBI-HSS):</strong><br>
-          Maslach, C., Jackson, S. E., & Leiter, M. P. (1996). <em>Maslach Burnout Inventory Manual</em> (3rd
-          ed.). Consulting Psychologists Press.<br>
-          <span style="font-size: 0.9em; color: #666;">Adaptación española utilizada: Seisdedos, N. (1997). Manual
-            MBI, Inventario de Burnout de Maslach. Madrid: TEA Ediciones.</span>
-        </p>
-
         <p><strong>Professional Quality of Life Scale (ProQOL) v5:</strong><br>
           Stamm, B. H. (2010). <em>The Concise ProQOL Manual</em>. Pocatello, ID: ProQOL.org.<br>
           <span style="font-size: 0.9em; color: #666;">Traducción y validación española: Galiana et al.

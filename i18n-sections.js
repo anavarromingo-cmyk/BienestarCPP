@@ -35,16 +35,6 @@ EN_SECTIONS['eval-header'] = `
 
 EN_SECTIONS['eval-education'] = `
   <div class="cards-grid">
-    <div class="info-card burnout">
-      <div class="info-card-icon">🔥</div>
-      <h3>Burnout</h3>
-      <p>Burnout is a syndrome of emotional exhaustion, depersonalisation, and reduced personal accomplishment. It emerges when work demands exceed your coping resources.</p>
-      <ul>
-        <li><strong>Emotional exhaustion:</strong> Extreme fatigue and lack of energy</li>
-        <li><strong>Depersonalisation:</strong> Distant and cynical attitude</li>
-        <li><strong>Low personal accomplishment:</strong> Sense of ineffectiveness</li>
-      </ul>
-    </div>
     <div class="info-card compassion">
       <div class="info-card-icon">💚</div>
       <h3>Compassion Fatigue</h3>
@@ -72,7 +62,6 @@ EN_SECTIONS['eval-buttons'] = `
   <h2>Self-Assessment: Discover how you are</h2>
   <div class="evaluation-buttons">
     <button class="btn btn-primary" onclick="abrirEvaluacion('compasion')">Check your Compassion Fatigue level</button>
-    <button class="btn btn-primary" onclick="abrirEvaluacion('burnout')">Check your Burnout level</button>
     <button class="btn btn-primary" onclick="abrirEvaluacion('autocuidado')">Do you really practise self-care? Find out</button>
   </div>`;
 
